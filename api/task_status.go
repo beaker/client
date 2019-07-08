@@ -25,6 +25,9 @@ const (
 	// and Beaker is processing the end results (e.g. logs, result data).
 	TaskStatusTerminating TaskStatus = "terminating"
 
+	// TaskStatusPreempted means a task was interrupted by an external cause, such as its node shutting down.
+	TaskStatusPreempted TaskStatus = "preempted"
+
 	// TaskStatusSucceeded means a task has completed successfully.
 	TaskStatusSucceeded TaskStatus = "succeeded"
 
@@ -38,10 +41,10 @@ const (
 	TaskStatusFailed TaskStatus = "failed"
 )
 
-// IsEndState is true if the TaskStatus is canceled, failed, or successful
+// IsEndState is true if the TaskStatus is preempted, canceled, failed, or successful
 func (ts TaskStatus) IsEndState() bool {
 	switch ts {
-	case TaskStatusSucceeded, TaskStatusSkipped, TaskStatusStopped, TaskStatusFailed:
+	case TaskStatusPreempted, TaskStatusSucceeded, TaskStatusSkipped, TaskStatusStopped, TaskStatusFailed:
 		return true
 	default:
 		return false

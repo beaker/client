@@ -23,7 +23,8 @@ type Task struct {
 	Ended   time.Time  `json:"ended"`
 
 	// Creation parameters
-	Spec TaskSpec `json:"spec"`
+	Spec        TaskSpec `json:"spec"`
+	ResumedFrom string   `json:"resumedFrom,omitempty"`
 
 	// Cost
 	Bill *Bill `json:"bill,omitempty"`
