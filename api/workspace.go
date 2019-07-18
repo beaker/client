@@ -17,6 +17,13 @@ type Workspace struct {
 	Archived bool      `json:"archived"`
 }
 
+type WorkspaceSpec struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Public      bool   `json:"public"`
+	Owner       string `json:"owner,omitempty"` // Defaults to requesting agent if not provided.
+}
+
 // WorkspacePage is a page of results from a batch workspace API.
 type WorkspacePage struct {
 	// Results of a batch query.
