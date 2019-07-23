@@ -119,7 +119,7 @@ type TaskRequirements struct {
 type DatasetMount struct {
 	// (required) Name or Unique ID of a dataset to mount.
 	DatasetIDDeprecated string `json:"dataset_id" yaml:"-"`
-	Dataset             string `json:"dataset" yaml:"datasetId"`
+	Dataset             string `json:"dataset" yaml:"dataset"`
 
 	// (optional) Path within the dataset to mount for this experiment container.
 	SubPath string `json:"subPath,omitempty" yaml:"subPath,omitempty"`
