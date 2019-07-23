@@ -17,11 +17,18 @@ type Workspace struct {
 	Archived bool      `json:"archived"`
 }
 
+// WorkspaceSpec is a specification for creating a new Workspace
 type WorkspaceSpec struct {
-	Name        string `json:"name"`
+	// (required) Name of the workspace to be created
+	Name string `json:"name"`
+
+	// (optional) Description of the workspace to be created
 	Description string `json:"description,omitempty"`
 	Public      bool   `json:"public"`
-	Owner       string `json:"owner,omitempty"` // Defaults to requesting agent if not provided.
+
+	// (required) Organization on behalf of whom this resource is created. The
+	// user issuing the request must be a member of the organization.
+	Owner string `json:"owner,omitempty"`
 }
 
 // WorkspacePage is a page of results from a batch workspace API.
@@ -31,4 +38,13 @@ type WorkspacePage struct {
 
 	// Opaque token to the element after Data, provided only if more data is available.
 	NextCursor string `json:"nextCursor,omitempty"`
+	// (required) Organization on whose behalf this resource is created. The
+	// user issuing the request must be a member of the organization.
+	Organization string `json:"org"`
+}
+
+// CreateWorkspaceResponse is a service response returned when a new workspace is
+// created.
+type CreateWorkspaceResponse struct {
+	ID string `json:"id"`
 }
