@@ -66,6 +66,10 @@ type DatasetSpec struct {
 	// the resource will be owned by the requestor.
 	Organization string `json:"org,omitempty"`
 
+	// (optional) Workspace where this dataset should be placed.
+	// TODO: Make required once workspaces feature is released & users are migrated.
+	Workspace string `json:"workspace,omitempty"`
+
 	// (optional) Text description for the dataset.
 	Description string `json:"description,omitempty"`
 

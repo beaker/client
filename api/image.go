@@ -50,6 +50,10 @@ type ImageSpec struct {
 	// the resource will be owned by the requestor.
 	Organization string `json:"org,omitempty"`
 
+	// (optional) Workspace where this image should be placed.
+	// TODO: Make required once workspaces feature is released & users are migrated.
+	Workspace string `json:"workspace,omitempty"`
+
 	// (required) Unique identifier for the image's image. In Docker images,
 	// this is a SHA256 hash.
 	ImageID string `json:"ImageID"` // TODO: convert to loweCase name and update reflection tag

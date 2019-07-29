@@ -18,6 +18,10 @@ type GroupSpec struct {
 	// the resource will be owned by the requestor.
 	Organization string `json:"org,omitempty"`
 
+	// (optional) Workspace where this group should be placed.
+	// TODO: Make required once workspaces feature is released & users are migrated.
+	Workspace string `json:"workspace,omitempty"`
+
 	// (required) Unique name to assign the group.
 	Name string `json:"name"`
 

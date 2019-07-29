@@ -39,6 +39,10 @@ type ExperimentSpec struct {
 	// the resource will be owned by the requestor.
 	Organization string `json:"org,omitempty" yaml:"org,omitempty"`
 
+	// (optional) Workspace where this experiment and its results should be placed.
+	// TODO: Make required once workspaces feature is released & users are migrated.
+	Workspace string `json:"workspace,omitempty" yaml:"workspace,omitempty"`
+
 	// (optional) Text description of the experiment.
 	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 
