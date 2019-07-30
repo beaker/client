@@ -26,9 +26,9 @@ type WorkspaceSpec struct {
 	Description string `json:"description,omitempty"`
 	Public      bool   `json:"public"`
 
-	// (required) Organization on behalf of whom this resource is created. The
+	// (optional) Organization on behalf of whom this resource is created. The
 	// user issuing the request must be a member of the organization.
-	Owner string `json:"owner,omitempty"`
+	Organization string `json:"org,omitempty"`
 }
 
 // WorkspacePage is a page of results from a batch workspace API.
