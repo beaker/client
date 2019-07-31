@@ -31,6 +31,18 @@ type WorkspaceSpec struct {
 	Organization string `json:"org,omitempty"`
 }
 
+// WorkspacePatchSpec describes a patch to apply to a workspace's editable fields.
+type WorkspacePatchSpec struct {
+	// (optional) New name to give the workspace. This will break any existing references by name.
+	Name *string `json:"name,omitempty"`
+
+	// (optional) New description to give the workspace
+	Description *string `json:"description,omitempty"`
+
+	// (optional) Whether the experiment should be archived. Ignored if nil.
+	Archive *bool `json:"archive,omitempty"`
+}
+
 // WorkspacePage is a page of results from a batch workspace API.
 type WorkspacePage struct {
 	// Results of a batch query.
