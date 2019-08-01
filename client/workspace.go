@@ -37,6 +37,11 @@ func (c *Client) Workspace(ctx context.Context, reference string) (*WorkspaceHan
 	return &WorkspaceHandle{client: c, id: reference}, nil
 }
 
+// ID returns a workspace's stable, unique ID.
+func (h *WorkspaceHandle) ID() string {
+	return h.id
+}
+
 // Get retrieves a task's details.
 func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
 	path := path.Join("/api/v3/workspaces", h.id)
