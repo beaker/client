@@ -44,6 +44,34 @@ func (c *Client) CreateExperiment(
 	return &ExperimentHandle{client: c, id: id}, nil
 }
 
+// ResumeExperiment resumes a previously preempted experiment. The new experiment is
+// created with an optional name if provided in experimentName. The experiment referenced
+// in resumeFromReference should refer to the name or ID of the experiment to resume from.
+// The experiment referenced must contain at least one 'preempted' task.
+func (c *Client) ResumeExperiment(
+	ctx context.Context,
+	resumeFromReference string,
+	experimentName string,
+) (*ExperimentHandle, error) {
+	id, err := c.resolveRef(ctx, "/api/v3/experiments", resumeFromReference)
+	if err != nil {
+		return nil, errors.WithMessage(err, "could not resolve experiment reference "+resumeFromReference)
+	}
+	query := url.Values{"name": {experimentName}}
+	resp, err := c.sendRequest(ctx, http.MethodPost, path.Join("/api/v3/experiments", id, "/resume"), query, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var resumedExperimentID string
+	if err := parseResponse(resp, &resumedExperimentID); err != nil {
+		return nil, err
+	}
+
+	return &ExperimentHandle{client: c, id: resumedExperimentID}, nil
+}
+
 // Experiment gets a handle for an experiment by name or ID. The returned handle
 // is guaranteed throughout its lifetime to refer to the same object, even if
 // that object is later renamed.
