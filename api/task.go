@@ -23,8 +23,8 @@ type Task struct {
 	Ended   time.Time  `json:"ended"`
 
 	// Creation parameters
-	Spec        TaskSpec `json:"spec"`
-	ResumedFrom string   `json:"resumedFrom,omitempty"`
+	Spec        TaskSpec        `json:"spec"`
+	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 
 	// Cost
 	Bill *Bill `json:"bill,omitempty"`
@@ -36,6 +36,11 @@ type Task struct {
 	ExitCode           int    `json:"exitCode,omitempty"`
 	CometURL           string `json:"cometUrl,omitempty"` // Deprecated
 	CometKey           string `json:"cometKey,omitempty"`
+}
+
+type ResumedFromSpec struct {
+	TaskID       string `json:"task_id,omitempty"`
+	ExperimentID string `json:"experiment_id,omitempty"`
 }
 
 type TaskCometDetail struct {
