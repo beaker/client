@@ -39,8 +39,8 @@ type Task struct {
 }
 
 type ResumedFromSpec struct {
-	TaskID       string `json:"task_id,omitempty"`
-	ExperimentID string `json:"experiment_id,omitempty"`
+	TaskID       string `json:"taskId,omitempty"`
+	ExperimentID string `json:"experimentId,omitempty"`
 }
 
 type TaskCometDetail struct {
