@@ -105,3 +105,12 @@ type RegistryAuth struct {
 	User          string `json:"user"`
 	Password      string `json:"password"`
 }
+
+// ImagePage is a page of results from a batch image API.
+type ImagePage struct {
+	// Results of a batch query.
+	Data []Image `json:"data"`
+
+	// Opaque token to the element after Data, provided only if more data is available.
+	NextCursor string `json:"nextCursor,omitempty"`
+}

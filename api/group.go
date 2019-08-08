@@ -124,3 +124,12 @@ type GroupParameterCount struct {
 	Name  string `json:"name"`
 	Count int64  `json:"count"`
 }
+
+// GroupPage is a page of results from a batch group API.
+type GroupPage struct {
+	// Results of a batch query.
+	Data []Group `json:"data"`
+
+	// Opaque token to the element after Data, provided only if more data is available.
+	NextCursor string `json:"nextCursor,omitempty"`
+}

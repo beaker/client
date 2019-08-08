@@ -130,3 +130,12 @@ type DatasetPatchSpec struct {
 	// (optional) Whether the dataset should be archived. Ignored if nil.
 	Archive *bool `json:"archive,omitempty"`
 }
+
+// DatasetPage is a page of results from a batch dataset API.
+type DatasetPage struct {
+	// Results of a batch query.
+	Data []Dataset `json:"data"`
+
+	// Opaque token to the element after Data, provided only if more data is available.
+	NextCursor string `json:"nextCursor,omitempty"`
+}

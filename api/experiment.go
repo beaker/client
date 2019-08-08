@@ -143,3 +143,12 @@ type ExperimentPatchSpec struct {
 	// (optional) Whether the experiment should be archived. Ignored if nil.
 	Archive *bool `json:"archive,omitempty"`
 }
+
+// ExperimentPage is a page of results from a batch experiment API.
+type ExperimentPage struct {
+	// Results of a batch query.
+	Data []Experiment `json:"data"`
+
+	// Opaque token to the element after Data, provided only if more data is available.
+	NextCursor string `json:"nextCursor,omitempty"`
+}
