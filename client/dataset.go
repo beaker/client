@@ -43,16 +43,17 @@ func (c *Client) CreateDataset(
 		return nil, err
 	}
 
-	var ds *fileheap.DatasetRef
-	if body.Storage != nil {
-		fileheap, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
-		if err != nil {
-			return nil, err
-		}
-		ds = fileheap.Dataset(body.Storage.ID)
+	fhClient, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
+	if err != nil {
+		return nil, err
 	}
 
-	return &DatasetHandle{client: c, id: body.ID, isFile: spec.Filename != "", Storage: ds}, nil
+	return &DatasetHandle{
+		client:  c,
+		id:      body.ID,
+		isFile:  spec.Filename != "",
+		Storage: fhClient.Dataset(body.Storage.ID),
+	}, nil
 }
 
 // Dataset gets a handle for a dataset by name or ID. The returned handle is
@@ -75,16 +76,17 @@ func (c *Client) Dataset(ctx context.Context, reference string) (*DatasetHandle,
 		return nil, err
 	}
 
-	var ds *fileheap.DatasetRef
-	if body.Storage != nil {
-		fileheap, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
-		if err != nil {
-			return nil, err
-		}
-		ds = fileheap.Dataset(body.Storage.ID)
+	fhClient, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
+	if err != nil {
+		return nil, err
 	}
 
-	return &DatasetHandle{client: c, id: body.ID, isFile: body.IsFile, Storage: ds}, nil
+	return &DatasetHandle{
+		client:  c,
+		id:      body.ID,
+		isFile:  body.IsFile,
+		Storage: fhClient.Dataset(body.Storage.ID),
+	}, nil
 }
 
 // ID returns a dataset's stable, unique ID.
@@ -113,40 +115,11 @@ func (h *DatasetHandle) Get(ctx context.Context) (*api.Dataset, error) {
 	return &body, nil
 }
 
-// Manifest retrieves a manifest for a dataset's contents.
-// Deprecated. Use Files() instead.
-func (h *DatasetHandle) Manifest(ctx context.Context) (*api.DatasetManifest, error) {
-	path := path.Join("/api/v3/datasets", h.id, "manifest")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var body api.DatasetManifest
-	if err = parseResponse(resp, &body); err != nil {
-		return nil, err
-	}
-	return &body, nil
-}
-
 // Files returns an iterator over all files in the dataset under the given path.
 func (h *DatasetHandle) Files(ctx context.Context, path string) (FileIterator, error) {
-	if h.Storage != nil {
-		return &fileHeapIterator{
-			dataset:  h,
-			iterator: h.Storage.Files(ctx, path),
-		}, nil
-	}
-
-	manifest, err := h.Manifest(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return &manifestFileIterator{
-		dataset: h,
-		files:   manifest.Files,
+	return &fileHeapIterator{
+		dataset:  h,
+		iterator: h.Storage.Files(ctx, path),
 	}, nil
 }
 

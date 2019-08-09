@@ -89,31 +89,6 @@ type DatasetSpec struct {
 	FileHeap bool `json:"fileHeap,omitempty"`
 }
 
-// DatasetFile dsecribes a file within a dataset.
-type DatasetFile struct {
-	// The full path/name of the file from the root of the dataset.
-	File string `json:"file"`
-
-	// The size of the file, in bytes.
-	Size uint64 `json:"size"`
-
-	TimeLastModifiedDeprecated time.Time `json:"time_last_modified"`
-	TimeLastModified           time.Time `json:"timeLastModified"`
-}
-
-// DatasetManifest describes the file contents of a dataset.
-type DatasetManifest struct {
-	// The unique ID of the dataset.
-	ID string `json:"id"`
-
-	// Whether the dataset should be treated as a single file.
-	SingleFileDeprecated bool `json:"single_file,omitempty"`
-	SingleFile           bool `json:"singleFile,omitempty"`
-
-	// Descriptions of files contained in the dataset.
-	Files []DatasetFile `json:"files,omitempty"`
-}
-
 // DatasetPatchSpec describes a patch to apply to a dataset's editable fields.
 // Only one field may be set in a single request.
 type DatasetPatchSpec struct {

@@ -1,13 +1,10 @@
 package client
 
 import (
-	"strings"
 	"time"
 
 	fileheap "github.com/beaker/fileheap/client"
 	"github.com/pkg/errors"
-
-	"github.com/beaker/client/api"
 )
 
 // FileIterator is an iterator over files within a dataset.
@@ -51,33 +48,5 @@ func (i *fileHeapIterator) Next() (*FileHandle, *FileInfo, error) {
 			Path:    info.Path,
 			Size:    info.Size,
 			Updated: info.Updated,
-		}, nil
-}
-
-// manifestFileIterator is an iterator over files in a dataset manifest.
-type manifestFileIterator struct {
-	dataset *DatasetHandle
-	files   []api.DatasetFile
-	prefix  string
-}
-
-func (i *manifestFileIterator) Next() (*FileHandle, *FileInfo, error) {
-	for len(i.files) > 0 && !strings.HasPrefix(i.files[0].File, i.prefix) {
-		i.files = i.files[1:]
-	}
-	if len(i.files) == 0 {
-		return nil, nil, ErrDone
-	}
-
-	file := i.files[0]
-	i.files = i.files[1:]
-
-	return &FileHandle{
-			dataset: i.dataset,
-			file:    file.File,
-		}, &FileInfo{
-			Path:    file.File,
-			Size:    int64(file.Size),
-			Updated: file.TimeLastModified,
 		}, nil
 }
