@@ -12,9 +12,10 @@ type Experiment struct {
 	Name string `json:"name,omitempty"`
 
 	// Ownership
-	Owner  Identity `json:"owner"`
-	Author Identity `json:"author"`
-	User   Identity `json:"user"` // TODO: Deprecated.
+	Owner     Identity `json:"owner"`
+	Author    Identity `json:"author"`
+	Workspace string   `json:"workspace"`
+	User      Identity `json:"user"` // TODO: Deprecated.
 
 	Description string           `json:"description,omitempty"`
 	Nodes       []ExperimentNode `json:"nodes"`

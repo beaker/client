@@ -30,9 +30,10 @@ type Dataset struct {
 	Name string `json:"name,omitempty"`
 
 	// Ownership
-	Owner  Identity `json:"owner"`
-	Author Identity `json:"author"`
-	User   Identity `json:"user"` // TODO: Deprecated.
+	Owner     Identity `json:"owner"`
+	Author    Identity `json:"author"`
+	Workspace string   `json:"workspace"`
+	User      Identity `json:"user"` // TODO: Deprecated.
 
 	// Status
 	Created   time.Time `json:"created"`
