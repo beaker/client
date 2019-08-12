@@ -43,6 +43,10 @@ type WorkspacePatchSpec struct {
 	Archive *bool `json:"archive,omitempty"`
 }
 
+type WorkspaceTransferSpec struct {
+	IDs []string `json:"ids"`
+}
+
 // WorkspacePage is a page of results from a batch workspace API.
 type WorkspacePage struct {
 	// Results of a batch query.
