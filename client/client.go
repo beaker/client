@@ -24,10 +24,11 @@ import (
 	"github.com/beaker/client/api"
 )
 
-// We encode the version as a manually-assigned constant for now. This must be
-// updated with each material change to how a client makes requests, and is
-// assumed to be monotonically increasing.
-const version = "v20190301"
+// If version is empty the client will not send a version header.
+// If it is not empty, the client will send a version header and the service
+// will respond with an error if the client version is out of date.
+// The CLI sets version at link time.
+const version = ""
 
 var idPattern = regexp.MustCompile(`^\w\w_[a-z0-9]{12}$`)
 
@@ -177,7 +178,9 @@ func (c *Client) newRetryableRequest(
 		return nil, err
 	}
 
-	req.Header.Set(api.HeaderVersion, version)
+	if version != "" {
+		req.Header.Set(api.HeaderVersion, version)
+	}
 	if len(c.userToken) > 0 {
 		req.Header.Set("Authorization", "Bearer "+c.userToken)
 	}
@@ -197,7 +200,9 @@ func (c *Client) newRequest(
 		return nil, err
 	}
 
-	req.Header.Set(api.HeaderVersion, version)
+	if version != "" {
+		req.Header.Set(api.HeaderVersion, version)
+	}
 	if len(c.userToken) > 0 {
 		req.Header.Set("Authorization", "Bearer "+c.userToken)
 	}

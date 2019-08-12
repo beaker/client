@@ -32,12 +32,9 @@ const (
 )
 
 type ImageSearchOptions struct {
-	SortClauses                []ImageSortClause   `json:"sortClauses,omitempty"`
-	SortClausesDeprecated      []ImageSortClause   `json:"sort_clauses,omitempty"`
-	FilterClauses              []ImageFilterClause `json:"filterClauses,omitempty"`
-	FilterClausesDeprecated    []ImageFilterClause `json:"filter_clauses,omitempty"`
-	FilterCombinator           FilterCombinator    `json:"filterCombinator,omitempty"`
-	FilterCombinatorDeprecated FilterCombinator    `json:"filter_combinator,omitempty"`
+	SortClauses      []ImageSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses    []ImageFilterClause `json:"filterClauses,omitempty"`
+	FilterCombinator FilterCombinator    `json:"filterCombinator,omitempty"`
 }
 
 type ImageSortClause struct {
@@ -52,17 +49,12 @@ type ImageFilterClause struct {
 }
 
 type DatasetSearchOptions struct {
-	SortClauses                  []DatasetSortClause   `json:"sortClauses,omitempty"`
-	SortClausesDeprecated        []DatasetSortClause   `json:"sort_clauses,omitempty"`
-	FilterClauses                []DatasetFilterClause `json:"filterClauses,omitempty"`
-	FilterClausesDeprecated      []DatasetFilterClause `json:"filter_clauses,omitempty"`
-	FilterCombinator             FilterCombinator      `json:"filterCombinator,omitempty"`
-	FilterCombinatorDeprecated   FilterCombinator      `json:"filter_combinator,omitempty"`
-	OmitResultDatasets           bool                  `json:"omitResultDatasets,omitempty"`
-	OmitResultDatasetsDeprecated bool                  `json:"omit_result_datasets,omitempty"`
-	IncludeUncommitted           bool                  `json:"includeUncommitted,omitempty"`
-	IncludeUncommittedDeprecated bool                  `json:"include_uncommitted,omitempty"`
-	Archived                     *bool                 `json:"archived,omitempty"`
+	SortClauses        []DatasetSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses      []DatasetFilterClause `json:"filterClauses,omitempty"`
+	FilterCombinator   FilterCombinator      `json:"filterCombinator,omitempty"`
+	OmitResultDatasets bool                  `json:"omitResultDatasets,omitempty"`
+	IncludeUncommitted bool                  `json:"includeUncommitted,omitempty"`
+	Archived           *bool                 `json:"archived,omitempty"`
 }
 
 type DatasetSortClause struct {
@@ -77,13 +69,10 @@ type DatasetFilterClause struct {
 }
 
 type ExperimentSearchOptions struct {
-	SortClauses                []ExperimentSortClause   `json:"sortClauses,omitempty"`
-	SortClausesDeprecated      []ExperimentSortClause   `json:"sort_clauses,omitempty"`
-	FilterClauses              []ExperimentFilterClause `json:"filterClauses,omitempty"`
-	FilterClausesDeprecated    []ExperimentFilterClause `json:"filter_clauses,omitempty"`
-	FilterCombinator           FilterCombinator         `json:"filterCombinator,omitempty"`
-	FilterCombinatorDeprecated FilterCombinator         `json:"filter_combinator,omitempty"`
-	Archived                   *bool                    `json:"archived,omitempty"`
+	SortClauses      []ExperimentSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses    []ExperimentFilterClause `json:"filterClauses,omitempty"`
+	FilterCombinator FilterCombinator         `json:"filterCombinator,omitempty"`
+	Archived         *bool                    `json:"archived,omitempty"`
 }
 
 type ExperimentSortClause struct {
@@ -98,13 +87,10 @@ type ExperimentFilterClause struct {
 }
 
 type GroupSearchOptions struct {
-	SortClauses                []GroupSortClause   `json:"sortClauses,omitempty"`
-	SortClausesDeprecated      []GroupSortClause   `json:"sort_clauses,omitempty"`
-	FilterClauses              []GroupFilterClause `json:"filterClauses,omitempty"`
-	FilterClausesDeprecated    []GroupFilterClause `json:"filter_clauses,omitempty"`
-	FilterCombinator           FilterCombinator    `json:"filterCombinator,omitempty"`
-	FilterCombinatorDeprecated FilterCombinator    `json:"filter_combinator,omitempty"`
-	Archived                   *bool               `json:"archived,omitempty"`
+	SortClauses      []GroupSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses    []GroupFilterClause `json:"filterClauses,omitempty"`
+	FilterCombinator FilterCombinator    `json:"filterCombinator,omitempty"`
+	Archived         *bool               `json:"archived,omitempty"`
 }
 
 type GroupSortClause struct {
@@ -119,14 +105,10 @@ type GroupFilterClause struct {
 }
 
 type GroupTaskSearchOptions struct {
-	SortClauses                    []GroupTaskSortClause      `json:"sortClauses,omitempty"`
-	SortClausesDeprecated          []GroupTaskSortClause      `json:"sort_clauses,omitempty"`
-	ParameterSortClauses           []GroupParameterSortClause `json:"parameterSortClauses,omitempty"`
-	ParameterSortClausesDeprecated []GroupParameterSortClause `json:"parameter_sort_clauses,omitempty"`
-	FilterClauses                  []GroupTaskFilterClause    `json:"filterClauses,omitempty"`
-	FilterClausesDeprecated        []GroupTaskFilterClause    `json:"filter_clauses,omitempty"`
-	FilterCombinator               FilterCombinator           `json:"filterCombinator,omitempty"`
-	FilterCombinatorDeprecated     FilterCombinator           `json:"filter_combinator,omitempty"`
+	SortClauses          []GroupTaskSortClause      `json:"sortClauses,omitempty"`
+	ParameterSortClauses []GroupParameterSortClause `json:"parameterSortClauses,omitempty"`
+	FilterClauses        []GroupTaskFilterClause    `json:"filterClauses,omitempty"`
+	FilterCombinator     FilterCombinator           `json:"filterCombinator,omitempty"`
 }
 
 type GroupTaskSortClause struct {
