@@ -9,7 +9,6 @@ type TFEventSeriesList struct {
 }
 
 type TFEventSeries struct {
-	Experiment string `json:"experiment"`
 	// File from which the events were extracted relative to the task's result directory.
 	Path string `json:"path"`
 	Task string `json:"task"`
