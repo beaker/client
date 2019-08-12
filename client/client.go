@@ -24,13 +24,15 @@ import (
 	"github.com/beaker/client/api"
 )
 
-// If version is empty the client will not send a version header.
-// If it is not empty, the client will send a version header and the service
-// will respond with an error if the client version is out of date.
-// The CLI sets version at link time.
-const version = ""
+var (
+	// If version is empty the client will not send a version header.
+	// If it is not empty, the client will send a version header and the service
+	// will respond with an error if the client version is out of date.
+	// The CLI sets version at link time.
+	version = ""
 
-var idPattern = regexp.MustCompile(`^\w\w_[a-z0-9]{12}$`)
+	idPattern = regexp.MustCompile(`^\w\w_[a-z0-9]{12}$`)
+)
 
 // Client is a Beaker HTTP client.
 type Client struct {
