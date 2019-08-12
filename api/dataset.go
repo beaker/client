@@ -44,7 +44,8 @@ type Dataset struct {
 	Description string `json:"description,omitempty"`
 
 	// Task for which this dataset is a result, i.e. provenance, if any.
-	SourceTask *string `json:"sourceTask,omitempty"`
+	SourceTaskDeprecated *string `json:"source_task,omitempty"`
+	SourceTask           *string `json:"sourceTask,omitempty"`
 
 	// Included if the dataset is a single file.
 	IsFile bool `json:"isFile,omitempty"`
@@ -80,7 +81,8 @@ type DatasetSpec struct {
 
 	// (optional) A token representing the user to which the object should be attributed.
 	// If omitted attribution will be given to the user issuing the request.
-	AuthorToken string `json:"authorToken,omitempty"`
+	AuthorTokenDeprecated string `json:"author_token,omitempty"`
+	AuthorToken           string `json:"authorToken,omitempty"`
 
 	// (optional) If set, the dataset will be stored in FileHeap.
 	// This flag will eventually become the default and be removed.
