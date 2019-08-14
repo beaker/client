@@ -4,10 +4,10 @@ import "time"
 
 // Workspace is the consumabable information about a workspace
 type Workspace struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Size        int    `json:"size"` // Total count of items in the workspace.
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description,omitempty"`
+	Size        WorkspaceItemCount `json:"size"`
 
 	Owner  Identity `json:"owner"`
 	Author Identity `json:"author"`
@@ -15,6 +15,14 @@ type Workspace struct {
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
 	Archived bool      `json:"archived"`
+}
+
+// WorkspaceItemCount describes how many items of each type are contained within a workspace.
+type WorkspaceItemCount struct {
+	Datasets    int `json:"datasets"`
+	Experiments int `json:"experiments"`
+	Groups      int `json:"groups"`
+	Images      int `json:"images"`
 }
 
 // WorkspaceSpec is a specification for creating a new Workspace
