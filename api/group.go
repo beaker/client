@@ -33,8 +33,7 @@ type GroupSpec struct {
 
 	// (optional) A token representing the user to which the object should be attributed.
 	// If omitted attribution will be given to the user issuing the request.
-	AuthorTokenDeprecated string `json:"author_token,omitempty"`
-	AuthorToken           string `json:"authorToken,omitempty"`
+	AuthorToken string `json:"authorToken,omitempty"`
 }
 
 // Group is a collection of experiments.
@@ -98,13 +97,11 @@ type GroupPatchSpec struct {
 
 	// (optional) Experiment IDs to add to the group.
 	// It is an error to add and remove the same experiment in one patch.
-	AddExperimentsDeprecated []string `json:"add_experiments,omitempty"`
-	AddExperiments           []string `json:"addExperiments,omitempty"`
+	AddExperiments []string `json:"addExperiments,omitempty"`
 
 	// (optional) Experiment IDs to remove from the group.
 	// It is an error to add and remove the same experiment in one patch.
-	RemoveExperimentsDeprecated []string `json:"remove_experiments,omitempty"`
-	RemoveExperiments           []string `json:"removeExperiments,omitempty"`
+	RemoveExperiments []string `json:"removeExperiments,omitempty"`
 
 	// (optional) New selected environment variables and metrics.
 	Parameters *[]GroupParameter `json:"parameters,omitempty"`

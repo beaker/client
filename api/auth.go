@@ -21,8 +21,7 @@ const (
 // may be omitted when viewed by a user with limited permissions.
 type PermissionSummary struct {
 	// Authorization for the user issuing a request.
-	RequesterAuthDeprecated Permission `json:"requester_auth"`
-	RequesterAuth           Permission `json:"requesterAuth"`
+	RequesterAuth Permission `json:"requesterAuth"`
 
 	// Default permissions granted on the object.
 	Default Permission `json:"default,omitempty"`
