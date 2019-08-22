@@ -17,6 +17,12 @@ type Workspace struct {
 	Archived bool      `json:"archived"`
 }
 
+// WorkspaceCost is the total cost associated with all the tasks in a given workspace
+type WorkspaceCost struct {
+	WorkspaceID string `json:"workspaceId"`
+	CostUSD     string `json:"costUsd"`
+}
+
 // WorkspaceItemCount describes how many items of each type are contained within a workspace.
 type WorkspaceItemCount struct {
 	Datasets    int `json:"datasets"`
