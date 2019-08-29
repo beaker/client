@@ -21,8 +21,9 @@ type MetricAlert struct {
 	Threshold float64              `json:"threshold"`
 	Severity  AlertSeverity        `json:"severity"`
 
-	// Currently enabled status
-	Enabled bool `json:"enabled"`
+	// Currently enabled and triggered status
+	Enabled   bool `json:"enabled"`
+	Triggered bool `json:"triggered"`
 }
 
 // MetricAlertSpec is currently for internal use only
@@ -32,4 +33,14 @@ type MetricAlertSpec struct {
 	Condition MetricAlertCondition `json:"condition" yaml:"condition"`
 	Threshold float64              `json:"threshold" yaml:"threshold"`
 	Severity  AlertSeverity        `json:"severity" yaml:"severity"`
+}
+
+// MetricAlertPatchSpec describes a patch to apply to a dataset's editable fields.
+// Only one field may be set in a single request.
+type MetricAlertPatchSpec struct {
+	// (optional) Whether the alert should be (re-)enabled.
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// (optional) Whether the alert should be triggered.
+	Triggered *bool `json:"triggered,omitempty"`
 }
