@@ -26,6 +26,11 @@ type MetricAlert struct {
 	Triggered bool `json:"triggered"`
 }
 
+// MetricAlerts is a collection of metric alerts
+type MetricAlerts struct {
+	MetricAlerts []MetricAlert `json:"metricAlerts"`
+}
+
 // MetricAlertSpec is currently for internal use only
 type MetricAlertSpec struct {
 	TaskID    string               `json:"taskId" yaml:"taskID"`
