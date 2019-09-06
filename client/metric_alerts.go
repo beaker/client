@@ -10,7 +10,7 @@ import (
 	"github.com/beaker/client/api"
 )
 
-// MetricAlerts returns all metric alerts. Intended for use by the alerts service only.
+// MetricAlerts returns all enabled metric alerts. Intended for use by the alerts service only.
 func (c *Client) MetricAlerts(ctx context.Context) (*api.MetricAlerts, error) {
 	path := "/api/v3/alerts/"
 	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
