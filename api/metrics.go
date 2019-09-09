@@ -18,3 +18,21 @@ type TFEventSeries struct {
 	Times  []int64   `json:"times"` // Seconds since the Unix epoch.
 	Values []float32 `json:"values"`
 }
+
+type SystemMetricNameList struct {
+	SystemMetrics []string `json:"systemMetrics"`
+}
+
+type SystemMetricSeriesList struct {
+	Series []SystemMetricSeries `json:"series"`
+}
+
+type SystemMetricSeries struct {
+	Task string `json:"task"`
+
+	Tags map[string]string `json:"tags"`
+
+	// All arrays are guaranteed to have the same length.
+	Times  []int64   `json:"times"` // Seconds since the Unix epoch.
+	Values []float32 `json:"values"`
+}
