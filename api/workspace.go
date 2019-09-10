@@ -78,3 +78,10 @@ type WorkspacePage struct {
 type CreateWorkspaceResponse struct {
 	ID string `json:"id"`
 }
+
+// WorkspaceReference is a reference to a workspace in the system, providing both
+// name and ID for human-readible and static references, respectively.
+type WorkspaceReference struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
