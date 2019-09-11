@@ -2,10 +2,14 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -72,8 +76,11 @@ func (c *Client) ListWorkspaces(
 // guaranteed throughout its lifetime to refer to the same object, even if that
 // object is later renamed.
 func (c *Client) Workspace(ctx context.Context, reference string) (*WorkspaceHandle, error) {
-	// TODO: c.resolveRef so reference can be either name or ID, once API endpoints accept names
-	return &WorkspaceHandle{client: c, id: reference}, nil
+	workspace, err := getWorkspace(ctx, c, reference)
+	if err != nil {
+		return nil, err
+	}
+	return &WorkspaceHandle{client: c, id: workspace.ID}, nil
 }
 
 // ID returns a workspace's stable, unique ID.
@@ -83,8 +90,17 @@ func (h *WorkspaceHandle) ID() string {
 
 // Get retrieves a task's details.
 func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
-	path := path.Join("/api/v3/workspaces", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	return getWorkspace(ctx, h.client, h.id)
+}
+
+func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Workspace, error) {
+	if err := validateWorkspaceRef(reference); err != nil {
+		return nil, err
+	}
+
+	// If successfully validated, reference contains a slash to match the correct route.
+	path := path.Join("/api/v3/workspaces", reference)
+	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +112,14 @@ func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
 	}
 
 	return &workspace, nil
+}
+
+// This ensures workspace references are of the form "foo/bar"
+func validateWorkspaceRef(ref string) error {
+	if strings.Count(ref, "/") != 1 || strings.HasSuffix(ref, "/") || strings.HasPrefix(ref, "/") {
+		return errors.New(fmt.Sprintf("%q is not a valid workspace identifier", ref))
+	}
+	return nil
 }
 
 type ListDatasetOptions struct {
