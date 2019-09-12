@@ -5,9 +5,9 @@ import "time"
 // A Cluster is a homogenous collection of compute instances. Instances may be
 // virtual machines or physical hardware, depending on the hosting environment.
 type Cluster struct {
-	ID          string `json:"id"`
-	Name        string `json:"name,omitempty"` // TODO: Contract? Probably unique among all active pools.
-	Environment string `json:"environment"`
+	ID     string `json:"id"`
+	Name   string `json:"name,omitempty"` // TODO: Contract? Probably unique among all active pools.
+	Galaxy string `json:"galaxy"`
 
 	Created    time.Time `json:"created"`
 	Expiration time.Time `json:"expiration,omitempty"` // TODO: *time.Time ?
@@ -16,11 +16,8 @@ type Cluster struct {
 	// Capacity is the maximum number of instances a cluster can contain at one time.
 	Capacity int `json:"capacity"`
 
-	// Spec describes per-instance configuration as requested during cluster creation.
-	Spec InstanceSpec `json:"spec"`
-
-	// AppliedSpec describes per-instance configuration as applied.
-	AppliedSpec InstanceSpec `json:"appliedSpec"`
+	// InstanceSpec describes per-instance configuration.
+	InstanceSpec InstanceSpec `json:"instanceSpec"`
 }
 
 // A ClusterPage contains a partial list of clusters.
@@ -30,9 +27,14 @@ type ClusterPage struct {
 
 // ClusterSpec provides options to configure a new cluster.
 type ClusterSpec struct {
-	Name        string `json:"name,omitempty"`
-	Environment string `json:"environment"`
-	Capacity    int    `json:"capacity"`
+	Name     string `json:"name,omitempty"`
+	Galaxy   string `json:"galaxy"`
+	Capacity int    `json:"capacity"`
+
+	// Preemptible declares whether the cluster should include lower cost
+	// preemptible instances, with the tradeoff that workloads are more likely
+	// to be interrupted.
+	Preemptible bool `json:"preemptible,omitempty"`
 
 	// Spec describes characteristics of each instance within the cluster.
 	// Default values will be set by internal policy.
@@ -41,11 +43,10 @@ type ClusterSpec struct {
 
 // InstanceSpec provides options to configure compute instances.
 type InstanceSpec struct {
-	CPUCount     int    `json:"cpuCount"`
-	GPUCount     int    `json:"gpuCount,omitempty"`
-	GPUType      string `json:"gpuType,omitempty"`
-	Memory       string `json:"memory"`
-	Preeemptible bool   `json:"preemptible,omitempty"`
+	CPUCount int    `json:"cpuCount"`
+	GPUCount int    `json:"gpuCount,omitempty"`
+	GPUType  string `json:"gpuType,omitempty"`
+	Memory   string `json:"memory"`
 }
 
 // InstanceSummary summarizes a instance's current status.
