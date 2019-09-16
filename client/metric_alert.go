@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/pkg/errors"
-
 	"github.com/beaker/client/api"
 )
 
@@ -35,10 +33,13 @@ type AlertHandle struct {
 
 // MetricAlert gets a handle for a metric alert by ID.
 func (c *Client) MetricAlert(ctx context.Context, id string) (*AlertHandle, error) {
-	id, err := c.resolveRef(ctx, "/api/v3/alerts", id)
+	// Validation that a metric alert with this ID exists
+	path := path.Join("/api/v3/alerts", id)
+	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve alert id "+id)
+		return nil, err
 	}
+	defer safeClose(resp.Body)
 
 	return &AlertHandle{client: c, id: id}, nil
 }
