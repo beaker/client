@@ -15,7 +15,6 @@ type Experiment struct {
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
 	Author    Identity           `json:"author"`
 	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
-	User      Identity           `json:"user"`         // TODO: Deprecated.
 
 	Description string           `json:"description,omitempty"`
 	Nodes       []ExperimentNode `json:"nodes"`
@@ -27,7 +26,7 @@ type Experiment struct {
 // while guaranteeing that it's unique and non-empty.
 func (e *Experiment) DisplayID() string {
 	if e.Name != "" {
-		return path.Join(e.User.Name, e.Name)
+		return path.Join(e.Owner.Name, e.Name)
 	}
 	return e.ID
 }

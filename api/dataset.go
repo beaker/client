@@ -33,7 +33,6 @@ type Dataset struct {
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
 	Author    Identity           `json:"author"`
 	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
-	User      Identity           `json:"user"`         // TODO: Deprecated.
 
 	// Status
 	Created   time.Time `json:"created"`
@@ -54,7 +53,7 @@ type Dataset struct {
 // guaranteeing that it's unique and non-empty.
 func (ds *Dataset) DisplayID() string {
 	if ds.Name != "" {
-		return path.Join(ds.User.Name, ds.Name)
+		return path.Join(ds.Owner.Name, ds.Name)
 	}
 	return ds.ID
 }

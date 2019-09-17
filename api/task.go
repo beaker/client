@@ -13,7 +13,6 @@ type Task struct {
 	// Ownership
 	Owner  Identity `json:"owner"`
 	Author Identity `json:"author"`
-	User   Identity `json:"user"` // TODO: Deprecated.
 
 	// Status
 	Status  TaskStatus `json:"status"`

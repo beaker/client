@@ -46,7 +46,6 @@ type Group struct {
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
 	Author    Identity           `json:"author"`
 	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
-	User      Identity           `json:"user"`         // TODO: Deprecated.
 
 	Description string    `json:"description,omitempty"`
 	Created     time.Time `json:"created"`
@@ -58,7 +57,7 @@ type Group struct {
 // while guaranteeing that it's unique and non-empty.
 func (e *Group) DisplayID() string {
 	if e.Name != "" {
-		return path.Join(e.User.Name, e.Name)
+		return path.Join(e.Owner.Name, e.Name)
 	}
 	return e.ID
 }
@@ -71,9 +70,8 @@ type GroupExperimentTask struct {
 
 // GroupExperiment is a minimal experiment summary for aggregated views.
 type GroupExperiment struct {
-	ID   string   `json:"id"`
-	Name string   `json:"name,omitempty"`
-	User Identity `json:"user"` // TODO: Deprecated. Replace with owner and/or author.
+	ID   string `json:"id"`
+	Name string `json:"name,omitempty"`
 }
 
 // GroupTask is a minimal task summary for aggregated views.

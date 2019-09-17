@@ -21,7 +21,6 @@ type Image struct {
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
 	Author    Identity           `json:"author"`
 	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
-	User      Identity           `json:"user"`         // TODO: Deprecated.
 
 	// Status
 	Created   time.Time `json:"created"`
@@ -38,7 +37,7 @@ type Image struct {
 // while guaranteeing that it's unique and non-empty.
 func (b *Image) DisplayID() string {
 	if b.Name != "" {
-		return path.Join(b.User.Name, b.Name)
+		return path.Join(b.Owner.Name, b.Name)
 	}
 	return b.ID
 }
