@@ -5,6 +5,14 @@ type CreateMetricAlertResponse struct {
 	ID string `json:"id"`
 }
 
+// MetricAlertByTask is a description of an alert as it corresponds to the task of an experiment
+type MetricAlertByTask struct {
+	ExperimentName string        `json:"experimentName"`
+	ExperimentID   string        `json:"experimentId"`
+	TaskID         string        `json:"taskId"`
+	Alerts         []MetricAlert `json:"alerts"`
+}
+
 // MetricAlert is a full description of a metric alert specification
 type MetricAlert struct {
 	// ID
@@ -48,4 +56,9 @@ type MetricAlertPatchSpec struct {
 
 	// (optional) Whether the alert should be triggered.
 	Triggered *bool `json:"triggered,omitempty"`
+}
+
+// UserMetricAlertPage describes a page of metric alert data
+type UserMetricAlertPage struct {
+	Data []MetricAlertByTask `json:"data"`
 }
