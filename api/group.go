@@ -43,11 +43,10 @@ type Group struct {
 	Name string `json:"name,omitempty"`
 
 	// Ownership
-	Owner               Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
-	Author              Identity           `json:"author"`
-	WorkspaceDeprecated string             `json:"workspace,omitempty"` // TODO: Deprecated. Only here for client compatibility.
-	Workspace           WorkspaceReference `json:"workspaceRef"`        // TODO: Rename to "workspace" when clients are updated.
-	User                Identity           `json:"user"`                // TODO: Deprecated.
+	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
+	Author    Identity           `json:"author"`
+	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
+	User      Identity           `json:"user"`         // TODO: Deprecated.
 
 	Description string    `json:"description,omitempty"`
 	Created     time.Time `json:"created"`
