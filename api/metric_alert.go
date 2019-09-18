@@ -41,11 +41,29 @@ type MetricAlerts struct {
 
 // MetricAlertSpec is currently for internal use only
 type MetricAlertSpec struct {
-	TaskID    string               `json:"taskId" yaml:"taskID"`
-	Metric    string               `json:"metric" yaml:"metric"`
+	// (optional) Organization on behalf of whom this resource is created. The
+	// user issuing the request must be a member of the organization. If omitted,
+	// the resource will be owned by the requestor.
+	Organization string `json:"org,omitempty"`
+
+	// (required) Task whose metric the alert is tracking.
+	TaskID string `json:"taskId" yaml:"taskID"`
+
+	// (required) Particular metric in the task the alert is tracking.
+	Metric string `json:"metric" yaml:"metric"`
+
+	// (required) Condition with the threshold on which the alert should be triggered.
 	Condition MetricAlertCondition `json:"condition" yaml:"condition"`
-	Threshold float64              `json:"threshold" yaml:"threshold"`
-	Severity  AlertSeverity        `json:"severity" yaml:"severity"`
+
+	// (required) Threshold with the condition on which the alert should be triggered.
+	Threshold float64 `json:"threshold" yaml:"threshold"`
+
+	// (required) Severity of the alert.
+	Severity AlertSeverity `json:"severity" yaml:"severity"`
+
+	// (optional) A token representing the user to which the object should be attributed.
+	// If omitted attribution will be given to the user issuing the request.
+	AuthorToken string `json:"authorToken,omitempty"`
 }
 
 // MetricAlertPatchSpec describes a patch to apply to a dataset's editable fields.
