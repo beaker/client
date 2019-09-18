@@ -56,6 +56,10 @@ type ExperimentSpec struct {
 
 	// (optional) Settings for the Comet.ml integration, if it should be used for this experiment.
 	Comet *ExperimentCometSpec `json:"comet,omitempty" yaml:"comet,omitempty"`
+
+	// (optional) Bind all tasks within the experiment to a particular cluster.
+	// Cluster affinity supercedes task requirements.
+	Cluster string `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 }
 
 // ExperimentNode describes a task along with its links within an experiment.
