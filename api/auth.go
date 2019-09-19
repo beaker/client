@@ -38,7 +38,7 @@ type WorkspacePermissionSummary struct {
 	RequesterAuth Permission `json:"requesterAuth"`
 
 	// Default permissions granted on the object.
-	Public bool `json:"public,omitempty"`
+	Public bool `json:"public"`
 
 	// Mapping of additional permissions granted to each user, indexed by user ID.
 	Authorizations map[string]Permission `json:"authorizations,omitempty"`
