@@ -2,14 +2,10 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
-	"strings"
-
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -94,7 +90,7 @@ func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
 }
 
 func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Workspace, error) {
-	if err := validateWorkspaceRef(reference); err != nil {
+	if err := validateRef(reference, 2); err != nil {
 		return nil, err
 	}
 
@@ -112,14 +108,6 @@ func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Worksp
 	}
 
 	return &workspace, nil
-}
-
-// This ensures workspace references are of the form "foo/bar"
-func validateWorkspaceRef(ref string) error {
-	if strings.Count(ref, "/") != 1 || strings.HasSuffix(ref, "/") || strings.HasPrefix(ref, "/") {
-		return errors.New(fmt.Sprintf("%q is not a valid workspace identifier", ref))
-	}
-	return nil
 }
 
 type ListDatasetOptions struct {

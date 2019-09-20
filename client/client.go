@@ -85,6 +85,21 @@ func (c *Client) Address() string {
 	return c.baseURL.String()
 }
 
+// Validate whether a reference appears to be of the correct shape. This helps
+// catch errors relating to missing delimiters so we can show consistent errors.
+func validateRef(ref string, parts int) error {
+	split := strings.Split(ref, "/")
+	if len(split) != parts {
+		return errors.Errorf("%q is not a valid identifier", ref)
+	}
+	for _, s := range split {
+		if s == "" {
+			return errors.Errorf("%q is not a valid identifier", ref)
+		}
+	}
+	return nil
+}
+
 // resolveRef resolves a given name or ID to its stable ID. On success, the
 // object is guaranteed to exist at the time of call.
 func (c *Client) resolveRef(
