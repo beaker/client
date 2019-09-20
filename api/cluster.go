@@ -58,6 +58,11 @@ type InstanceSummary struct {
 	ScheduledTasks []string `json:"scheduledTasks"`
 }
 
+// InstanceExecutions is a list of all executions assigned to an instance.
+type InstanceExecutions struct {
+	Executions []string `json:"executions"`
+}
+
 // InstanceStatus describes the availability of a instance.
 type InstanceStatus string
 
