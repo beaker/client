@@ -58,7 +58,7 @@ func (c *Client) ListClusters(ctx context.Context, galaxy string) ([]api.Cluster
 
 // Cluster gets a handle for a cluster by name or ID. The cluster is not resolved
 // and not guaranteed to exist.
-func (c *Client) Cluster(ctx context.Context, name string) *ClusterHandle {
+func (c *Client) Cluster(name string) *ClusterHandle {
 	return &ClusterHandle{client: c, name: name}
 }
 
