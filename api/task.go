@@ -116,7 +116,7 @@ type TaskRequirements struct {
 // DatasetMount describes a read-only data source for a task.
 type DatasetMount struct {
 	// (required) Name or Unique ID of a dataset to mount.
-	Dataset string `json:"dataset" yaml:"dataset"`
+	Dataset string `json:"dataset" yaml:"datasetId"` // YAML name is locked for v1 spec.
 
 	// (optional) Path within the dataset to mount for this experiment container.
 	SubPath string `json:"subPath,omitempty" yaml:"subPath,omitempty"`
