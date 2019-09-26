@@ -21,7 +21,7 @@ func (c *Client) CreateCluster(
 	account string,
 	spec api.ClusterSpec,
 ) (*api.Cluster, error) {
-	if err := validateRef(spec.Galaxy, 1); err != nil {
+	if err := validateRef(account, 1); err != nil {
 		return nil, err
 	}
 
@@ -41,12 +41,16 @@ func (c *Client) CreateCluster(
 
 // ListClusters enumerates all clusters within a galaxy.
 // TODO: Make this return an iterator.
-func (c *Client) ListClusters(ctx context.Context, galaxy string) ([]api.Cluster, error) {
-	if err := validateRef(galaxy, 1); err != nil {
+// TODO: Include galaxy, expiration filter.
+func (c *Client) ListClusters(
+	ctx context.Context,
+	account string,
+) ([]api.Cluster, error) {
+	if err := validateRef(account, 1); err != nil {
 		return nil, err
 	}
 
-	path := path.Join("/api/v3/clusters", galaxy)
+	path := path.Join("/api/v3/clusters", account)
 	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
