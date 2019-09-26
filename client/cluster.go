@@ -16,12 +16,16 @@ type ClusterHandle struct {
 }
 
 // CreateCluster creates a new dynamic compute cluster on which to run experiments.
-func (c *Client) CreateCluster(ctx context.Context, spec api.ClusterSpec) (*api.Cluster, error) {
+func (c *Client) CreateCluster(
+	ctx context.Context,
+	account string,
+	spec api.ClusterSpec,
+) (*api.Cluster, error) {
 	if err := validateRef(spec.Galaxy, 1); err != nil {
 		return nil, err
 	}
 
-	path := path.Join("/api/v3/clusters", spec.Galaxy)
+	path := path.Join("/api/v3/clusters", account)
 	resp, err := c.sendRequest(ctx, http.MethodPost, path, nil, spec)
 	if err != nil {
 		return nil, err
@@ -93,8 +97,8 @@ func (h *ClusterHandle) Extend(ctx context.Context) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	path := path.Join("/api/v3/clusters", h.name)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	path := path.Join("/api/v3/clusters", h.name, "extend")
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -104,7 +108,10 @@ func (h *ClusterHandle) Extend(ctx context.Context) (time.Time, error) {
 	if err := parseResponse(resp, &result); err != nil {
 		return time.Time{}, err
 	}
-	return result.Expiration, nil
+	if result.Expiration == nil {
+		return time.Time{}, nil
+	}
+	return *result.Expiration, nil
 }
 
 // Delete terminates a cluster.

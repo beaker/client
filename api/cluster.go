@@ -6,12 +6,12 @@ import "time"
 // virtual machines or physical hardware, depending on the hosting environment.
 type Cluster struct {
 	ID     string `json:"id"`
-	Name   string `json:"name,omitempty"` // TODO: Contract? Probably unique among all active pools.
+	Name   string `json:"name,omitempty"`
 	Galaxy string `json:"galaxy"`
 
-	Created    time.Time `json:"created"`
-	Expiration time.Time `json:"expiration,omitempty"` // TODO: *time.Time ?
-	Terminated time.Time `json:"terminated,omitempty"` // TODO: *time.Time ?
+	Created    time.Time  `json:"created"`
+	Expiration *time.Time `json:"expiration,omitempty"`
+	Terminated *time.Time `json:"terminated,omitempty"`
 
 	// Capacity is the maximum number of instances a cluster can contain at one time.
 	Capacity int `json:"capacity"`
@@ -28,7 +28,7 @@ type ClusterPage struct {
 // ClusterSpec provides options to configure a new cluster.
 type ClusterSpec struct {
 	Name     string `json:"name,omitempty"`
-	Galaxy   string `json:"galaxy"`
+	Galaxy   string `json:"galaxy,omitempty"`
 	Capacity int    `json:"capacity"`
 
 	// Preemptible declares whether the cluster should include lower cost
