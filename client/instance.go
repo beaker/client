@@ -21,7 +21,7 @@ func (c *Client) Instance(id string) *InstanceHandle {
 }
 
 // ListExecutions retrieves all executions that are assigned to the instance.
-func (h *InstanceHandle) ListExecutions(ctx context.Context) (*api.InstanceExecutions, error) {
+func (h *InstanceHandle) ListExecutions(ctx context.Context) (*api.ScheduledTasks, error) {
 	path := path.Join("/api/v3/instances", h.id, "executions")
 	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
@@ -29,7 +29,7 @@ func (h *InstanceHandle) ListExecutions(ctx context.Context) (*api.InstanceExecu
 	}
 	defer safeClose(resp.Body)
 
-	var result api.InstanceExecutions
+	var result api.ScheduledTasks
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}

@@ -53,14 +53,6 @@ type InstanceSpec struct {
 type InstanceSummary struct {
 	ID     string         `json:"id"`
 	Status InstanceStatus `json:"status"`
-
-	// IDs of all tasks running or scheduled on this instance.
-	ScheduledTasks []string `json:"scheduledTasks"`
-}
-
-// InstanceExecutions is a list of all executions assigned to an instance.
-type InstanceExecutions struct {
-	Executions []string `json:"executions"`
 }
 
 // InstanceStatus describes the availability of a instance.
@@ -95,4 +87,18 @@ type Machine struct {
 	Preemptible bool   `json:"preemptible"`
 	Cost        int64  `json:"cost"`
 	IsActive    bool   `json:"isActive"`
+}
+
+// ScheduledTasks is an ordered collection of task executions.
+type ScheduledTasks struct {
+	Data []ScheduledTask `json:"data"`
+}
+
+// ScheduledTask summarizes relations of tasks which have been scheduled.
+type ScheduledTask struct {
+	TaskID      string `json:"taskId"`
+	ExecutionID string `json:"executionId"`
+
+	// InstanceID is set when a task has been scheduled on an instance.
+	InstanceID string `json:"instanceId,omitempty"`
 }
