@@ -56,10 +56,6 @@ type ExperimentSpec struct {
 
 	// (optional) Settings for the Comet.ml integration, if it should be used for this experiment.
 	Comet *ExperimentCometSpec `json:"comet,omitempty" yaml:"comet,omitempty"`
-
-	// (optional) Bind all tasks within the experiment to a particular cluster.
-	// Cluster affinity supercedes task requirements.
-	Cluster string `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 }
 
 // ExperimentNode describes a task along with its links within an experiment.
@@ -99,6 +95,10 @@ type ExperimentTaskSpec struct {
 	// (optional) Tasks on which this task depends. Mounts will be applied, in
 	// the order defined here, after existing mounts in the task spec.
 	DependsOn []TaskDependency `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty"`
+
+	// (optional) Name of a cluster on which the task should run.
+	// Cluster affinity supercedes task requirements.
+	Cluster string `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.
