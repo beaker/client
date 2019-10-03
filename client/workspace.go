@@ -110,6 +110,17 @@ func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Worksp
 	return &workspace, nil
 }
 
+func (h *WorkspaceHandle) Transfer(ctx context.Context, ids ...string) error {
+	body := api.WorkspaceTransferSpec{IDs: ids}
+	path := path.Join("/api/v3/workspaces", h.id, "transfer")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, body)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
+
 type ListDatasetOptions struct {
 	Cursor        string
 	Archived      *bool
