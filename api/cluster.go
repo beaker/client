@@ -1,6 +1,10 @@
 package api
 
-import "time"
+import (
+	"time"
+
+	"github.com/shopspring/decimal"
+)
 
 // A Cluster is a homogenous collection of compute instances. Instances may be
 // virtual machines or physical hardware, depending on the hosting environment.
@@ -16,8 +20,13 @@ type Cluster struct {
 	// Capacity is the maximum number of instances a cluster can contain at one time.
 	Capacity int `json:"capacity"`
 
-	// InstanceSpec describes per-instance configuration.
-	InstanceSpec InstanceSpec `json:"instanceSpec"`
+	// InstanceCost describes the cost per node in units of USD-per-hour.
+	InstanceCost *decimal.Decimal `json:"instanceCost,omitempty"`
+
+	// Requested and actual configuration
+	Status        ClusterStatus `json:"status"`
+	RequestedSpec InstanceSpec  `json:"requestedSpec"`
+	ActualSpec    *InstanceSpec `json:"actualSpec,omitempty"`
 }
 
 // A ClusterPage contains a partial list of clusters.
@@ -40,6 +49,23 @@ type ClusterSpec struct {
 	// Default values will be set by internal policy.
 	Spec InstanceSpec `json:"spec"`
 }
+
+// ClusterStatus describes where a cluster is in its lifecycle.
+type ClusterStatus string
+
+const (
+	// ClusterPending indicates a cluster is in the process of being created.
+	ClusterPending ClusterStatus = "pending"
+
+	// ClusterActive indicates a cluster is online and available to schedule tasks.
+	ClusterActive ClusterStatus = "active"
+
+	// ClusterTerminated indicates a cluster has expired or been explicitly stopped.
+	ClusterTerminated ClusterStatus = "terminated"
+
+	// ClusterFailed indicates creation of a cluster could not be completed.
+	ClusterFailed ClusterStatus = "failed"
+)
 
 // InstanceSpec provides options to configure compute instances.
 type InstanceSpec struct {
