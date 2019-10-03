@@ -113,7 +113,7 @@ func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Worksp
 func (h *WorkspaceHandle) Transfer(ctx context.Context, ids ...string) error {
 	body := api.WorkspaceTransferSpec{IDs: ids}
 	path := path.Join("/api/v3/workspaces", h.id, "transfer")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, body)
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, body)
 	if err != nil {
 		return err
 	}
