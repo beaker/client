@@ -132,3 +132,67 @@ func (h *ClusterHandle) Delete(ctx context.Context) error {
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
 }
+
+func (h *ClusterHandle) CreateInstance(ctx context.Context, hostname string) (*api.Instance, error) {
+	if err := validateRef(h.name, 2); err != nil {
+		return nil, err
+	}
+
+	path := path.Join("/api/v3/clusters", h.name, "instances")
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, api.CreateInstanceSpec{
+		Hostname: hostname,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+	var result api.Instance
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// ListClusterInstances enumerates all active instances within a cluster.
+// TODO: Make this return an iterator.
+func (h *ClusterHandle) ListClusterInstances(
+	ctx context.Context) ([]api.Instance, error) {
+	if err := validateRef(h.name, 2); err != nil {
+		return nil, err
+	}
+
+	path := path.Join("/api/v3/clusters", h.name, "instances")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.ClusterInstances
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return result.Data, nil
+}
+
+// ListClusterExecutions enumerates all active or pending tasks on a cluster.
+// TODO: Make this return an iterator.
+func (h *ClusterHandle) ListClusterExecutions(
+	ctx context.Context) ([]api.ScheduledTask, error) {
+	if err := validateRef(h.name, 2); err != nil {
+		return nil, err
+	}
+
+	path := path.Join("/api/v3/clusters", h.name, "executions")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.ScheduledTasks
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return result.Data, nil
+}

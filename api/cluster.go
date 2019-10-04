@@ -75,12 +75,6 @@ type InstanceSpec struct {
 	Memory   string `json:"memory"`
 }
 
-// InstanceSummary summarizes a instance's current status.
-type InstanceSummary struct {
-	ID     string         `json:"id"`
-	Status InstanceStatus `json:"status"`
-}
-
 // InstanceStatus describes the availability of a instance.
 type InstanceStatus string
 
@@ -100,6 +94,26 @@ const (
 	// Terminated instances have been permanently stopped (deleted).
 	Terminated InstanceStatus = "terminated"
 )
+
+type Instance struct {
+	ID       string         `json:"id"`
+	Hostname string         `json:"hostname"`
+	Created  time.Time      `json:"created"`
+	Status   InstanceStatus `json:"status"`
+}
+
+type ClusterInstances struct {
+	// instances running on this cluster
+	Data []Instance `json:"data"`
+}
+
+type CreateInstanceSpec struct {
+	Hostname string `json:"hostname"`
+}
+
+type InstanceStatusSpec struct {
+	Status InstanceStatus `json:"status"`
+}
 
 // Deprecated. Use clusters/instances instead.
 type Machine struct {
