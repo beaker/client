@@ -36,20 +36,26 @@ func (h *InstanceHandle) ListExecutions(ctx context.Context) (*api.ScheduledTask
 	return &result, nil
 }
 
-// ListExecutions retrieves all executions that are assigned to the instance.
-func (h *InstanceHandle) SetStatus(ctx context.Context, status api.InstanceStatus) (*api.Instance, error) {
+// SetStatus retrieves all executions that are assigned to the instance.
+func (h *InstanceHandle) SetStatus(ctx context.Context, status api.InstanceStatus) error {
 	path := path.Join("/api/v3/instances", h.id, "status")
 	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, &api.InstanceStatusSpec{
 		Status: status,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
 
-	var result api.Instance
-	if err := parseResponse(resp, &result); err != nil {
-		return nil, err
+// Delete removes the instance (marks it terminated)
+func (h *InstanceHandle) Delete(ctx context.Context) error {
+	path := path.Join("/api/v3/instances", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	if err != nil {
+		return err
 	}
-	return &result, nil
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
 }
