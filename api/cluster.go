@@ -25,8 +25,29 @@ type Cluster struct {
 
 	// Requested and actual configuration
 	Status        ClusterStatus `json:"status"`
-	RequestedSpec InstanceSpec  `json:"requestedSpec"`
-	ActualSpec    *InstanceSpec `json:"actualSpec,omitempty"`
+	InstanceSpec  InstanceSpec  `json:"instanceSpec"`
+	InstanceShape *InstanceSpec `json:"instanceShape,omitempty"`
+}
+
+// ClusterPatch allows a client to update aspects of a Cluster.
+type ClusterPatch struct {
+	// Capacity changes the maximum number of instances a cluster can contain at one time.
+	Capacity *int `json:"capacity,omitempty"`
+
+	// Valid permanently sets validity for the cluster and should be accompanied
+	// by an instance spec in the same request. If set to true, the cluster is
+	// ready for use. Otherwise, it's considered failed.
+	//
+	// This value is internal; behavior is undefined if set by external clients.
+	Valid *bool `json:"valid,omitempty"`
+
+	// InstanceShape details the shape of instances created during cluster creation.
+	//
+	// This value is internal; behavior is undefined if set by external clients.
+	InstanceShape *InstanceSpec `json:"instanceShape,omitempty"`
+
+	// InstanceCost sets the estimated cost of each instance within the cluster in USD-per-hour.
+	InstanceCost *decimal.Decimal `json:"instanceCost,omitempty"`
 }
 
 // A ClusterPage contains a partial list of clusters.
@@ -69,10 +90,10 @@ const (
 
 // InstanceSpec provides options to configure compute instances.
 type InstanceSpec struct {
-	CPUCount int    `json:"cpuCount"`
+	CPUCount int    `json:"cpuCount,omitempty"`
 	GPUCount int    `json:"gpuCount,omitempty"`
 	GPUType  string `json:"gpuType,omitempty"`
-	Memory   string `json:"memory"`
+	Memory   string `json:"memory,omitempty"`
 }
 
 // InstanceStatus describes the availability of a instance.

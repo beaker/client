@@ -118,6 +118,26 @@ func (h *ClusterHandle) Extend(ctx context.Context) (time.Time, error) {
 	return *result.Expiration, nil
 }
 
+// Patch updates a cluster's details.
+func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*api.Cluster, error) {
+	if err := validateRef(h.name, 2); err != nil {
+		return nil, err
+	}
+
+	path := path.Join("/api/v3/clusters", h.name)
+	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, patch)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.Cluster
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 // Delete terminates a cluster.
 func (h *ClusterHandle) Delete(ctx context.Context) error {
 	if err := validateRef(h.name, 2); err != nil {
