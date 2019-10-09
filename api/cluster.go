@@ -9,9 +9,8 @@ import (
 // A Cluster is a homogenous collection of compute instances. Instances may be
 // virtual machines or physical hardware, depending on the hosting environment.
 type Cluster struct {
-	ID     string `json:"id"`
-	Name   string `json:"name,omitempty"`
-	Galaxy string `json:"galaxy"`
+	ID   string `json:"id"`
+	Name string `json:"name,omitempty"`
 
 	Created    time.Time  `json:"created"`
 	Expiration *time.Time `json:"expiration,omitempty"`
@@ -58,7 +57,6 @@ type ClusterPage struct {
 // ClusterSpec provides options to configure a new cluster.
 type ClusterSpec struct {
 	Name     string `json:"name,omitempty"`
-	Galaxy   string `json:"galaxy,omitempty"`
 	Capacity int    `json:"capacity"`
 
 	// Preemptible declares whether the cluster should include lower cost

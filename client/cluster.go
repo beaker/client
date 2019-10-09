@@ -41,11 +41,8 @@ func (c *Client) CreateCluster(
 
 // ListClusters enumerates all clusters within a galaxy.
 // TODO: Make this return an iterator.
-// TODO: Include galaxy, expiration filter.
-func (c *Client) ListClusters(
-	ctx context.Context,
-	account string,
-) ([]api.Cluster, error) {
+// TODO: Include expiration filter.
+func (c *Client) ListClusters(ctx context.Context, account string) ([]api.Cluster, error) {
 	if err := validateRef(account, 1); err != nil {
 		return nil, err
 	}
