@@ -109,7 +109,7 @@ type TaskRequirements struct {
 	// (optional) GPU variant to prefer when scheduling task.
 	GPUType string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
 
-	// (optional) Run on preemptible instances (defaults to false)
+	// (optional) Run on preemptible nodes (defaults to false)
 	Preemptible bool `json:"preemptible,omitempty" yaml:"preemptible,omitempty"`
 }
 

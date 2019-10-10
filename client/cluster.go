@@ -150,42 +150,41 @@ func (h *ClusterHandle) Delete(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
-func (h *ClusterHandle) CreateInstance(ctx context.Context, hostname string) (*api.Instance, error) {
+func (h *ClusterHandle) CreateNode(ctx context.Context, hostname string) (*api.Node, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
 	}
 
-	path := path.Join("/api/v3/clusters", h.name, "instances")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, api.CreateInstanceSpec{
+	path := path.Join("/api/v3/clusters", h.name, "nodes")
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, api.CreateNodeSpec{
 		Hostname: hostname,
 	})
 	if err != nil {
 		return nil, err
 	}
 	defer safeClose(resp.Body)
-	var result api.Instance
+	var result api.Node
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-// ListClusterInstances enumerates all active instances within a cluster.
+// ListClusterNodes enumerates all active nodes within a cluster.
 // TODO: Make this return an iterator.
-func (h *ClusterHandle) ListClusterInstances(
-	ctx context.Context) ([]api.Instance, error) {
+func (h *ClusterHandle) ListClusterNodes(ctx context.Context) ([]api.Node, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
 	}
 
-	path := path.Join("/api/v3/clusters", h.name, "instances")
+	path := path.Join("/api/v3/clusters", h.name, "nodes")
 	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
 	defer safeClose(resp.Body)
 
-	var result api.ClusterInstances
+	var result api.NodePage
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}
@@ -194,8 +193,7 @@ func (h *ClusterHandle) ListClusterInstances(
 
 // ListClusterExecutions enumerates all active or pending tasks on a cluster.
 // TODO: Make this return an iterator.
-func (h *ClusterHandle) ListClusterExecutions(
-	ctx context.Context) ([]api.ScheduledTask, error) {
+func (h *ClusterHandle) ListClusterExecutions(ctx context.Context) ([]api.ScheduledTask, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
 	}
