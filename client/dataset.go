@@ -119,7 +119,7 @@ func (h *DatasetHandle) Get(ctx context.Context) (*api.Dataset, error) {
 func (h *DatasetHandle) Files(ctx context.Context, path string) (FileIterator, error) {
 	return &fileHeapIterator{
 		dataset:  h,
-		iterator: h.Storage.Files(ctx, path),
+		iterator: h.Storage.Files(ctx, &fileheap.FileIteratorOptions{Prefix: path}),
 	}, nil
 }
 
