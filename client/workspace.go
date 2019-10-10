@@ -287,3 +287,28 @@ func (h *WorkspaceHandle) patchWorkspace(ctx context.Context, spec api.Workspace
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
 }
+
+func (h *WorkspaceHandle) Permissions(ctx context.Context) (*api.WorkspacePermissionSummary, error) {
+	path := path.Join("/api/v3/workspaces", h.id, "auth")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+	var result api.WorkspacePermissionSummary
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (h *WorkspaceHandle) SetPermissions(ctx context.Context, patch api.WorkspacePermissionPatch) error {
+	path := path.Join("/api/v3/workspaces", h.id, "auth")
+	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, patch)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
