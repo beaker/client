@@ -51,7 +51,8 @@ type ClusterPatch struct {
 
 // A ClusterPage contains a partial list of clusters.
 type ClusterPage struct {
-	Data []Cluster `json:"data"`
+	Data       []Cluster `json:"data"`
+	NextCursor string    `json:"nextCursor"`
 }
 
 // ClusterSpec provides options to configure a new cluster.
