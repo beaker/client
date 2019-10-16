@@ -24,8 +24,10 @@ type Task struct {
 	Spec        TaskSpec        `json:"spec"`
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 
-	// Cost
-	Bill *Bill `json:"bill,omitempty"`
+	// Scheduling and cost
+	Cluster string `json:"cluster,omitempty"`
+	Node    string `json:"node,omitempty"`
+	Bill    *Bill  `json:"bill,omitempty"`
 
 	// Results
 	ResultID string `json:"resultId"`
