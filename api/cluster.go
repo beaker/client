@@ -13,7 +13,6 @@ type Cluster struct {
 	Name string `json:"name,omitempty"`
 
 	Created    time.Time  `json:"created"`
-	Expiration *time.Time `json:"expiration,omitempty"`
 	Terminated *time.Time `json:"terminated,omitempty"`
 
 	// Capacity is the maximum number of nodes a cluster can contain at one time.

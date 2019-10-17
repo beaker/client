@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"path"
-	"time"
 
 	"github.com/beaker/client/api"
 )
@@ -92,29 +91,6 @@ func (h *ClusterHandle) Get(ctx context.Context) (*api.Cluster, error) {
 	return &result, nil
 }
 
-// Extend resets a cluster's time-to-live (TTL), returning the new expiration time.
-func (h *ClusterHandle) Extend(ctx context.Context) (time.Time, error) {
-	if err := validateRef(h.name, 2); err != nil {
-		return time.Time{}, err
-	}
-
-	path := path.Join("/api/v3/clusters", h.name, "extend")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer safeClose(resp.Body)
-
-	var result api.Cluster
-	if err := parseResponse(resp, &result); err != nil {
-		return time.Time{}, err
-	}
-	if result.Expiration == nil {
-		return time.Time{}, nil
-	}
-	return *result.Expiration, nil
-}
-
 // Patch updates a cluster's details.
 func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*api.Cluster, error) {
 	if err := validateRef(h.name, 2); err != nil {
@@ -135,8 +111,11 @@ func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*ap
 	return &result, nil
 }
 
-// Delete terminates a cluster.
-func (h *ClusterHandle) Delete(ctx context.Context) error {
+// Terminate invalidates a cluster and frees its name for reuse.
+//
+// New tasks cannot be created on the cluster, but existing scheduled tasks will
+// be allowed to complete.
+func (h *ClusterHandle) Terminate(ctx context.Context) error {
 	if err := validateRef(h.name, 2); err != nil {
 		return err
 	}
@@ -150,6 +129,7 @@ func (h *ClusterHandle) Delete(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
+// CreateNode is meant for internal use only.
 func (h *ClusterHandle) CreateNode(ctx context.Context, hostname string) (*api.Node, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
