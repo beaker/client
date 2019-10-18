@@ -144,7 +144,7 @@ func (h *TaskHandle) PutLogs(ctx context.Context, logs io.Reader, since time.Tim
 
 	resp, err = newRetryableClient(&http.Client{
 		Timeout: 30 * time.Second,
-	}).Do(req.WithContext(ctx))
+	}, nil).Do(req.WithContext(ctx))
 	if err != nil {
 		return err
 	}

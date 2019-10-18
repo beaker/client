@@ -38,7 +38,17 @@ var (
 type Client struct {
 	baseURL   url.URL
 	userToken string
+
+	// If set, then HTTPResponseHook will be invoked after every HTTP response
+	// arrives. This can be used by users of this client to implement diagnostics,
+	// such as request logging.
+	HTTPResponseHook HTTPResponseHook
 }
+
+// HTTPResponseHook will be given an HTTP response, and the duration that the request took.
+// When inspecting the response, don't read or close the response body, as that will affect
+// the client behavior.
+type HTTPResponseHook func(resp *http.Response, duration time.Duration)
 
 // NewClient creates a new Beaker client bound to a single user.
 func NewClient(address string, userToken string) (*Client, error) {
@@ -57,8 +67,8 @@ func NewClient(address string, userToken string) (*Client, error) {
 	}, nil
 }
 
-func newRetryableClient(httpClient *http.Client) *retryable.Client {
-	return &retryable.Client{
+func newRetryableClient(httpClient *http.Client, httpResponseHook HTTPResponseHook) *retryable.Client {
+	rc := &retryable.Client{
 		HTTPClient:   httpClient,
 		Logger:       &errorLogger{Logger: log.New(os.Stderr, "", log.LstdFlags)},
 		RetryWaitMin: 100 * time.Millisecond,
@@ -68,6 +78,14 @@ func newRetryableClient(httpClient *http.Client) *retryable.Client {
 		Backoff:      exponentialJitterBackoff,
 		ErrorHandler: retryable.PassthroughErrorHandler,
 	}
+
+	if httpResponseHook != nil {
+		th := &timingHook{responseHook: httpResponseHook}
+		rc.RequestLogHook = th.RequestLogHook
+		rc.ResponseLogHook = th.ResponseLogHook
+	}
+
+	return rc
 }
 
 type errorLogger struct {
@@ -180,7 +198,7 @@ func (c *Client) sendRequest(
 	return newRetryableClient(&http.Client{
 		Timeout:       30 * time.Second,
 		CheckRedirect: copyRedirectHeader,
-	}).Do(req.WithContext(ctx))
+	}, c.HTTPResponseHook).Do(req.WithContext(ctx))
 }
 
 func (c *Client) newRetryableRequest(
@@ -294,4 +312,18 @@ func exponentialJitterBackoff(
 
 	backoff := min + math.Min(max-min, min*math.Exp2(float64(attempt)))*random.Float64()
 	return time.Duration(backoff)
+}
+
+type timingHook struct {
+	start        time.Time
+	responseHook HTTPResponseHook
+}
+
+func (th *timingHook) RequestLogHook(logger retryable.Logger, req *http.Request, attemptNum int) {
+	th.start = time.Now()
+}
+
+func (th *timingHook) ResponseLogHook(logger retryable.Logger, resp *http.Response) {
+	duration := time.Now().Sub(th.start)
+	th.responseHook(resp, duration)
 }
