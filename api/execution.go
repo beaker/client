@@ -19,6 +19,9 @@ type Execution struct {
 
 	// Result describes where the task will write output.
 	Result ResultMount `json:"result"`
+
+	// Resources define external requirements for task execution.
+	Resources *TaskResources `json:"resources,omitempty"`
 }
 
 // ImageSource describes all supported image sources by type. Exactly one must be defined.
@@ -73,4 +76,9 @@ type ResultMount struct {
 
 	// ID of the dataset to write results to.
 	Dataset string `json:"dataset"`
+}
+
+// TaskResources describe external requirements which must be available for a task to run.
+type TaskResources struct {
+	GPUCount int `json:"gpuCount,omitempty"`
 }
