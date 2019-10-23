@@ -108,32 +108,12 @@ type NodeSpec struct {
 	Memory   string `json:"memory,omitempty"`
 }
 
-// NodeStatus describes the availability of a node.
-type NodeStatus string
-
-const (
-	// Starting nodes are in the process of booting.
-	Starting NodeStatus = "starting"
-
-	// Running nodes are online.
-	Running NodeStatus = "running"
-
-	// Stopping nodes are shutting down.
-	Stopping NodeStatus = "stopping"
-
-	// Stopped nodes have been shut down, but not terminated.
-	Stopped NodeStatus = "stopped"
-
-	// Terminated nodes have been permanently stopped (deleted).
-	Terminated NodeStatus = "terminated"
-)
-
 // A Node is a single machine within a cluster
 type Node struct {
-	ID       string     `json:"id"`
-	Hostname string     `json:"hostname"`
-	Created  time.Time  `json:"created"`
-	Status   NodeStatus `json:"status"`
+	ID         string     `json:"id"`
+	Hostname   string     `json:"hostname"`
+	Created    time.Time  `json:"created"`
+	Terminated *time.Time `json:"terminated"`
 }
 
 // NodePage contains a partial list of nodes.
@@ -144,11 +124,6 @@ type NodePage struct {
 // CreateNodeSpec allows a requestor to describe a node on creation.
 type CreateNodeSpec struct {
 	Hostname string `json:"hostname"`
-}
-
-// NodeStatusSpec describes a status change for a node.
-type NodeStatusSpec struct {
-	Status NodeStatus `json:"status"`
 }
 
 // ScheduledTasks is an ordered collection of task executions.

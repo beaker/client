@@ -36,19 +36,6 @@ func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.ScheduledTasks, e
 	return &result, nil
 }
 
-// SetStatus retrieves all executions that are assigned to the node.
-func (h *NodeHandle) SetStatus(ctx context.Context, status api.NodeStatus) error {
-	path := path.Join("/api/v3/nodes", h.id, "status")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, &api.NodeStatusSpec{
-		Status: status,
-	})
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
-
 // Delete removes the node (marks it terminated)
 func (h *NodeHandle) Delete(ctx context.Context) error {
 	path := path.Join("/api/v3/nodes", h.id)
