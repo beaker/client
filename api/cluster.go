@@ -131,11 +131,58 @@ type ScheduledTasks struct {
 	Data []ScheduledTask `json:"data"`
 }
 
-// ScheduledTask summarizes relations of tasks which have been scheduled.
-type ScheduledTask struct {
-	TaskID      string `json:"taskId"`
-	ExecutionID string `json:"executionId"`
+// Execution represents an attempt to run a task. A task may have many executions.
+type Execution struct {
+	ID   string `json:"id"`
+	Task string `json:"task"`
 
-	// NodeID is set when a task has been scheduled on an node.
-	NodeID string `json:"nodeId,omitempty"`
+	// Spec details input parameters for the task. References to source images
+	// and datasets are resolved to stable IDs. Original unresolved references
+	// may be obtained by inspecting the task directly.
+	Spec TaskSpecV2 `json:"spec"`
+
+	Result ResultTarget   `json:"result"`
+	State  ExecutionState `json:"state"`
+
+	// Node is set when a task has been assigned to a node.
+	Node string `json:"node,omitempty"`
+}
+
+// ExecutionState details an execution's status.
+type ExecutionState struct {
+	Created   time.Time  `json:"created"`
+	Scheduled *time.Time `json:"scheduled,omitempty"`
+	Started   *time.Time `json:"started,omitempty"`
+	Exited    *time.Time `json:"exited,omitempty"`
+	Finished  *time.Time `json:"finished,omitempty"`
+
+	// Canceled, if present, specifies when an execution was stopped by user
+	// request. This may occur any time before the execution has finished.
+	Canceled *time.Time `json:"canceled,omitempty"`
+
+	// ExitCode is an integer process exit code, if the process exited normally.
+	ExitCode *int `json:"exitCode,omitempty"`
+
+	// Status summarizes the execution's overall status as an enumeration.
+	Status TaskStatus `jsone:"state"`
+
+	// Message describes additional state-related context.
+	Message string `json:"message,omitempty"`
+}
+
+// ResultTarget describes a target to which results will be written.
+type ResultTarget struct {
+	// Name or ID of a Beaker dataset.
+	Beaker string `json:"beaker,omitempty" yaml:"beaker,omitempty"`
+}
+
+// ScheduledTask summarizes relations of executions, or tasks which have been scheduled to run.
+type ScheduledTask struct {
+	Task string `json:"task"`
+
+	// Execution uniquely identifies one attempt to execute a task.
+	Execution string `json:"execution"`
+
+	// Node is set when a task has been assigned to a node.
+	Node string `json:"node,omitempty"`
 }

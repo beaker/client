@@ -1,27 +1,30 @@
 package api
 
-// Execution contains the information necessary for an executor to run a task.
-type Execution struct {
-	ID     string `json:"id"`
-	TaskID string `json:"taskId"`
+// TaskSpecV2 describes a single job, or process, to run.
+type TaskSpecV2 struct {
+	// (optional) Name is used to refer to this task. It must be unique among
+	// all tasks within the Spec.
+	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
-	// Image is a fully-resolved image source.
-	Image ImageSource `json:"image"`
+	// (required) Image is the name or ID of an image to run.
+	Image ImageSource `json:"image" yaml:"image"`
 
-	// Command is the full command to run as a list of separate arguments.
-	Command []string `json:"command"`
+	// (required) Command is the full shell command to run as a list of separate
+	// arguments. Default comamnds such as Docker's ENTRYPOINT are ignored.
+	// Example: ["python", "-u", "main.py"]
+	Command []string `json:"command" yaml:"command"`
 
-	// EnvVars is a mapping of all environment variables passed into the task.
-	EnvVars map[string]string `json:"envVars,omitempty"`
+	// (optional) EnvVars are passed into the task as environment variables.
+	EnvVars map[string]string `json:"envVars,omitempty" yaml:"envVars,omitempty"`
 
-	// Datasets are external data sources to mount into the task.
-	Datasets []Mount `json:"datasets,omitempty"`
+	// (optional) Datasets are external data sources to mount into the task.
+	Datasets []Mount `json:"datasets,omitempty" yaml:"datasets,omitempty"`
 
-	// Result describes where the task will write output.
-	Result ResultMount `json:"result"`
+	// (required) Result describes where the task will write output.
+	Result ResultSpec `json:"result" yaml:"result"`
 
 	// Resources define external requirements for task execution.
-	Resources *TaskResources `json:"resources,omitempty"`
+	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 }
 
 // ImageSource describes all supported image sources by type. Exactly one must be defined.
@@ -56,29 +59,25 @@ type Mount struct {
 	Source DataSource `json:"source" yaml:"source"`
 }
 
-// DataSource describes all supported data sources by type. Exactly one type
-// must be defined.
+// DataSource describes all supported data sources by type. Exactly one must be defined.
 type DataSource struct {
 	// Name or ID of a Beaker dataset.
 	Beaker string `json:"beaker,omitempty" yaml:"beaker,omitempty"`
 
-	// Mount data from the executing host. Support depends on the environment.
+	// Mount data from the executing host. Support depends on the executing environment.
 	HostPath string `json:"hostPath,omitempty" yaml:"hostPath,omitempty"`
 
 	// Name of a previous task from which the result will be mounted.
 	Result string `json:"result,omitempty" yaml:"result,omitempty"`
 }
 
-// ResultMount describes how to mount a result dataset within a task.
-type ResultMount struct {
-	// Path is a file or directory where the task will write output.
-	Path string `json:"path"`
-
-	// ID of the dataset to write results to.
-	Dataset string `json:"dataset"`
+// ResultSpec describes how to store the output of a task.
+type ResultSpec struct {
+	// (required) Path is a file or directory where the task will write output.
+	Path string `json:"path" yaml:"path"`
 }
 
 // TaskResources describe external requirements which must be available for a task to run.
 type TaskResources struct {
-	GPUCount int `json:"gpuCount,omitempty"`
+	GPUCount int `json:"gpuCount,omitempty" yaml:"gpuCount,omitempty"`
 }

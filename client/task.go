@@ -153,3 +153,32 @@ func (h *TaskHandle) PutLogs(ctx context.Context, logs io.Reader, since time.Tim
 	}
 	return nil
 }
+
+// ExecutionHandle provides access to a single execution.
+type ExecutionHandle struct {
+	client *Client
+	taskID string
+	id     string
+}
+
+// Execution gets a handle for an execution by ID. The execution is not resolved
+// and not guaranteed to exist.
+func (h *TaskHandle) Execution(id string) *ExecutionHandle {
+	return &ExecutionHandle{client: h.client, taskID: h.id, id: id}
+}
+
+// Get retrieves an execution's details.
+func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
+	path := path.Join("/api/v3/tasks", h.taskID, "executions", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.Execution
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
