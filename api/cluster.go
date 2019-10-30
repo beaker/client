@@ -164,7 +164,7 @@ type ExecutionState struct {
 	ExitCode *int `json:"exitCode,omitempty"`
 
 	// Status summarizes the execution's overall status as an enumeration.
-	Status TaskStatus `jsone:"state"`
+	Status TaskStatus `json:"status"`
 
 	// Message describes additional state-related context.
 	Message string `json:"message,omitempty"`
