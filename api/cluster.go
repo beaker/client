@@ -153,8 +153,8 @@ type ExecutionState struct {
 	Created   time.Time  `json:"created"`
 	Scheduled *time.Time `json:"scheduled,omitempty"`
 	Started   *time.Time `json:"started,omitempty"`
-	Exited    *time.Time `json:"exited,omitempty"`
-	Finished  *time.Time `json:"finished,omitempty"`
+	Ended     *time.Time `json:"ended,omitempty"`
+	Finalized *time.Time `json:"finalized,omitempty"`
 
 	// Canceled, if present, specifies when an execution was stopped by user
 	// request. This may occur any time before the execution has finished.
