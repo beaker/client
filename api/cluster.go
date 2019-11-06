@@ -141,11 +141,6 @@ type Execution struct {
 	ID   string `json:"id"`
 	Task string `json:"task"`
 
-	// Spec details input parameters for the task. References to source images
-	// and datasets are resolved to stable IDs. Original unresolved references
-	// may be obtained by inspecting the task directly.
-	Spec *TaskSpecV2 `json:"spec,omitempty"`
-
 	Image   ImageSource           `json:"image"`
 	Result  ResultTarget          `json:"result"`
 	Sources map[string]DataSource `json:"sources"` // Keyed by container path
