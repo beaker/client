@@ -126,9 +126,14 @@ type CreateNodeSpec struct {
 	Hostname string `json:"hostname"`
 }
 
-// ScheduledTasks is an ordered collection of task executions.
+// ScheduledTasks is an ordered collection of scheduled tasks.
 type ScheduledTasks struct {
 	Data []ScheduledTask `json:"data"`
+}
+
+// Executions is an ordered collection of task executions.
+type Executions struct {
+	Data []Execution `json:"data"`
 }
 
 // Execution represents an attempt to run a task. A task may have many executions.
@@ -139,13 +144,17 @@ type Execution struct {
 	// Spec details input parameters for the task. References to source images
 	// and datasets are resolved to stable IDs. Original unresolved references
 	// may be obtained by inspecting the task directly.
-	Spec TaskSpecV2 `json:"spec"`
+	Spec *TaskSpecV2 `json:"spec,omitempty"`
 
-	Result ResultTarget   `json:"result"`
-	State  ExecutionState `json:"state"`
+	Image   ImageSource           `json:"image"`
+	Result  ResultTarget          `json:"result"`
+	Sources map[string]DataSource `json:"sources"` // Keyed by container path
 
 	// Node is set when a task has been assigned to a node.
 	Node string `json:"node,omitempty"`
+
+	// State describes execution status and progression.
+	State ExecutionState `json:"state"`
 }
 
 // ExecutionState details an execution's status.
@@ -155,10 +164,6 @@ type ExecutionState struct {
 	Started   *time.Time `json:"started,omitempty"`
 	Ended     *time.Time `json:"ended,omitempty"`
 	Finalized *time.Time `json:"finalized,omitempty"`
-
-	// Canceled, if present, specifies when an execution was stopped by user
-	// request. This may occur any time before the execution has finished.
-	Canceled *time.Time `json:"canceled,omitempty"`
 
 	// ExitCode is an integer process exit code, if the process exited normally.
 	ExitCode *int `json:"exitCode,omitempty"`

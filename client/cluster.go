@@ -3,7 +3,9 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
+	"strconv"
 
 	"github.com/beaker/client/api"
 )
@@ -171,11 +173,25 @@ func (h *ClusterHandle) ListClusterNodes(ctx context.Context) ([]api.Node, error
 	return result.Data, nil
 }
 
+type ListExecutionOptions struct {
+	Scheduled *bool
+}
+
 // ListClusterExecutions enumerates all active or pending tasks on a cluster.
 // TODO: Make this return an iterator.
-func (h *ClusterHandle) ListClusterExecutions(ctx context.Context) ([]api.ScheduledTask, error) {
+func (h *ClusterHandle) ListClusterExecutions(
+	ctx context.Context,
+	opts *ListExecutionOptions,
+) ([]api.Execution, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
+	}
+
+	v := url.Values{}
+	if opts != nil {
+		if opts.Scheduled != nil {
+			v.Add("scheduled", strconv.FormatBool(*opts.Scheduled))
+		}
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "executions")
@@ -185,7 +201,7 @@ func (h *ClusterHandle) ListClusterExecutions(ctx context.Context) ([]api.Schedu
 	}
 	defer safeClose(resp.Body)
 
-	var result api.ScheduledTasks
+	var result api.Executions
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}
