@@ -157,6 +157,12 @@ type Execution struct {
 	State ExecutionState `json:"state"`
 }
 
+// ResultTarget describes a target to which results will be written.
+type ResultTarget struct {
+	// Name or ID of a Beaker dataset.
+	Beaker string `json:"beaker,omitempty"`
+}
+
 // ExecutionState details an execution's status.
 type ExecutionState struct {
 	Created   time.Time  `json:"created"`
@@ -169,16 +175,10 @@ type ExecutionState struct {
 	ExitCode *int `json:"exitCode,omitempty"`
 
 	// Status summarizes the execution's overall status as an enumeration.
-	Status TaskStatus `json:"status"`
+	Status ExecStatus `json:"status"`
 
 	// Message describes additional state-related context.
 	Message string `json:"message,omitempty"`
-}
-
-// ResultTarget describes a target to which results will be written.
-type ResultTarget struct {
-	// Name or ID of a Beaker dataset.
-	Beaker string `json:"beaker,omitempty" yaml:"beaker,omitempty"`
 }
 
 // ScheduledTask summarizes relations of executions, or tasks which have been scheduled to run.

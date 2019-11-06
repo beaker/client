@@ -182,3 +182,14 @@ func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 	}
 	return &result, nil
 }
+
+// PostStatus updates an execution's current status.
+func (h *ExecutionHandle) PostStatus(ctx context.Context, status api.ExecStatusUpdate) error {
+	path := path.Join("/api/v3/tasks", h.taskID, "executions", h.id, "status")
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, status)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}

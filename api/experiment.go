@@ -148,3 +148,37 @@ type ExperimentPage struct {
 	// Opaque token to the element after Data, provided only if more data is available.
 	NextCursor string `json:"nextCursor,omitempty"`
 }
+
+// ExecStatus describes what phase an execution is in.
+type ExecStatus string
+
+const (
+	// ExecPending indicates a task is waiting to be assigned to a node.
+	ExecPending ExecStatus = "pending"
+
+	// ExecInitializing indicates a task has been assigned to a node and is preparing to run.
+	ExecInitializing ExecStatus = "initializing"
+
+	// ExecRunning indicates a task has started.
+	ExecRunning ExecStatus = "running"
+
+	// ExecFinalizing indicates a task exited or was interrupted and its results
+	// capture is finalizing. Callers may inspect its exit code to determine
+	// success or failure. If none is set, the execution is considered failed.
+	ExecFinalizing ExecStatus = "finalizing"
+
+	// ExecComplete indicates a task has ended and all results have been captured.
+	ExecComplete ExecStatus = "complete"
+)
+
+// ExecStatusUpdate snapshots a task execution's status.
+type ExecStatusUpdate struct {
+	// (optional) Status to record for the task.
+	Status ExecStatus `json:"status,omitempty"`
+
+	// (optional) Human-readable message to provide context for the status.
+	Message *string `json:"message,omitempty"`
+
+	// (optional) Exit code of the task's process.
+	ExitCode *int `json:"exitCode,omitempty"`
+}
