@@ -31,9 +31,6 @@ const (
 	// TaskStatusSucceeded means a task has completed successfully.
 	TaskStatusSucceeded TaskStatus = "succeeded"
 
-	// TaskStatusSkipped means a task will never run due to failed or invalid prerequisites.
-	TaskStatusSkipped TaskStatus = "skipped"
-
 	// TaskStatusStopped means a task was interrupted.
 	TaskStatusStopped TaskStatus = "stopped"
 
@@ -44,7 +41,7 @@ const (
 // IsEndState is true if the TaskStatus is preempted, canceled, failed, or successful
 func (ts TaskStatus) IsEndState() bool {
 	switch ts {
-	case TaskStatusPreempted, TaskStatusSucceeded, TaskStatusSkipped, TaskStatusStopped, TaskStatusFailed:
+	case TaskStatusPreempted, TaskStatusSucceeded, TaskStatusStopped, TaskStatusFailed:
 		return true
 	default:
 		return false

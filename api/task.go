@@ -15,10 +15,11 @@ type Task struct {
 	Author Identity `json:"author"`
 
 	// Status
-	Status  TaskStatus `json:"status"`
-	Created time.Time  `json:"created"`
-	Started time.Time  `json:"started"`
-	Ended   time.Time  `json:"ended"`
+	Status   TaskStatus `json:"status"`
+	Created  time.Time  `json:"created"`
+	Started  time.Time  `json:"started"`
+	Ended    time.Time  `json:"ended"`
+	Canceled *time.Time `json:"canceled,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpec        `json:"spec"`
