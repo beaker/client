@@ -173,15 +173,15 @@ func (h *ClusterHandle) ListClusterNodes(ctx context.Context) ([]api.Node, error
 	return result.Data, nil
 }
 
-type ListExecutionOptions struct {
+type ExecutionFilters struct {
 	Scheduled *bool
 }
 
-// ListClusterExecutions enumerates all active or pending tasks on a cluster.
+// ListExecutions enumerates all active or pending tasks on a cluster.
 // TODO: Make this return an iterator.
-func (h *ClusterHandle) ListClusterExecutions(
+func (h *ClusterHandle) ListExecutions(
 	ctx context.Context,
-	opts *ListExecutionOptions,
+	opts *ExecutionFilters,
 ) ([]api.Execution, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
