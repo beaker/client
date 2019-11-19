@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"path"
 	"strconv"
+	"time"
 
 	fileheap "github.com/beaker/fileheap/client"
 
@@ -14,9 +15,10 @@ import (
 
 // DatasetHandle provides operations on a dataset.
 type DatasetHandle struct {
-	client *Client
-	id     string
-	isFile bool
+	client  *Client
+	expires time.Time
+	id      string
+	isFile  bool
 
 	Storage *fileheap.DatasetRef
 }
@@ -50,6 +52,7 @@ func (c *Client) CreateDataset(
 
 	return &DatasetHandle{
 		client:  c,
+		expires: body.Storage.TokenExpires,
 		id:      body.ID,
 		isFile:  spec.Filename != "",
 		Storage: fhClient.Dataset(body.Storage.ID),
@@ -83,10 +86,16 @@ func (c *Client) Dataset(ctx context.Context, reference string) (*DatasetHandle,
 
 	return &DatasetHandle{
 		client:  c,
+		expires: body.Storage.TokenExpires,
 		id:      body.ID,
 		isFile:  body.IsFile,
 		Storage: fhClient.Dataset(body.Storage.ID),
 	}, nil
+}
+
+// Expires gets the time that the dataset reference expires and must be resolved again.
+func (h *DatasetHandle) Expires() time.Time {
+	return h.expires
 }
 
 // ID returns a dataset's stable, unique ID.
