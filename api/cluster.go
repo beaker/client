@@ -22,9 +22,11 @@ type Cluster struct {
 	NodeCost *decimal.Decimal `json:"nodeCost,omitempty"`
 
 	// Requested and actual configuration
-	Status    ClusterStatus `json:"status"`
-	NodeSpec  NodeSpec      `json:"nodeSpec"`
-	NodeShape *NodeSpec     `json:"nodeShape,omitempty"`
+	Preemptible bool          `json:"preemptible"`
+	Protected   bool          `json:"protected"`
+	Status      ClusterStatus `json:"status"`
+	NodeSpec    NodeSpec      `json:"nodeSpec"`
+	NodeShape   *NodeSpec     `json:"nodeShape,omitempty"`
 }
 
 // ClusterPatch allows a client to update aspects of a Cluster.
@@ -63,6 +65,10 @@ type ClusterSpec struct {
 	// preemptible nodes, with the tradeoff that workloads are more likely to be
 	// interrupted.
 	Preemptible bool `json:"preemptible,omitempty"`
+
+	// Protected marks the cluster as a protected resource, ensuring only
+	// administrators can modify/delete it. Only administrators can create them.
+	Protected bool `json:"protected,omitempty"`
 
 	// Spec describes characteristics of each node within the cluster.
 	// Default values will be set by internal policy.
