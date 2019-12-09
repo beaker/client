@@ -33,19 +33,11 @@ type Task struct {
 	// Results
 	ResultID string `json:"resultId"`
 	ExitCode int    `json:"exitCode,omitempty"`
-	CometURL string `json:"cometUrl,omitempty"` // Deprecated
-	CometKey string `json:"cometKey,omitempty"`
 }
 
 type ResumedFromSpec struct {
 	TaskID       string `json:"taskId,omitempty"`
 	ExperimentID string `json:"experimentId,omitempty"`
-}
-
-type TaskCometDetail struct {
-	TaskID             string `json:"taskId"`
-	CometExperimentKey string `json:"cometKey"`
-	CometURL           string `json:"cometUrl"`
 }
 
 type TaskLogUploadLink struct {
