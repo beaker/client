@@ -44,9 +44,6 @@ type Dataset struct {
 
 	// Task for which this dataset is a result, i.e. provenance, if any.
 	SourceTask *string `json:"sourceTask,omitempty"`
-
-	// Included if the dataset is a single file.
-	IsFile bool `json:"isFile,omitempty"`
 }
 
 // DisplayID returns the most human-friendly name available for a dataset while
@@ -71,11 +68,6 @@ type DatasetSpec struct {
 
 	// (optional) Text description for the dataset.
 	Description string `json:"description,omitempty"`
-
-	// (optional) If set, the dataset will be treated as a single file with the
-	// given file name. Beaker will also enforce that the dataset contains at
-	// most one file.
-	Filename string `json:"filename,omitempty"`
 
 	// (optional) A token representing the user to which the object should be attributed.
 	// If omitted attribution will be given to the user issuing the request.

@@ -18,7 +18,6 @@ type DatasetHandle struct {
 	client  *Client
 	expires time.Time
 	id      string
-	isFile  bool
 
 	Storage *fileheap.DatasetRef
 }
@@ -54,7 +53,6 @@ func (c *Client) CreateDataset(
 		client:  c,
 		expires: body.Storage.TokenExpires,
 		id:      body.ID,
-		isFile:  spec.Filename != "",
 		Storage: fhClient.Dataset(body.Storage.ID),
 	}, nil
 }
@@ -88,7 +86,6 @@ func (c *Client) Dataset(ctx context.Context, reference string) (*DatasetHandle,
 		client:  c,
 		expires: body.Storage.TokenExpires,
 		id:      body.ID,
-		isFile:  body.IsFile,
 		Storage: fhClient.Dataset(body.Storage.ID),
 	}, nil
 }
@@ -101,11 +98,6 @@ func (h *DatasetHandle) Expires() time.Time {
 // ID returns a dataset's stable, unique ID.
 func (h *DatasetHandle) ID() string {
 	return h.id
-}
-
-// IsFile returns true if the dataset is a single file.
-func (h *DatasetHandle) IsFile() bool {
-	return h.isFile
 }
 
 // Get retrieves a dataset's details.
