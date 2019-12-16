@@ -14,12 +14,15 @@ type Task struct {
 	Owner  Identity `json:"owner"`
 	Author Identity `json:"author"`
 
-	// Status
-	Status   TaskStatus `json:"status"`
-	Created  time.Time  `json:"created"`
-	Started  time.Time  `json:"started"`
-	Ended    time.Time  `json:"ended"`
-	Canceled *time.Time `json:"canceled,omitempty"`
+	// Status (deprecated fields)
+	Status  TaskStatus `json:"status"`
+	Created time.Time  `json:"created"`
+	Started time.Time  `json:"started"`
+	Ended   time.Time  `json:"ended"`
+
+	// State of this task's most recent execution, if any.
+	LastState *ExecutionState `json:"lastState,omitempty"`
+	Canceled  *time.Time      `json:"canceled,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpec        `json:"spec"`

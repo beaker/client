@@ -57,10 +57,11 @@ type ExperimentSpec struct {
 
 // ExperimentNode describes a task along with its links within an experiment.
 type ExperimentNode struct {
-	Name     string     `json:"name,omitempty"`
-	TaskID   string     `json:"taskId"`
-	ResultID string     `json:"resultId"`
-	Status   TaskStatus `json:"status"`
+	Name      string          `json:"name,omitempty"`
+	TaskID    string          `json:"taskId"`
+	ResultID  string          `json:"resultId"`
+	LastState *ExecutionState `json:"lastState,omitempty"`
+	Status    TaskStatus      `json:"status"`
 
 	// Identifiers of tasks dependent on this node within the containing experiment.
 	ChildTasks []string `json:"childTaskIds"`

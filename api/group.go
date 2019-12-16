@@ -76,11 +76,12 @@ type GroupExperiment struct {
 
 // GroupTask is a minimal task summary for aggregated views.
 type GroupTask struct {
-	ID      string                 `json:"id"`
-	Status  TaskStatus             `json:"status"`
-	Metrics map[string]interface{} `json:"metrics,omitempty"`
-	Env     map[string]string      `json:"env,omitempty"`
-	Name    string                 `json:"name,omitempty"`
+	ID        string                 `json:"id"`
+	Status    TaskStatus             `json:"status"`
+	LastState *ExecutionState        `json:"lastState,omitempty"`
+	Metrics   map[string]interface{} `json:"metrics,omitempty"`
+	Env       map[string]string      `json:"env,omitempty"`
+	Name      string                 `json:"name,omitempty"`
 }
 
 // GroupPatchSpec describes a patch to apply to a group's editable fields.

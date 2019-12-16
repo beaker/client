@@ -175,9 +175,6 @@ type ExecutionState struct {
 	// ExitCode is an integer process exit code, if the process exited normally.
 	ExitCode *int `json:"exitCode,omitempty"`
 
-	// Status summarizes the execution's overall status as an enumeration.
-	Status ExecStatus `json:"status"`
-
 	// Message describes additional state-related context.
 	Message string `json:"message,omitempty"`
 }
