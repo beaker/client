@@ -73,12 +73,6 @@ type WorkspacePage struct {
 	Organization string `json:"org"`
 }
 
-// CreateWorkspaceResponse is a service response returned when a new workspace is
-// created.
-type CreateWorkspaceResponse struct {
-	ID string `json:"id"`
-}
-
 // WorkspaceReference is a reference to a workspace in the system, providing both
 // name and ID for human-readible and static references, respectively.
 type WorkspaceReference struct {

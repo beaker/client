@@ -26,12 +26,12 @@ func (c *Client) CreateWorkspace(
 	}
 	defer safeClose(resp.Body)
 
-	var workspaceID api.CreateWorkspaceResponse
-	if err := parseResponse(resp, &workspaceID); err != nil {
+	var workspace api.Workspace
+	if err := parseResponse(resp, &workspace); err != nil {
 		return nil, err
 	}
 
-	return &WorkspaceHandle{client: c, id: workspaceID.ID}, nil
+	return &WorkspaceHandle{client: c, id: workspace.ID}, nil
 }
 
 type ListWorkspaceOptions struct {
