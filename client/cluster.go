@@ -40,26 +40,47 @@ func (c *Client) CreateCluster(
 	return &result, nil
 }
 
-// ListClusters enumerates all clusters within a galaxy.
-// TODO: Make this return an iterator.
-// TODO: Include expiration filter.
-func (c *Client) ListClusters(ctx context.Context, account string) ([]api.Cluster, error) {
+type ListClusterOptions struct {
+	Limit      int64
+	Cursor     string
+	Terminated *bool
+}
+
+// ListClusters enumerates all clusters owned by an account. If provided, only clusters
+// that match the constraints in opts are returned.
+func (c *Client) ListClusters(
+	ctx context.Context,
+	account string,
+	opts *ListClusterOptions,
+) ([]api.Cluster, string, error) {
 	if err := validateRef(account, 1); err != nil {
-		return nil, err
+		return nil, "", err
+	}
+
+	if opts == nil {
+		opts = &ListClusterOptions{}
 	}
 
 	path := path.Join("/api/v3/clusters", account)
-	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	query := url.Values{}
+	query.Add("cursor", opts.Cursor)
+	if opts.Limit > 0 {
+		query.Add("limit", strconv.FormatInt(opts.Limit, 10))
+	}
+	if opts.Terminated != nil {
+		query.Add("terminated", strconv.FormatBool(*opts.Terminated))
+	}
+	resp, err := c.sendRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	defer safeClose(resp.Body)
 
 	var result api.ClusterPage
 	if err := parseResponse(resp, &result); err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	return result.Data, nil
+	return result.Data, result.NextCursor, nil
 }
 
 // Cluster gets a handle for a cluster by name or ID. The cluster is not resolved
