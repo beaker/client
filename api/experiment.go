@@ -61,6 +61,7 @@ type ExperimentNode struct {
 	TaskID    string          `json:"taskId"`
 	ResultID  string          `json:"resultId"`
 	LastState *ExecutionState `json:"lastState,omitempty"`
+	Canceled  *time.Time      `json:"canceled,omitempty"`
 	Status    TaskStatus      `json:"status"`
 
 	// Identifiers of tasks dependent on this node within the containing experiment.
