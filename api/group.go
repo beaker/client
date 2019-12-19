@@ -79,6 +79,7 @@ type GroupTask struct {
 	ID        string                 `json:"id"`
 	Status    TaskStatus             `json:"status"`
 	LastState *ExecutionState        `json:"lastState,omitempty"`
+	Canceled  *time.Time             `json:"canceled,omitempty"`
 	Metrics   map[string]interface{} `json:"metrics,omitempty"`
 	Env       map[string]string      `json:"env,omitempty"`
 	Name      string                 `json:"name,omitempty"`
