@@ -133,25 +133,6 @@ func (h *ImageHandle) Commit(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
-// GetPermissions gets a summary of the user's permissions on the image.
-func (h *ImageHandle) GetPermissions(ctx context.Context) (*api.PermissionSummary, error) {
-	return getPermissions(ctx, h.client, path.Join("/api/v3/images", h.ID(), "auth"))
-}
-
-// PatchPermissions ammends an image's permissions.
-func (h *ImageHandle) PatchPermissions(
-	ctx context.Context,
-	permissionPatch api.PermissionPatch,
-) error {
-	path := path.Join("/api/v3/images", h.id, "auth")
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, permissionPatch)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
-
 func (c *Client) SearchImages(
 	ctx context.Context,
 	searchOptions api.ImageSearchOptions,

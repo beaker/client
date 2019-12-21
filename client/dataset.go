@@ -161,25 +161,6 @@ func (h *DatasetHandle) Commit(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
-// GetPermissions gets a summary of the user's permissions on the dataset.
-func (h *DatasetHandle) GetPermissions(ctx context.Context) (*api.PermissionSummary, error) {
-	return getPermissions(ctx, h.client, path.Join("/api/v3/datasets", h.ID(), "auth"))
-}
-
-// PatchPermissions ammends a dataset's permissions.
-func (h *DatasetHandle) PatchPermissions(
-	ctx context.Context,
-	permissionPatch api.PermissionPatch,
-) error {
-	path := path.Join("/api/v3/datasets", h.id, "auth")
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, permissionPatch)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
-
 func (c *Client) SearchDatasets(
 	ctx context.Context,
 	searchOptions api.DatasetSearchOptions,

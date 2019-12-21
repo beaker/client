@@ -28,21 +28,3 @@ func (c *Client) WhoAmI(ctx context.Context) (*api.UserDetail, error) {
 
 	return &user, nil
 }
-
-func getPermissions(
-	ctx context.Context,
-	client *Client,
-	path string,
-) (*api.PermissionSummary, error) {
-	resp, err := client.sendRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var body api.PermissionSummary
-	if err := parseResponse(resp, &body); err != nil {
-		return nil, err
-	}
-	return &body, nil
-}

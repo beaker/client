@@ -13,13 +13,7 @@ type CreateGroupResponse struct {
 
 // GroupSpec is a specification for creating a new Group.
 type GroupSpec struct {
-	// (optional) Organization on behalf of whom this resource is created. The
-	// user issuing the request must be a member of the organization. If omitted,
-	// the resource will be owned by the requestor.
-	Organization string `json:"org,omitempty"`
-
-	// (optional) Workspace where this group should be placed.
-	// TODO: Make required once workspaces feature is released & users are migrated.
+	// (required) Workspace where this group should be placed.
 	Workspace string `json:"workspace,omitempty"`
 
 	// (required) Unique name to assign the group.

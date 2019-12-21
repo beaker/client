@@ -34,13 +34,7 @@ func (e *Experiment) DisplayID() string {
 // ExperimentSpec describes a set of tasks with optional dependencies.
 // This set represents a (potentially disconnected) directed acyclic graph.
 type ExperimentSpec struct {
-	// (optional) Organization on behalf of whom this resource is created. The
-	// user issuing the request must be a member of the organization. If omitted,
-	// the resource will be owned by the requestor.
-	Organization string `json:"org,omitempty" yaml:"org,omitempty"`
-
-	// (optional) Workspace where this experiment and its results should be placed.
-	// TODO: Make required once workspaces feature is released & users are migrated.
+	// (required) Workspace where this experiment and its results should be placed.
 	Workspace string `json:"workspace,omitempty" yaml:"workspace,omitempty"`
 
 	// (optional) Text description of the experiment.
