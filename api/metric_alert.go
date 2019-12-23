@@ -24,10 +24,10 @@ type MetricAlert struct {
 	Author Identity `json:"author"`
 
 	// Metrics
-	Metric    string               `json:"metric"`
-	Condition MetricAlertCondition `json:"condition"`
-	Threshold float64              `json:"threshold"`
-	Severity  AlertSeverity        `json:"severity"`
+	Metric    string        `json:"metric"`
+	Condition Condition     `json:"condition"`
+	Threshold float64       `json:"threshold"`
+	Severity  AlertSeverity `json:"severity"`
 
 	// Currently enabled and triggered status
 	Enabled   bool `json:"enabled"`
@@ -53,7 +53,7 @@ type MetricAlertSpec struct {
 	Metric string `json:"metric" yaml:"metric"`
 
 	// (required) Condition with the threshold on which the alert should be triggered.
-	Condition MetricAlertCondition `json:"condition" yaml:"condition"`
+	Condition Condition `json:"condition" yaml:"condition"`
 
 	// (required) Threshold with the condition on which the alert should be triggered.
 	Threshold float64 `json:"threshold" yaml:"threshold"`
@@ -80,3 +80,14 @@ type MetricAlertPatchSpec struct {
 type UserMetricAlertPage struct {
 	Data []MetricAlertByTask `json:"data"`
 }
+
+// Condition represents the condition on which the alert should be triggerered for the metric
+type Condition string
+
+const (
+	// ConditionLessThan means the alert should be triggered when the metric falls below the given threshold
+	ConditionLessThan Condition = "less_than"
+
+	// ConditionGreaterThan means the alert should be triggered when the metric exceeds the given threshold
+	ConditionGreaterThan Condition = "greater_than"
+)
