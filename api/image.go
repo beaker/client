@@ -5,12 +5,6 @@ import (
 	"time"
 )
 
-// CreateImageResponse is a service response returned when a new image is
-// created. For now it's just the image ID, but may be expanded in the future.
-type CreateImageResponse struct {
-	ID string `json:"id"`
-}
-
 // Image describes the Docker image ran by a Task while executing an Experiment.
 type Image struct {
 	// Identity

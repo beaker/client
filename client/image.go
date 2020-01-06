@@ -35,7 +35,7 @@ func (c *Client) CreateImage(
 	}
 	defer safeClose(resp.Body)
 
-	var body api.CreateImageResponse
+	var body api.Image
 	if err := parseResponse(resp, &body); err != nil {
 		return nil, err
 	}
