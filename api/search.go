@@ -32,9 +32,8 @@ const (
 )
 
 type ImageSearchOptions struct {
-	SortClauses      []ImageSortClause   `json:"sortClauses,omitempty"`
-	FilterClauses    []ImageFilterClause `json:"filterClauses,omitempty"`
-	FilterCombinator FilterCombinator    `json:"filterCombinator,omitempty"`
+	SortClauses   []ImageSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses []ImageFilterClause `json:"filterClauses,omitempty"`
 }
 
 type ImageSortClause struct {
@@ -51,7 +50,6 @@ type ImageFilterClause struct {
 type DatasetSearchOptions struct {
 	SortClauses        []DatasetSortClause   `json:"sortClauses,omitempty"`
 	FilterClauses      []DatasetFilterClause `json:"filterClauses,omitempty"`
-	FilterCombinator   FilterCombinator      `json:"filterCombinator,omitempty"`
 	OmitResultDatasets bool                  `json:"omitResultDatasets,omitempty"`
 	IncludeUncommitted bool                  `json:"includeUncommitted,omitempty"`
 	Archived           *bool                 `json:"archived,omitempty"`
@@ -69,10 +67,9 @@ type DatasetFilterClause struct {
 }
 
 type ExperimentSearchOptions struct {
-	SortClauses      []ExperimentSortClause   `json:"sortClauses,omitempty"`
-	FilterClauses    []ExperimentFilterClause `json:"filterClauses,omitempty"`
-	FilterCombinator FilterCombinator         `json:"filterCombinator,omitempty"`
-	Archived         *bool                    `json:"archived,omitempty"`
+	SortClauses   []ExperimentSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses []ExperimentFilterClause `json:"filterClauses,omitempty"`
+	Archived      *bool                    `json:"archived,omitempty"`
 }
 
 type ExperimentSortClause struct {
@@ -87,10 +84,9 @@ type ExperimentFilterClause struct {
 }
 
 type GroupSearchOptions struct {
-	SortClauses      []GroupSortClause   `json:"sortClauses,omitempty"`
-	FilterClauses    []GroupFilterClause `json:"filterClauses,omitempty"`
-	FilterCombinator FilterCombinator    `json:"filterCombinator,omitempty"`
-	Archived         *bool               `json:"archived,omitempty"`
+	SortClauses   []GroupSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses []GroupFilterClause `json:"filterClauses,omitempty"`
+	Archived      *bool               `json:"archived,omitempty"`
 }
 
 type GroupSortClause struct {
