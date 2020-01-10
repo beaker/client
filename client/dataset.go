@@ -39,7 +39,7 @@ func (c *Client) CreateDataset(
 	}
 	defer safeClose(resp.Body)
 
-	var body api.CreateDatasetResponse
+	var body api.Dataset
 	if err := parseResponse(resp, &body); err != nil {
 		return nil, err
 	}

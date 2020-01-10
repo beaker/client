@@ -13,18 +13,9 @@ type DatasetStorage struct {
 	TokenExpires time.Time `json:"tokenExpires"`
 }
 
-// CreateDatasetResponse is a service response returned when a new dataset is created.
-type CreateDatasetResponse struct {
-	Storage *DatasetStorage `json:"storage,omitempty"`
-
-	ID string `json:"id"`
-}
-
 // Dataset is a file or collection of files. It may be the result of a task or
 // uploaded directly by a user.
 type Dataset struct {
-	Storage *DatasetStorage `json:"storage,omitempty"`
-
 	// Identity
 	ID   string `json:"id"`
 	Name string `json:"name,omitempty"`
@@ -44,6 +35,8 @@ type Dataset struct {
 
 	// Task for which this dataset is a result, i.e. provenance, if any.
 	SourceTask *string `json:"sourceTask,omitempty"`
+
+	Storage *DatasetStorage `json:"storage,omitempty"`
 }
 
 // DisplayID returns the most human-friendly name available for a dataset while
