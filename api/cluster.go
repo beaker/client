@@ -163,6 +163,9 @@ type ExecutionState struct {
 
 	// Message describes additional state-related context.
 	Message string `json:"message,omitempty"`
+
+	// TaskCanceled indicates whether and when an execution's task was canceled.
+	TaskCanceled *time.Time `json:"taskCanceled,omitempty"`
 }
 
 // ScheduledTask summarizes relations of executions, or tasks which have been scheduled to run.
