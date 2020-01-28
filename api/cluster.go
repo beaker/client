@@ -169,11 +169,13 @@ type ExecutionState struct {
 }
 
 // ScheduledTask summarizes relations of executions, or tasks which have been scheduled to run.
+// TODO: Remove this and replace with Execution.
 type ScheduledTask struct {
 	Task string `json:"task"`
 
 	// Execution uniquely identifies one attempt to execute a task.
-	Execution string `json:"execution"`
+	ExecutionID string `json:"id"` // Back-compat shim so we can update executors.
+	Execution   string `json:"execution"`
 
 	// Node is set when a task has been assigned to a node.
 	Node string `json:"node,omitempty"`
