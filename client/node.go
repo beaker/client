@@ -21,7 +21,7 @@ func (c *Client) Node(id string) *NodeHandle {
 }
 
 // ListExecutions retrieves all executions that are assigned to the node.
-func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.ScheduledTasks, error) {
+func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error) {
 	path := path.Join("/api/v3/nodes", h.id, "executions")
 	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
@@ -29,7 +29,7 @@ func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.ScheduledTasks, e
 	}
 	defer safeClose(resp.Body)
 
-	var result api.ScheduledTasks
+	var result api.Executions
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}

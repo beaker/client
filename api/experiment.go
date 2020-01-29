@@ -127,6 +127,51 @@ type ExperimentPage struct {
 	NextCursor string `json:"nextCursor,omitempty"`
 }
 
+// Executions is an ordered collection of task executions.
+type Executions struct {
+	Data []Execution `json:"data"`
+}
+
+// Execution represents an attempt to run a task. A task may have many executions.
+type Execution struct {
+	ID   string `json:"id"`
+	Task string `json:"task"`
+
+	Image   ImageSource           `json:"image"`
+	Result  ResultTarget          `json:"result"`
+	Sources map[string]DataSource `json:"sources"` // Keyed by container path
+
+	// Node is set when a task has been assigned to a node.
+	Node string `json:"node,omitempty"`
+
+	// State describes execution status and progression.
+	State ExecutionState `json:"state"`
+}
+
+// ResultTarget describes a target to which results will be written.
+type ResultTarget struct {
+	// Name or ID of a Beaker dataset.
+	Beaker string `json:"beaker,omitempty"`
+}
+
+// ExecutionState details an execution's status.
+type ExecutionState struct {
+	Created   time.Time  `json:"created"`
+	Scheduled *time.Time `json:"scheduled,omitempty"`
+	Started   *time.Time `json:"started,omitempty"`
+	Ended     *time.Time `json:"ended,omitempty"`
+	Finalized *time.Time `json:"finalized,omitempty"`
+
+	// ExitCode is an integer process exit code, if the process exited normally.
+	ExitCode *int `json:"exitCode,omitempty"`
+
+	// Message describes additional state-related context.
+	Message string `json:"message,omitempty"`
+
+	// TaskCanceled indicates whether and when an execution's task was canceled.
+	TaskCanceled *time.Time `json:"taskCanceled,omitempty"`
+}
+
 // ExecStatus describes what phase an execution is in.
 type ExecStatus string
 
