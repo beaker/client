@@ -161,6 +161,17 @@ func (h *DatasetHandle) Commit(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
+// Delete a dataset. Note that this action is not reversible. The data will be deleted forever.
+func (h *DatasetHandle) Delete(ctx context.Context) error {
+	path := path.Join("/api/v3/datasets", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
+
 func (c *Client) SearchDatasets(
 	ctx context.Context,
 	searchOptions api.DatasetSearchOptions,
