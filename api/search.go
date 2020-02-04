@@ -8,13 +8,9 @@ type SearchOperator string
 
 const (
 	OpEqual            SearchOperator = "eq"
-	OpNotEqual         SearchOperator = "neq"
-	OpGreaterThan      SearchOperator = "gt"
 	OpGreaterThanEqual SearchOperator = "gte"
 	OpLessThan         SearchOperator = "lt"
-	OpLessThanEqual    SearchOperator = "lte"
 	OpContains         SearchOperator = "ctn"
-	OpNotContains      SearchOperator = "nctn"
 )
 
 type SortOrder string
@@ -22,13 +18,6 @@ type SortOrder string
 const (
 	SortAscending  SortOrder = "ascending"
 	SortDescending SortOrder = "descending"
-)
-
-type FilterCombinator string
-
-const (
-	CombinatorAnd FilterCombinator = "and"
-	CombinatorOr  FilterCombinator = "or"
 )
 
 type ImageSearchOptions struct {
@@ -104,7 +93,6 @@ type GroupTaskSearchOptions struct {
 	SortClauses          []GroupTaskSortClause      `json:"sortClauses,omitempty"`
 	ParameterSortClauses []GroupParameterSortClause `json:"parameterSortClauses,omitempty"`
 	FilterClauses        []GroupTaskFilterClause    `json:"filterClauses,omitempty"`
-	FilterCombinator     FilterCombinator           `json:"filterCombinator,omitempty"`
 }
 
 type GroupTaskSortClause struct {
