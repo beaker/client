@@ -23,6 +23,22 @@ func (c *Client) Node(id string) *NodeHandle {
 // ListExecutions retrieves all executions that are assigned to the node.
 func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error) {
 	path := path.Join("/api/v3/nodes", h.id, "executions")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.Executions
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// AssignExecutions lists all executions on a node and assigns a new one if it has none.
+func (h *NodeHandle) AssignExecutions(ctx context.Context) (*api.Executions, error) {
+	path := path.Join("/api/v3/nodes", h.id, "executions")
 	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
 		return nil, err

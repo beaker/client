@@ -176,22 +176,19 @@ type ExecutionState struct {
 type ExecStatus string
 
 const (
-	// ExecPending indicates a task is waiting to be assigned to a node.
-	ExecPending ExecStatus = "pending"
+	// ExecScheduled indicates a task has been assigned to a node and is preparing to run.
+	ExecScheduled ExecStatus = "scheduled"
 
-	// ExecInitializing indicates a task has been assigned to a node and is preparing to run.
-	ExecInitializing ExecStatus = "initializing"
+	// ExecStarted indicates an execution has started running.
+	ExecStarted ExecStatus = "started"
 
-	// ExecRunning indicates a task has started.
-	ExecRunning ExecStatus = "running"
-
-	// ExecFinalizing indicates a task exited or was interrupted and its results
-	// capture is finalizing. Callers may inspect its exit code to determine
+	// ExecEnded indicates an execution exited or was interrupted. Its results
+	// may not yet be final. Callers may inspect its exit code to determine
 	// success or failure. If none is set, the execution is considered failed.
-	ExecFinalizing ExecStatus = "finalizing"
+	ExecEnded ExecStatus = "ended"
 
-	// ExecComplete indicates a task has ended and all results have been captured.
-	ExecComplete ExecStatus = "complete"
+	// ExecFinalized indicates a task has ended and all results have been captured.
+	ExecFinalized ExecStatus = "finalized"
 )
 
 // ExecStatusUpdate snapshots a task execution's status.
