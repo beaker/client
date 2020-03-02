@@ -10,7 +10,7 @@ import (
 
 // WhoAmI returns a client's active user.
 func (c *Client) WhoAmI(ctx context.Context) (*api.UserDetail, error) {
-	uri := path.Join("/api/v3/auth/whoami")
+	uri := path.Join("/api/v3/user")
 	resp, err := c.sendRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
