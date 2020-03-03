@@ -22,14 +22,10 @@ type TaskHandle struct {
 
 // Task gets a handle for a task by name or ID. The returned handle is
 // guaranteed throughout its lifetime to refer to the same object, even if that
-// object is later renamed.
-func (c *Client) Task(ctx context.Context, reference string) (*TaskHandle, error) {
-	id, err := c.resolveRef(ctx, "/api/v3/tasks", reference)
-	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve task reference "+reference)
-	}
-
-	return &TaskHandle{client: c, id: id}, nil
+// object is later renamed, however, the task is not resolved and may infact
+// not exist/already be deleted.
+func (c *Client) Task(reference string) *TaskHandle {
+	return &TaskHandle{client: c, id: reference}
 }
 
 // ID returns a task's stable, unique ID.
