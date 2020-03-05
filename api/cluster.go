@@ -22,11 +22,11 @@ type Cluster struct {
 	NodeCost *decimal.Decimal `json:"nodeCost,omitempty"`
 
 	// Requested and actual configuration
-	Preemptible bool          `json:"preemptible"`
-	Protected   bool          `json:"protected"`
-	Status      ClusterStatus `json:"status"`
-	NodeSpec    NodeSpec      `json:"nodeSpec"`
-	NodeShape   *NodeSpec     `json:"nodeShape,omitempty"`
+	Preemptible bool           `json:"preemptible"`
+	Protected   bool           `json:"protected"`
+	Status      ClusterStatus  `json:"status"`
+	NodeSpec    NodeResources  `json:"nodeSpec"`
+	NodeShape   *NodeResources `json:"nodeShape,omitempty"`
 }
 
 // ClusterPatch allows a client to update aspects of a Cluster.
@@ -44,7 +44,7 @@ type ClusterPatch struct {
 	// NodeShape details the shape of nodes created during cluster creation.
 	//
 	// This value is internal; behavior is undefined if set by external clients.
-	NodeShape *NodeSpec `json:"nodeShape,omitempty"`
+	NodeShape *NodeResources `json:"nodeShape,omitempty"`
 
 	// NodeCost sets the estimated cost of each node within the cluster in USD-per-hour.
 	NodeCost *decimal.Decimal `json:"nodeCost,omitempty"`
@@ -72,7 +72,7 @@ type ClusterSpec struct {
 
 	// Spec describes characteristics of each node within the cluster.
 	// Default values will be set by internal policy.
-	Spec NodeSpec `json:"spec"`
+	Spec NodeResources `json:"spec"`
 }
 
 // ClusterStatus describes where a cluster is in its lifecycle.
@@ -92,12 +92,12 @@ const (
 	ClusterFailed ClusterStatus = "failed"
 )
 
-// NodeSpec provides options to configure compute nodes.
-type NodeSpec struct {
-	CPUCount int    `json:"cpuCount,omitempty"`
-	GPUCount int    `json:"gpuCount,omitempty"`
-	GPUType  string `json:"gpuType,omitempty"`
-	Memory   string `json:"memory,omitempty"`
+// NodeResources describe a node's available resources.
+type NodeResources struct {
+	CPUCount float64 `json:"cpuCount,omitempty"`
+	GPUCount int     `json:"gpuCount,omitempty"`
+	GPUType  string  `json:"gpuType,omitempty"`
+	Memory   string  `json:"memory,omitempty"`
 }
 
 // A Node is a single machine within a cluster
