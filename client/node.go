@@ -37,9 +37,9 @@ func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error
 }
 
 // AssignExecutions lists all executions on a node and assigns a new one if it has none.
-func (h *NodeHandle) AssignExecutions(ctx context.Context) (*api.Executions, error) {
+func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeResources) (*api.Executions, error) {
 	path := path.Join("/api/v3/nodes", h.id, "executions")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, resources)
 	if err != nil {
 		return nil, err
 	}
@@ -50,6 +50,16 @@ func (h *NodeHandle) AssignExecutions(ctx context.Context) (*api.Executions, err
 		return nil, err
 	}
 	return &result, nil
+}
+
+func (h *NodeHandle) Heartbeat(ctx context.Context) error {
+	path := path.Join("/api/v3/nodes", h.id, "heartbeat")
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
 }
 
 // Delete removes the node (marks it terminated)
