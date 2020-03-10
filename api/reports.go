@@ -6,7 +6,8 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// TODO: Document
+// UsageReport:
+// Deprecated: UsageReport - Reporting in general needs an improved API
 type UsageReport struct {
 	Start        time.Time     `json:"start"`
 	End          time.Time     `json:"end"`
@@ -17,7 +18,8 @@ type UsageReport struct {
 	Items        []EntityUsage `json:"items"`
 }
 
-// TODO: Document
+// EntityUsage:
+// Deprecated: Reporting in general needs an improved API
 type EntityUsage struct {
 	Entity      Identity                    `json:"entity"`
 	ReportGroup string                      `json:"reportGroup"`
@@ -25,10 +27,13 @@ type EntityUsage struct {
 	Intervals   map[time.Time]UsageInterval `json:"intervals"`
 }
 
-// TODO: Document
+// UsageInterval:
+// Deprecated: Reporting in general needs an improved API
 type UsageInterval struct {
 	ExperimentCount int             `json:"experimentCount"`
-	Cost            decimal.Decimal `json:"cost"`
+	Cost            decimal.Decimal `json:"cost"`         // Total cost, i.e. UsageCost + OverheadCost
+	UsageCost       decimal.Decimal `json:"usageCost"`    // Distinguish actual usage related cost from total cost
+	OverheadCost    decimal.Decimal `json:"overheadCost"` // Distinguish overhead
 	Duration        int64           `json:"duration"`
 	GPUSeconds      int64           `json:"gpuSeconds"`
 }
