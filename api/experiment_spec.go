@@ -1,5 +1,14 @@
 package api
 
+// ExperimentSpecV2 describes a collection of processes to run.
+type ExperimentSpecV2 struct {
+	// (required) Version must be 'v2'
+	Version string `json:"version" yaml:"version"`
+
+	// (required) Tasks to run.
+	Tasks []TaskSpec `json:"tasks,omitempty" yaml:"tasks,omitempty"`
+}
+
 // TaskSpecV2 describes a single job, or process, to run.
 type TaskSpecV2 struct {
 	// (optional) Name is used to refer to this task. It must be unique among
@@ -23,7 +32,7 @@ type TaskSpecV2 struct {
 	// (required) Result describes where the task will write output.
 	Result ResultSpec `json:"result" yaml:"result"`
 
-	// Resources define external requirements for task execution.
+	// (optional) Resources define external requirements for task execution.
 	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 }
 
@@ -79,5 +88,16 @@ type ResultSpec struct {
 
 // TaskResources describe external requirements which must be available for a task to run.
 type TaskResources struct {
+	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
+	//
+	// Examples: 4, 0.5
+	CPUCount float64 `json:"cpuCount,omitempty" yaml:"gpuCount,omitempty"`
+
+	// (optional) GPUCount sets a mimimum number of GPU cores and must be a non-negative integer.
 	GPUCount int `json:"gpuCount,omitempty" yaml:"gpuCount,omitempty"`
+
+	// (optional) Memory sets a limit for CPU memory as a number with unit suffix.
+	//
+	// Examples: 2.5GiB, 10240m
+	Memory string `json:"memory,omitempty" yaml:"memory,omitempty"`
 }

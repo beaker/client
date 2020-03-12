@@ -132,19 +132,6 @@ type TaskPatchSpec struct {
 	Cancel bool `json:"cancel,omitempty"`
 }
 
-// TaskStatusSpec describes a change in a task's status.
-type TaskStatusSpec struct {
-	// (required) Status to record for the task.
-	Status TaskStatus `json:"status"`
-
-	// (optional) Human-readable message to provide context for the status.
-	Message *string `json:"message,omitempty"`
-
-	// (optional) Exit code of the task's process.
-	// It is recommended to provide when entering Succeeded and Failed states.
-	ExitCode *int `json:"exitCode,omitempty"`
-}
-
 type TaskEvents struct {
 	Task   string      `json:"task"`
 	Events []TaskEvent `json:"events"`
