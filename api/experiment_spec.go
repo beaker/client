@@ -97,7 +97,14 @@ type TaskResources struct {
 	GPUCount int `json:"gpuCount,omitempty" yaml:"gpuCount,omitempty"`
 
 	// (optional) Memory sets a limit for CPU memory as a number with unit suffix.
+	// Memory must be equivalent to MemoryBytes if both are set.
 	//
 	// Examples: 2.5GiB, 10240m
 	Memory string `json:"memory,omitempty" yaml:"memory,omitempty"`
+
+	// (optional) MemoryBytes sets a limit for CPU memory as an exact byte count.
+	// MemoryBytes must be equivalent to Memory if both are set.
+	//
+	// Examples: 1073741824
+	MemoryBytes int64 `json:"memoryBytes,omitempty" yaml:"memoryBytes,omitempty"`
 }
