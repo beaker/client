@@ -12,3 +12,5 @@ const (
 	GroupNameOrDescription Group = "nameOrDescription"
 	GroupOwner             Group = "owner"
 )
+
+func (g Group) String() string { return string(g) }

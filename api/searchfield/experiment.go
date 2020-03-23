@@ -12,3 +12,5 @@ const (
 	ExperimentOwner             Experiment = "owner"
 	ExperimentStatus            Experiment = "status"
 )
+
+func (e Experiment) String() string { return string(e) }

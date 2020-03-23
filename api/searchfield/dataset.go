@@ -11,3 +11,5 @@ const (
 	DatasetNameOrDescription Dataset = "nameOrDescription"
 	DatasetOwner             Dataset = "owner"
 )
+
+func (ds Dataset) String() string { return string(ds) }

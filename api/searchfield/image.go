@@ -9,3 +9,5 @@ const (
 	ImageDescription  Image = "description"
 	ImageCreatingUser Image = "user"
 )
+
+func (i Image) String() string { return string(i) }
