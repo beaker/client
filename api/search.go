@@ -101,9 +101,9 @@ type GroupTaskSortClause struct {
 }
 
 type GroupParameterSortClause struct {
-	Type  string    `json:"type"`
-	Name  string    `json:"name"`
-	Order SortOrder `json:"order"`
+	Type  GroupParameterType `json:"type"`
+	Name  string             `json:"name"`
+	Order SortOrder          `json:"order"`
 }
 
 type GroupTaskFilterClause struct {

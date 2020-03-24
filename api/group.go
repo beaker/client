@@ -104,17 +104,28 @@ type GroupPatchSpec struct {
 	Archive *bool `json:"archive,omitempty"`
 }
 
+// GroupParameterType enumerates sources for a paramater in group analyses.
+type GroupParameterType string
+
+const (
+	// MetricParameter is a parameter parsed from a user-generated metric file in a task result.
+	MetricParameter GroupParameterType = "metric"
+
+	// EnvVarParameter is a parameter supplied as an environment variable in a task spec.
+	EnvVarParameter GroupParameterType = "env"
+)
+
 // GroupParameter is a measurable value for use in group analyses.
 type GroupParameter struct {
-	Type string `json:"type"`
-	Name string `json:"name"`
+	Type GroupParameterType `json:"type"`
+	Name string             `json:"name"`
 }
 
 // GroupParameterCount summarizes how often a parameter is observed among a group's tasks.
 type GroupParameterCount struct {
-	Type  string `json:"type"`
-	Name  string `json:"name"`
-	Count int64  `json:"count"`
+	Type  GroupParameterType `json:"type"`
+	Name  string             `json:"name"`
+	Count int64              `json:"count"`
 }
 
 // GroupPage is a page of results from a batch group API.
