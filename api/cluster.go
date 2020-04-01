@@ -14,6 +14,9 @@ type Cluster struct {
 
 	Created    time.Time  `json:"created"`
 	Terminated *time.Time `json:"terminated,omitempty"`
+	Validated  *time.Time `json:"validated,omitempty"`
+
+	StatusMessage string `json:"statusMessage,omitempty"`
 
 	// Capacity is the maximum number of nodes a cluster can contain at one time.
 	Capacity int `json:"capacity"`
@@ -40,6 +43,12 @@ type ClusterPatch struct {
 	//
 	// This value is internal; behavior is undefined if set by external clients.
 	Valid *bool `json:"valid,omitempty"`
+
+	// StatusMessage provides optional additional information regarding the status,
+	// e.g. why validation failed
+	//
+	// This value is internal; behavior is undefined if set by external clients.
+	StatusMessage *string `json:"statusMessage,omitempty"`
 
 	// NodeShape details the shape of nodes created during cluster creation.
 	//
