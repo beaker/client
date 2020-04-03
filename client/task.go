@@ -141,19 +141,18 @@ func (h *TaskHandle) PutLogs(ctx context.Context, logs io.Reader, since time.Tim
 // ExecutionHandle provides access to a single execution.
 type ExecutionHandle struct {
 	client *Client
-	taskID string
 	id     string
 }
 
 // Execution gets a handle for an execution by ID. The execution is not resolved
 // and not guaranteed to exist.
-func (h *TaskHandle) Execution(id string) *ExecutionHandle {
-	return &ExecutionHandle{client: h.client, taskID: h.id, id: id}
+func (c *Client) Execution(id string) *ExecutionHandle {
+	return &ExecutionHandle{client: c, id: id}
 }
 
 // Get retrieves an execution's details.
 func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
-	path := path.Join("/api/v3/tasks", h.taskID, "executions", h.id)
+	path := path.Join("/api/v3/executions", h.id)
 	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -169,7 +168,7 @@ func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 
 // PostStatus updates an execution's current status.
 func (h *ExecutionHandle) PostStatus(ctx context.Context, status api.ExecStatusUpdate) error {
-	path := path.Join("/api/v3/tasks", h.taskID, "executions", h.id, "status")
+	path := path.Join("/api/v3/executions", h.id, "status")
 	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, status)
 	if err != nil {
 		return err
