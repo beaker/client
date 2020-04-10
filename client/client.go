@@ -39,10 +39,31 @@ type Client struct {
 	baseURL   url.URL
 	userToken string
 
+	userAgent string
 	// If set, then HTTPResponseHook will be invoked after every HTTP response
 	// arrives. This can be used by users of this client to implement diagnostics,
 	// such as request logging.
 	HTTPResponseHook HTTPResponseHook
+}
+
+// Optional additions while constructing the client.
+type Option interface {
+	apply(*Client) error
+}
+
+type optionFunc func(*Client) error
+
+func (o optionFunc) apply(c *Client) error {
+	return o.apply(c)
+}
+
+// WithUserAgent sets the useragent header for all requests issued by the client.
+// If not specified, the executable's name is used as the default user-agent.
+func WithUserAgent(userAgent string) Option {
+	return optionFunc(func(c *Client) error {
+		c.userAgent = userAgent
+		return nil
+	})
 }
 
 // HTTPResponseHook will be given an HTTP response, and the duration that the request took.
@@ -51,7 +72,7 @@ type Client struct {
 type HTTPResponseHook func(resp *http.Response, duration time.Duration)
 
 // NewClient creates a new Beaker client bound to a single user.
-func NewClient(address string, userToken string) (*Client, error) {
+func NewClient(address string, userToken string, opts ...Option) (*Client, error) {
 	u, err := urlx.ParseWithDefaultScheme(address, "https")
 	if err != nil {
 		return nil, err
@@ -61,10 +82,26 @@ func NewClient(address string, userToken string) (*Client, error) {
 		return nil, errors.New("address must be base server address in the form [scheme://]host[:port]")
 	}
 
-	return &Client{
+	client := &Client{
 		baseURL:   *u,
 		userToken: userToken,
-	}, nil
+	}
+
+	for _, opt := range opts {
+		if err := opt.apply(client); err != nil {
+			return nil, err
+		}
+	}
+
+	if client.userAgent == "" {
+		exec, err := os.Executable()
+		if err != nil {
+			exec = os.Args[0]
+		}
+		client.userAgent = path.Base(exec)
+	}
+
+	return client, nil
 }
 
 func newRetryableClient(httpClient *http.Client, httpResponseHook HTTPResponseHook) *retryable.Client {
@@ -220,6 +257,7 @@ func (c *Client) newRetryableRequest(
 		req.Header.Set("Authorization", "Bearer "+c.userToken)
 	}
 
+	req.Header.Set("User-Agent", c.userAgent)
 	return req, nil
 }
 
@@ -242,6 +280,7 @@ func (c *Client) newRequest(
 		req.Header.Set("Authorization", "Bearer "+c.userToken)
 	}
 
+	req.Header.Set("User-Agent", c.userAgent)
 	return req, nil
 }
 
