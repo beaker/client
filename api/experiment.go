@@ -146,6 +146,9 @@ type Execution struct {
 
 	// State describes execution status and progression.
 	State ExecutionState `json:"state"`
+
+	// Limits describes resources assigned to this execution
+	Limits TaskResources `json:"limits"`
 }
 
 // ResultTarget describes a target to which results will be written.
