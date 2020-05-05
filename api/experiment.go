@@ -196,7 +196,7 @@ const (
 
 // ExecStatusUpdate snapshots a task execution's status.
 type ExecStatusUpdate struct {
-	// (optional) Status to record for the task.
+	// (optional) Status is the task's current stage of execution.
 	Status ExecStatus `json:"status,omitempty"`
 
 	// (optional) Human-readable message to provide context for the status.
@@ -204,4 +204,7 @@ type ExecStatusUpdate struct {
 
 	// (optional) Exit code of the task's process.
 	ExitCode *int `json:"exitCode,omitempty"`
+
+	// (optional) Limits record the maximum resources available during execution.
+	Limits *TaskResources `json:"limits,omitempty"`
 }
