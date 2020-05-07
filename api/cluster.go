@@ -122,7 +122,8 @@ type NodePage struct {
 	Data []Node `json:"data"`
 }
 
-// CreateNodeSpec allows a requestor to describe a node on creation.
-type CreateNodeSpec struct {
-	Hostname string `json:"hostname"`
+// NodeSpec allows a requestor to describe a node on creation.
+type NodeSpec struct {
+	Hostname string         `json:"hostname"`
+	Limits   *NodeResources `json:"limits"`
 }

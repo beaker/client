@@ -153,15 +153,13 @@ func (h *ClusterHandle) Terminate(ctx context.Context) error {
 }
 
 // CreateNode is meant for internal use only.
-func (h *ClusterHandle) CreateNode(ctx context.Context, hostname string) (*api.Node, error) {
+func (h *ClusterHandle) CreateNode(ctx context.Context, spec api.NodeSpec) (*api.Node, error) {
 	if err := validateRef(h.name, 2); err != nil {
 		return nil, err
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "nodes")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, api.CreateNodeSpec{
-		Hostname: hostname,
-	})
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, spec)
 	if err != nil {
 		return nil, err
 	}
