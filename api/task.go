@@ -9,6 +9,7 @@ type Task struct {
 	// Identity
 	ID           string `json:"id"`
 	ExperimentID string `json:"experimentId"`
+	Name         string `json:"name,omitempty"`
 
 	// Ownership
 	Owner  Identity `json:"owner"`
