@@ -1,9 +1,5 @@
 package api
 
-import (
-	"github.com/beaker/client/api/searchfield"
-)
-
 type SearchOperator string
 
 const (
@@ -20,21 +16,19 @@ const (
 	SortDescending SortOrder = "descending"
 )
 
-type ImageSearchOptions struct {
-	SortClauses   []ImageSortClause   `json:"sortClauses,omitempty"`
-	FilterClauses []ImageFilterClause `json:"filterClauses,omitempty"`
-}
+type DatasetField string
 
-type ImageSortClause struct {
-	Field searchfield.Image `json:"field"`
-	Order SortOrder         `json:"order"`
-}
+const (
+	DatasetCommitted         DatasetField = "committed"
+	DatasetCreatingUser      DatasetField = "user"
+	DatasetDescription       DatasetField = "description"
+	DatasetID                DatasetField = "id"
+	DatasetName              DatasetField = "name"
+	DatasetNameOrDescription DatasetField = "nameOrDescription"
+	DatasetOwner             DatasetField = "owner"
+)
 
-type ImageFilterClause struct {
-	Field    searchfield.Image `json:"field"`
-	Operator SearchOperator    `json:"operator,omitempty"`
-	Value    interface{}       `json:"value"`
-}
+func (ds DatasetField) String() string { return string(ds) }
 
 type DatasetSearchOptions struct {
 	SortClauses        []DatasetSortClause   `json:"sortClauses,omitempty"`
@@ -45,15 +39,38 @@ type DatasetSearchOptions struct {
 }
 
 type DatasetSortClause struct {
-	Field searchfield.Dataset `json:"field"`
-	Order SortOrder           `json:"order"`
+	Field DatasetField `json:"field"`
+	Order SortOrder    `json:"order"`
 }
 
 type DatasetFilterClause struct {
-	Field    searchfield.Dataset `json:"field"`
-	Operator SearchOperator      `json:"operator,omitempty"`
-	Value    interface{}         `json:"value"`
+	Field    DatasetField   `json:"field"`
+	Operator SearchOperator `json:"operator,omitempty"`
+	Value    interface{}    `json:"value"`
 }
+
+type ExecutionField string
+
+const (
+	ExecutionID ExecutionField = "id"
+)
+
+func (e ExecutionField) String() string { return string(e) }
+
+type ExperimentField string
+
+const (
+	ExperimentCreated           ExperimentField = "created"
+	ExperimentCreatingUser      ExperimentField = "user"
+	ExperimentDescription       ExperimentField = "description"
+	ExperimentID                ExperimentField = "id"
+	ExperimentName              ExperimentField = "name"
+	ExperimentNameOrDescription ExperimentField = "nameOrDescription"
+	ExperimentOwner             ExperimentField = "owner"
+	ExperimentStatus            ExperimentField = "status"
+)
+
+func (e ExperimentField) String() string { return string(e) }
 
 type ExperimentSearchOptions struct {
 	SortClauses   []ExperimentSortClause   `json:"sortClauses,omitempty"`
@@ -62,15 +79,30 @@ type ExperimentSearchOptions struct {
 }
 
 type ExperimentSortClause struct {
-	Field searchfield.Experiment `json:"field"`
-	Order SortOrder              `json:"order"`
+	Field ExperimentField `json:"field"`
+	Order SortOrder       `json:"order"`
 }
 
 type ExperimentFilterClause struct {
-	Field    searchfield.Experiment `json:"field"`
-	Operator SearchOperator         `json:"operator,omitempty"`
-	Value    interface{}            `json:"value"`
+	Field    ExperimentField `json:"field"`
+	Operator SearchOperator  `json:"operator,omitempty"`
+	Value    interface{}     `json:"value"`
 }
+
+type GroupField string
+
+const (
+	GroupCreated           GroupField = "created"
+	GroupCreatingUser      GroupField = "user"
+	GroupDescription       GroupField = "description"
+	GroupID                GroupField = "id"
+	GroupModified          GroupField = "modified"
+	GroupName              GroupField = "name"
+	GroupNameOrDescription GroupField = "nameOrDescription"
+	GroupOwner             GroupField = "owner"
+)
+
+func (g GroupField) String() string { return string(g) }
 
 type GroupSearchOptions struct {
 	SortClauses   []GroupSortClause   `json:"sortClauses,omitempty"`
@@ -79,15 +111,26 @@ type GroupSearchOptions struct {
 }
 
 type GroupSortClause struct {
-	Field searchfield.Group `json:"field"`
-	Order SortOrder         `json:"order"`
+	Field GroupField `json:"field"`
+	Order SortOrder  `json:"order"`
 }
 
 type GroupFilterClause struct {
-	Field    searchfield.Group `json:"field"`
-	Operator SearchOperator    `json:"operator,omitempty"`
-	Value    interface{}       `json:"value"`
+	Field    GroupField     `json:"field"`
+	Operator SearchOperator `json:"operator,omitempty"`
+	Value    interface{}    `json:"value"`
 }
+
+type GroupTaskField string
+
+const (
+	GroupTaskID         GroupTaskField = "taskId"
+	GroupTaskStatus     GroupTaskField = "taskStatus"
+	GroupExperimentID   GroupTaskField = "experimentId"
+	GroupExperimentName GroupTaskField = "experimentName"
+)
+
+func (gt GroupTaskField) String() string { return string(gt) }
 
 type GroupTaskSearchOptions struct {
 	SortClauses          []GroupTaskSortClause      `json:"sortClauses,omitempty"`
@@ -96,8 +139,8 @@ type GroupTaskSearchOptions struct {
 }
 
 type GroupTaskSortClause struct {
-	Field searchfield.GroupTask `json:"field"`
-	Order SortOrder             `json:"order"`
+	Field GroupTaskField `json:"field"`
+	Order SortOrder      `json:"order"`
 }
 
 type GroupParameterSortClause struct {
@@ -107,7 +150,45 @@ type GroupParameterSortClause struct {
 }
 
 type GroupTaskFilterClause struct {
-	Field    searchfield.GroupTask `json:"field"`
-	Operator SearchOperator        `json:"operator,omitempty"`
-	Value    interface{}           `json:"value"`
+	Field    GroupTaskField `json:"field"`
+	Operator SearchOperator `json:"operator,omitempty"`
+	Value    interface{}    `json:"value"`
 }
+
+type ImageField string
+
+const (
+	ImageID           ImageField = "id"
+	ImageName         ImageField = "name"
+	ImageCommitted    ImageField = "committed"
+	ImageDescription  ImageField = "description"
+	ImageCreatingUser ImageField = "user"
+)
+
+func (i ImageField) String() string { return string(i) }
+
+type ImageSearchOptions struct {
+	SortClauses   []ImageSortClause   `json:"sortClauses,omitempty"`
+	FilterClauses []ImageFilterClause `json:"filterClauses,omitempty"`
+}
+
+type ImageSortClause struct {
+	Field ImageField `json:"field"`
+	Order SortOrder  `json:"order"`
+}
+
+type ImageFilterClause struct {
+	Field    ImageField     `json:"field"`
+	Operator SearchOperator `json:"operator,omitempty"`
+	Value    interface{}    `json:"value"`
+}
+
+type WorkspaceField string
+
+const (
+	WorkspaceName     WorkspaceField = "name"
+	WorkspaceCreated  WorkspaceField = "created"
+	WorkspaceModified WorkspaceField = "modified"
+)
+
+func (ws WorkspaceField) String() string { return string(ws) }
