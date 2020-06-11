@@ -58,7 +58,8 @@ type TaskResults struct {
 // TaskSpec contains all information necessary to create a new task.
 type TaskSpec struct {
 	// (required) Image containing the code to be run.
-	Image string `json:"image" yaml:"image"`
+	Image       string `json:"image,omitempty" yaml:"image,omitempty"`
+	DockerImage string `json:"dockerImage,omitempty" yaml:"dockerImage,omitempty"`
 
 	// (required) Container path in which the task will save results. Files
 	// written to this location will be persisted as a dataset upon task
