@@ -27,7 +27,7 @@ type TaskSpecV2 struct {
 	EnvVars map[string]string `json:"envVars,omitempty" yaml:"envVars,omitempty"`
 
 	// (optional) Datasets are external data sources to mount into the task.
-	Datasets []Mount `json:"datasets,omitempty" yaml:"datasets,omitempty"`
+	Datasets []DataMount `json:"datasets,omitempty" yaml:"datasets,omitempty"`
 
 	// (required) Result describes where the task will write output.
 	Result ResultSpec `json:"result" yaml:"result"`
@@ -47,8 +47,8 @@ type ImageSource struct {
 	Docker string `json:"docker,omitempty" yaml:"docker,omitempty"`
 }
 
-// Mount describes how a dataset is mounted into a task or environment.
-type Mount struct {
+// DataMount describes how a dataset is mounted into a task or environment.
+type DataMount struct {
 	// (required) Path within a container to mount the data source. Mount paths
 	// must be absolute and may not overlap.
 	//

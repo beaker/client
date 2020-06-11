@@ -137,18 +137,22 @@ type Execution struct {
 	ID   string `json:"id"`
 	Task string `json:"task"`
 
-	Image   ImageSource           `json:"image"`
-	Result  ResultTarget          `json:"result"`
-	Sources map[string]DataSource `json:"sources"` // Keyed by container path
-
 	// Node is set when a task has been assigned to a node.
 	Node string `json:"node,omitempty"`
+
+	// Spec describes the execution's task, but with all soft references fully resolved.
+	Spec   TaskSpecV2   `json:"spec"`
+	Result ResultTarget `json:"result"`
 
 	// State describes execution status and progression.
 	State ExecutionState `json:"state"`
 
 	// Limits describes resources assigned to this execution
 	Limits TaskResources `json:"limits"`
+
+	// TODO: Deprecated, remove these.
+	Image   ImageSource           `json:"image"`
+	Sources map[string]DataSource `json:"sources"` // Keyed by container path
 }
 
 // ResultTarget describes a target to which results will be written.
