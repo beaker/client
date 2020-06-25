@@ -149,10 +149,6 @@ type Execution struct {
 
 	// Limits describes resources assigned to this execution
 	Limits TaskResources `json:"limits"`
-
-	// TODO: Deprecated, remove these.
-	Image   ImageSource           `json:"image"`
-	Sources map[string]DataSource `json:"sources"` // Keyed by container path
 }
 
 // ResultTarget describes a target to which results will be written.

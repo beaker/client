@@ -135,7 +135,6 @@ func (gt GroupTaskField) String() string { return string(gt) }
 type GroupTaskSearchOptions struct {
 	SortClauses          []GroupTaskSortClause      `json:"sortClauses,omitempty"`
 	ParameterSortClauses []GroupParameterSortClause `json:"parameterSortClauses,omitempty"`
-	FilterClauses        []GroupTaskFilterClause    `json:"filterClauses,omitempty"`
 }
 
 type GroupTaskSortClause struct {
@@ -147,12 +146,6 @@ type GroupParameterSortClause struct {
 	Type  GroupParameterType `json:"type"`
 	Name  string             `json:"name"`
 	Order SortOrder          `json:"order"`
-}
-
-type GroupTaskFilterClause struct {
-	Field    GroupTaskField `json:"field"`
-	Operator SearchOperator `json:"operator,omitempty"`
-	Value    interface{}    `json:"value"`
 }
 
 type ImageField string
