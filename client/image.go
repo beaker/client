@@ -133,6 +133,17 @@ func (h *ImageHandle) Commit(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
+// Delete an image. Note that this action is not reversible.
+func (h *ImageHandle) Delete(ctx context.Context) error {
+	path := path.Join("/api/v3/images", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
+
 func (c *Client) SearchImages(
 	ctx context.Context,
 	searchOptions api.ImageSearchOptions,
