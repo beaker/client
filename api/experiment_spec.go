@@ -34,6 +34,9 @@ type TaskSpecV2 struct {
 
 	// (optional) Resources define external requirements for task execution.
 	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
+
+	// (deprecated) Description is a long-form explanation of the task.
+	Description string `json:"-" yaml:"-"`
 }
 
 // ImageSource describes all supported image sources by type. Exactly one must be defined.
