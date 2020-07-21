@@ -149,6 +149,9 @@ type Execution struct {
 
 	// Limits describes resources assigned to this execution
 	Limits TaskResources `json:"limits"`
+
+	// Priority describes the urgency with with this execution will be scheduled.
+	Priority string `json:"priority"`
 }
 
 // ResultTarget describes a target to which results will be written.

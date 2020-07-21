@@ -53,6 +53,7 @@ type ExecutionField string
 
 const (
 	ExecutionID ExecutionField = "id"
+	Priority    ExecutionField = "priority"
 )
 
 func (e ExecutionField) String() string { return string(e) }

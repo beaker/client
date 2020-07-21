@@ -25,8 +25,9 @@ func (c *Client) CreateExperiment(
 	spec api.ExperimentSpec,
 	name string,
 	force bool,
+	priority string,
 ) (*ExperimentHandle, error) {
-	query := url.Values{"name": {name}}
+	query := url.Values{"name": {name}, "priority": {priority}}
 	if force {
 		query.Add("force", "true")
 	}
