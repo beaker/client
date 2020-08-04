@@ -5,8 +5,16 @@ type ExperimentSpecV2 struct {
 	// (required) Version must be 'v2'
 	Version string `json:"version" yaml:"version"`
 
-	// (required) Tasks to run.
+	// (required) Tasks define what to run.
 	Tasks []TaskSpec `json:"tasks,omitempty" yaml:"tasks,omitempty"`
+
+	// (required) Contexts describes environments in which to run tasks.
+	Contexts []Context `json:"contexts,omitempty" yaml:"contexts,omitempty"`
+
+	// (optional) This default names a context which will be assigned to all
+	// tasks which don't specify a context. It may be omitted if all tasks have
+	// been assigned an explicit context.
+	DefaultContext string `json:"defaultContext,omitempty" yaml:"defaultContext,omitempty"`
 }
 
 // TaskSpecV2 describes a single job, or process, to run.
@@ -18,10 +26,21 @@ type TaskSpecV2 struct {
 	// (required) Image is the name or ID of an image to run.
 	Image ImageSource `json:"image" yaml:"image"`
 
-	// (required) Command is the full shell command to run as a list of separate
-	// arguments. Default comamnds such as Docker's ENTRYPOINT are ignored.
+	// (optional) Command is the full shell command to run as a list of separate
+	// arguments. If omitted, the image's default command is used, for example
+	// Docker's ENTRYPOINT directive. If set, default commands such as Docker's
+	// ENTRYPOINT and CMD directives are ignored.
+	//
 	// Example: ["python", "-u", "main.py"]
-	Command []string `json:"command" yaml:"command"`
+	Command []string `json:"command,omitempty" yaml:"command,omitempty"`
+
+	// (optional) Arguments are appended to the Command and replace default
+	// arguments such as Docker's CMD directive. If Command is omitted arguments
+	// are appended to the default command, Docker's ENTRYPOINT directive.
+	//
+	// Example: If Command is ["python"], specifying arguments ["-u", "main.py"]
+	// will run the command "python -u main.py".
+	Arguments []string `json:"arguments,omitempty" yaml:"arguments,omitempty"`
 
 	// (optional) EnvVars are passed into the task as environment variables.
 	EnvVars map[string]string `json:"envVars,omitempty" yaml:"envVars,omitempty"`
@@ -32,7 +51,11 @@ type TaskSpecV2 struct {
 	// (required) Result describes where the task will write output.
 	Result ResultSpec `json:"result" yaml:"result"`
 
-	// (optional) Resources define external requirements for task execution.
+	// (optional) Context assigns an execution context to this task. The named
+	// context must be defined within the task's experiment.
+	Context string `json:"context,omitempty" yaml:"context,omitempty"`
+
+	// (deprecated) Resources define external requirements for task execution.
 	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 
 	// (deprecated) Description is a long-form explanation of the task.
@@ -87,6 +110,24 @@ type DataSource struct {
 type ResultSpec struct {
 	// (required) Path is a file or directory where the task will write output.
 	Path string `json:"path" yaml:"path"`
+}
+
+// A Context describes how and where to run tasks.
+type Context struct {
+	// (optional) Name a context to refer to it in experiments.
+	Name string
+
+	// (required) Name or ID of a cluster on which the task should run.
+	Cluster string `json:"cluster" yaml:"cluter"`
+
+	// (optional) Priority describes the urgency with which a task will run.
+	//
+	// Values may be "low", "normal", or "high". If omitted, defaults to normal.
+	// Priority may also be elevated to "urgent" through UI.
+	Priority string `json:"priority,omitempty" yaml:"priority,omitempty"`
+
+	// (optional) Resources define external hardware requirements for task execution.
+	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 }
 
 // TaskResources describe external requirements which must be available for a task to run.
