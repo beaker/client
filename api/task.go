@@ -107,12 +107,6 @@ type TaskRequirements struct {
 
 	// (optional) GPUs required in increments of one full core.
 	GPUCount int `json:"gpuCount" yaml:"gpuCount,omitempty"`
-
-	// (optional) GPU variant to prefer when scheduling task.
-	GPUType string `json:"gpuType,omitempty" yaml:"gpuType,omitempty"`
-
-	// (optional) Run on preemptible nodes (defaults to false)
-	Preemptible bool `json:"preemptible,omitempty" yaml:"preemptible,omitempty"`
 }
 
 // DatasetMount describes a read-only data source for a task.
