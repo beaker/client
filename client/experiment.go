@@ -18,19 +18,14 @@ type ExperimentHandle struct {
 	id     string
 }
 
-// CreateExperiment creates a new experiment with an optional name. If force is true, then
-// Beaker is asked to admit the experiment even if it depends on uncommitted datasets.
+// CreateExperiment creates a new experiment with an optional name.
 func (c *Client) CreateExperiment(
 	ctx context.Context,
 	spec api.ExperimentSpec,
 	name string,
-	force bool,
 	priority string,
 ) (*ExperimentHandle, error) {
 	query := url.Values{"name": {name}, "priority": {priority}}
-	if force {
-		query.Add("force", "true")
-	}
 	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/experiments", query, spec)
 	if err != nil {
 		return nil, err
