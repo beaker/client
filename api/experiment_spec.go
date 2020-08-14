@@ -6,15 +6,14 @@ type ExperimentSpecV2 struct {
 	Version string `json:"version" yaml:"version"`
 
 	// (required) Tasks define what to run.
-	Tasks []TaskSpec `json:"tasks,omitempty" yaml:"tasks,omitempty"`
+	Tasks []TaskSpecV2 `json:"tasks,omitempty" yaml:"tasks,omitempty"`
 
-	// (required) Contexts describes environments in which to run tasks.
-	Contexts []Context `json:"contexts,omitempty" yaml:"contexts,omitempty"`
-
-	// (optional) This default names a context which will be assigned to all
-	// tasks which don't specify a context. It may be omitted if all tasks have
-	// been assigned an explicit context.
-	DefaultContext string `json:"defaultContext,omitempty" yaml:"defaultContext,omitempty"`
+	// (optional) Context describes how an experiment's tasks should be run.
+	// Required fields may be omitted if each task has defined its own context.
+	//
+	// Because contexts depend on external configuration, a given context may be
+	// invalid or unavailable on subsequent runs.
+	Context *Context `json:"context,omitempty" yaml:"context,omitempty"`
 }
 
 // TaskSpecV2 describes a single job, or process, to run.
@@ -51,11 +50,16 @@ type TaskSpecV2 struct {
 	// (required) Result describes where the task will write output.
 	Result ResultSpec `json:"result" yaml:"result"`
 
-	// (optional) Context assigns an execution context to this task. The named
-	// context must be defined within the task's experiment.
-	Context string `json:"context,omitempty" yaml:"context,omitempty"`
+	// (optional) Context describes how and where this task should run. Some
+	// fields are required and must be set in either the experiment or the task.
+	// If a field is set in both, the task's takes precedence.
+	//
+	// Because contexts depend on external configuration, a given context may be
+	// invalid or unavailable on subsequent runs.
+	Context *Context `json:"context,omitempty" yaml:"context,omitempty"`
 
-	// (deprecated) Resources define external requirements for task execution.
+	// (optional) Resources define external hardware requirements for this task.
+	// TODO: Consider whether to move this into the context.
 	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 
 	// (deprecated) Description is a long-form explanation of the task.
@@ -114,9 +118,6 @@ type ResultSpec struct {
 
 // A Context describes how and where to run tasks.
 type Context struct {
-	// (optional) Name a context to refer to it in experiments.
-	Name string
-
 	// (required) Name or ID of a cluster on which the task should run.
 	Cluster string `json:"cluster" yaml:"cluter"`
 
@@ -125,9 +126,6 @@ type Context struct {
 	// Values may be "low", "normal", or "high". If omitted, defaults to normal.
 	// Priority may also be elevated to "urgent" through UI.
 	Priority string `json:"priority,omitempty" yaml:"priority,omitempty"`
-
-	// (optional) Resources define external hardware requirements for task execution.
-	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 }
 
 // TaskResources describe external requirements which must be available for a task to run.
