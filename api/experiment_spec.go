@@ -2,8 +2,11 @@ package api
 
 // ExperimentSpecV2 describes a collection of processes to run.
 type ExperimentSpecV2 struct {
-	// (required) Version must be 'v2'
+	// (required) Version must be 'v2-alpha'
 	Version string `json:"version" yaml:"version"`
+
+	// (optional) Description provides a long-form explanation for an experiment.
+	Description string `json:"description,omitempty" yaml:"description,omitempty"`
 
 	// (required) Tasks define what to run.
 	Tasks []TaskSpecV2 `json:"tasks,omitempty" yaml:"tasks,omitempty"`

@@ -34,6 +34,9 @@ func (e *Experiment) DisplayID() string {
 // ExperimentSpec describes a set of tasks with optional dependencies.
 // This set represents a (potentially disconnected) directed acyclic graph.
 type ExperimentSpec struct {
+	// (optional) Version must be 'v1' or left unset.
+	Version string `json:"version,omitempty" yaml:"version,omitempty"`
+
 	// (required) Workspace where this experiment and its results should be placed.
 	Workspace string `json:"workspace,omitempty" yaml:"workspace,omitempty"`
 

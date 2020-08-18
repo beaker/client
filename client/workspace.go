@@ -1,11 +1,14 @@
 package client
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/beaker/client/api"
 )
@@ -161,6 +164,58 @@ func (h *WorkspaceHandle) Datasets(
 	}
 
 	return result.Data, result.NextCursor, nil
+}
+
+// ExperimentOpts allows a caller to set options when creating an experiment.
+// All fields are optional and default to reasonable values.
+type ExperimentOpts struct {
+	// Name is a human-friendly identifier for display.
+	Name string
+
+	// AuthorToken may be set to an API token to attribute an experiment. If
+	// omitted, the author defaults to the bearer token set on the client.
+	AuthorToken string
+}
+
+// CreateExperiment creates a new experiment in the calling workspace.
+func (h *WorkspaceHandle) CreateExperiment(
+	ctx context.Context,
+	spec *api.ExperimentSpec,
+	opts *ExperimentOpts,
+) (*ExperimentHandle, error) {
+	var query url.Values
+	if opts != nil && opts.Name != "" {
+		query = url.Values{"name": {opts.Name}}
+	}
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(spec); err != nil {
+		return nil, err
+	}
+
+	path := path.Join("/api/v3/workspaces", h.id, "experiments")
+	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, buf)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if opts != nil && opts.AuthorToken != "" {
+		req.Header.Set(api.HeaderAuthor, opts.AuthorToken)
+	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout:       30 * time.Second,
+		CheckRedirect: copyRedirectHeader,
+	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	defer safeClose(resp.Body)
+
+	var id string
+	if err := parseResponse(resp, &id); err != nil {
+		return nil, err
+	}
+
+	return &ExperimentHandle{client: h.client, id: id}, nil
 }
 
 type ListExperimentOptions struct {
