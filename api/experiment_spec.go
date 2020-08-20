@@ -122,7 +122,7 @@ type ResultSpec struct {
 // A Context describes how and where to run tasks.
 type Context struct {
 	// (required) Name or ID of a cluster on which the task should run.
-	Cluster string `json:"cluster" yaml:"cluter"`
+	Cluster string `json:"cluster" yaml:"cluster"`
 
 	// (optional) Priority describes the urgency with which a task will run.
 	//

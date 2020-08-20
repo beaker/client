@@ -194,7 +194,7 @@ func (h *WorkspaceHandle) CreateExperiment(
 	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "experiments")
-	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, buf)
+	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, &buf)
 	if err != nil {
 		return nil, err
 	}
