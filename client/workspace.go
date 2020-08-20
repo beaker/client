@@ -180,9 +180,9 @@ type ExperimentOpts struct {
 // CreateExperiment creates a new experiment in the calling workspace.
 func (h *WorkspaceHandle) CreateExperiment(
 	ctx context.Context,
-	spec *api.ExperimentSpec,
+	spec *api.ExperimentSpecV2,
 	opts *ExperimentOpts,
-) (*ExperimentHandle, error) {
+) (*api.Experiment, error) {
 	var query url.Values
 	if opts != nil && opts.Name != "" {
 		query = url.Values{"name": {opts.Name}}
@@ -210,12 +210,12 @@ func (h *WorkspaceHandle) CreateExperiment(
 	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
 	defer safeClose(resp.Body)
 
-	var id string
-	if err := parseResponse(resp, &id); err != nil {
+	var result api.Experiment
+	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
 	}
 
-	return &ExperimentHandle{client: h.client, id: id}, nil
+	return &result, nil
 }
 
 type ListExperimentOptions struct {
