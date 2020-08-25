@@ -10,13 +10,6 @@ type ExperimentSpecV2 struct {
 
 	// (required) Tasks define what to run.
 	Tasks []TaskSpecV2 `json:"tasks,omitempty" yaml:"tasks,omitempty"`
-
-	// (optional) Context describes how an experiment's tasks should be run.
-	// Required fields may be omitted if each task has defined its own context.
-	//
-	// Because contexts depend on external configuration, a given context may be
-	// invalid or unavailable on subsequent runs.
-	Context *Context `json:"context,omitempty" yaml:"context,omitempty"`
 }
 
 // TaskSpecV2 describes a single job, or process, to run.
@@ -53,17 +46,15 @@ type TaskSpecV2 struct {
 	// (required) Result describes where the task will write output.
 	Result ResultSpec `json:"result" yaml:"result"`
 
-	// (optional) Context describes how and where this task should run. Some
-	// fields are required and must be set in either the experiment or the task.
-	// If a field is set in both, the task's takes precedence.
-	//
-	// Because contexts depend on external configuration, a given context may be
-	// invalid or unavailable on subsequent runs.
-	Context *Context `json:"context,omitempty" yaml:"context,omitempty"`
-
 	// (optional) Resources define external hardware requirements for this task.
 	// TODO: Consider whether to move this into the context.
 	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
+
+	// (required) Context describes how and where this task should run.
+	//
+	// Because contexts depend on external configuration, a given context may be
+	// invalid or unavailable on subsequent runs.
+	Context Context `json:"context" yaml:"context"`
 
 	// (deprecated) Description is a long-form explanation of the task.
 	Description string `json:"-" yaml:"-"`
@@ -119,18 +110,6 @@ type ResultSpec struct {
 	Path string `json:"path" yaml:"path"`
 }
 
-// A Context describes how and where to run tasks.
-type Context struct {
-	// (required) Name or ID of a cluster on which the task should run.
-	Cluster string `json:"cluster" yaml:"cluster"`
-
-	// (optional) Priority describes the urgency with which a task will run.
-	//
-	// Values may be "low", "normal", or "high". If omitted, defaults to normal.
-	// Priority may also be elevated to "urgent" through UI.
-	Priority string `json:"priority,omitempty" yaml:"priority,omitempty"`
-}
-
 // TaskResources describe external requirements which must be available for a task to run.
 type TaskResources struct {
 	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
@@ -153,3 +132,36 @@ type TaskResources struct {
 	// Examples: 1073741824
 	MemoryBytes int64 `json:"memoryBytes,omitempty" yaml:"memoryBytes,omitempty"`
 }
+
+// A Context describes how and where to run tasks.
+type Context struct {
+	// (required) Name or ID of a cluster on which the task should run.
+	Cluster string `json:"cluster" yaml:"cluster"`
+
+	// (optional) Priority describes the urgency with which a task will run.
+	//
+	// Values may be "low", "normal", or "high". If omitted, defaults to normal.
+	// Priority may also be elevated to "urgent" through UI.
+	Priority Priority `json:"priority,omitempty" yaml:"priority,omitempty"`
+}
+
+// Priority determines when a task will run relative to other tasks. Tasks of
+// highest priority are exhausted before lower-priority tasks are considered for
+// scheduling.
+type Priority string
+
+const (
+	// UrgentPriority tasks are run as soon as possible. Because this priority
+	// can be disruptive, it may only be set after a task's creation.
+	UrgentPriority Priority = "urgent"
+
+	// HighPriority tasks run before all non-urgent tasks. This is the highest
+	// priority settable during task creation.
+	HighPriority Priority = "high"
+
+	// NormalPriority is the default priority for tasks, equivalent to unset.
+	NormalPriority Priority = "normal"
+
+	// LowPriority tasks run last and may be deferred for long periods of time.
+	LowPriority Priority = "low"
+)

@@ -52,8 +52,8 @@ type DatasetFilterClause struct {
 type ExecutionField string
 
 const (
-	ExecutionID ExecutionField = "id"
-	Priority    ExecutionField = "priority"
+	ExecutionID       ExecutionField = "id"
+	ExecutionPriority ExecutionField = "priority"
 )
 
 func (e ExecutionField) String() string { return string(e) }
