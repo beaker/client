@@ -115,7 +115,7 @@ type TaskResources struct {
 	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
 	//
 	// Examples: 4, 0.5
-	CPUCount float64 `json:"cpuCount,omitempty" yaml:"gpuCount,omitempty"`
+	CPUCount float64 `json:"cpuCount,omitempty" yaml:"cpuCount,omitempty"`
 
 	// (optional) GPUCount sets a mimimum number of GPU cores and must be a non-negative integer.
 	GPUCount int `json:"gpuCount,omitempty" yaml:"gpuCount,omitempty"`
