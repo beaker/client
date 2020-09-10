@@ -114,7 +114,8 @@ type Node struct {
 	ID         string         `json:"id"`
 	Hostname   string         `json:"hostname"`
 	Created    time.Time      `json:"created"`
-	Terminated *time.Time     `json:"terminated"`
+	Cordoned   *time.Time     `json:"cordoned,omitempty"`
+	Terminated *time.Time     `json:"terminated,omitempty"`
 	Limits     *NodeResources `json:"limits,omitempty"`
 }
 
