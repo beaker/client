@@ -8,8 +8,15 @@ import (
 
 // NodeUsageReport contains one series for each combination of values in the group by.
 type NodeUsageReport struct {
-	Totals NodeUsageInterval `json:"totals"`
+	Totals UsageInterval     `json:"totals"`
 	Series []NodeUsageSeries `json:"series"`
+}
+
+// UsageInterval reports the value of a NodeMetric during a single time interval.
+type UsageInterval struct {
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
+	Value float64   `json:"value"`
 }
 
 // NodeUsageSeries reports the value of a NodeMetric over time.
@@ -20,18 +27,50 @@ type NodeUsageSeries struct {
 	// Cluster name is included if the data is grouped by cluster.
 	Cluster string `json:"cluster,omitempty"`
 
-	// Environment (on-prem or cloud) is included if the data is grouped by environment.
-	Environment string `json:"environment,omitempty"`
+	// Whether or not the cluster is on-premise. Included if the data is grouped by on-premise.
+	OnPrem *bool `json:"onPrem,omitempty"`
 
-	Totals    NodeUsageInterval   `json:"totals"`
-	Intervals []NodeUsageInterval `json:"intervals"`
+	Totals    UsageInterval   `json:"totals"`
+	Intervals []UsageInterval `json:"intervals"`
 }
 
-// NodeUsageInterval reports the value of a NodeMetric during a single time interval.
-type NodeUsageInterval struct {
-	Start time.Time `json:"start"`
-	End   time.Time `json:"end"`
-	Value float64   `json:"value"`
+// TaskUsageReport contains one series for each combination of values in the group by.
+type TaskUsageReport struct {
+	Totals UsageInterval     `json:"totals"`
+	Series []TaskUsageSeries `json:"series"`
+}
+
+// TaskUsageSeries reports the value of a TaskMetric over time.
+type TaskUsageSeries struct {
+	// Task ID is included if the data is grouped by node.
+	Task string `json:"task,omitempty"`
+
+	// Experiment ID is included if the data is grouped by experiment.
+	Experiment string `json:"experiment,omitempty"`
+
+	// Workspace ID is included if the data is grouped by workspace.
+	Workspace string `json:"workspace,omitempty"`
+
+	// Node ID is included if the data is grouped by node.
+	Node string `json:"node,omitempty"`
+
+	// Cluster name is included if the data is grouped by cluster.
+	Cluster string `json:"cluster,omitempty"`
+
+	// Author name is included if the data is grouped by author.
+	Author string `json:"author,omitempty"`
+
+	// Owner name is included if the data is grouped by owner.
+	Owner string `json:"owner,omitempty"`
+
+	// Team name is included if the data is grouped by team.
+	Team string `json:"team,omitempty"`
+
+	// Whether or not the cluster is on-premise. Included if the data is grouped by on-premise.
+	OnPrem *bool `json:"onPrem,omitempty"`
+
+	Totals    UsageInterval   `json:"totals"`
+	Intervals []UsageInterval `json:"intervals"`
 }
 
 // UsageReport:
@@ -49,15 +88,15 @@ type UsageReport struct {
 // EntityUsage:
 // Deprecated: Reporting in general needs an improved API
 type EntityUsage struct {
-	Entity      Identity                    `json:"entity"`
-	ReportGroup string                      `json:"reportGroup"`
-	Totals      UsageInterval               `json:"totals"`
-	Intervals   map[time.Time]UsageInterval `json:"intervals"`
+	Entity      Identity                          `json:"entity"`
+	ReportGroup string                            `json:"reportGroup"`
+	Totals      LegacyUsageInterval               `json:"totals"`
+	Intervals   map[time.Time]LegacyUsageInterval `json:"intervals"`
 }
 
-// UsageInterval:
+// LegacyUsageInterval:
 // Deprecated: Reporting in general needs an improved API
-type UsageInterval struct {
+type LegacyUsageInterval struct {
 	ExperimentCount int             `json:"experimentCount"`
 	Cost            decimal.Decimal `json:"cost"`         // Total cost, i.e. UsageCost + OverheadCost
 	UsageCost       decimal.Decimal `json:"usageCost"`    // Distinguish actual usage related cost from total cost
