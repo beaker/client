@@ -27,6 +27,9 @@ type NodeUsageSeries struct {
 	// Cluster name is included if the data is grouped by cluster.
 	Cluster string `json:"cluster,omitempty"`
 
+	// Whether or not the cluster is preemptible. Included if the data is grouped by preemptible.
+	Preemptible *bool `json:"preemptible,omitempty"`
+
 	// Whether or not the cluster is on-premise. Included if the data is grouped by on-premise.
 	OnPrem *bool `json:"onPrem,omitempty"`
 
