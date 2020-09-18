@@ -2,8 +2,6 @@ package api
 
 import (
 	"time"
-
-	"github.com/shopspring/decimal"
 )
 
 // NodeUsageReport contains one series for each combination of values in the group by.
@@ -74,36 +72,4 @@ type TaskUsageSeries struct {
 
 	Totals    UsageInterval   `json:"totals"`
 	Intervals []UsageInterval `json:"intervals"`
-}
-
-// UsageReport:
-// Deprecated: UsageReport - Reporting in general needs an improved API
-type UsageReport struct {
-	Start        time.Time     `json:"start"`
-	End          time.Time     `json:"end"`
-	Currency     string        `json:"currency"`
-	EntityType   string        `json:"entityType"`
-	Interval     string        `json:"interval"`
-	IntervalKeys []time.Time   `json:"intervalKeys"`
-	Items        []EntityUsage `json:"items"`
-}
-
-// EntityUsage:
-// Deprecated: Reporting in general needs an improved API
-type EntityUsage struct {
-	Entity      Identity                          `json:"entity"`
-	ReportGroup string                            `json:"reportGroup"`
-	Totals      LegacyUsageInterval               `json:"totals"`
-	Intervals   map[time.Time]LegacyUsageInterval `json:"intervals"`
-}
-
-// LegacyUsageInterval:
-// Deprecated: Reporting in general needs an improved API
-type LegacyUsageInterval struct {
-	ExperimentCount int             `json:"experimentCount"`
-	Cost            decimal.Decimal `json:"cost"`         // Total cost, i.e. UsageCost + OverheadCost
-	UsageCost       decimal.Decimal `json:"usageCost"`    // Distinguish actual usage related cost from total cost
-	OverheadCost    decimal.Decimal `json:"overheadCost"` // Distinguish overhead
-	Duration        int64           `json:"duration"`
-	GPUSeconds      int64           `json:"gpuSeconds"`
 }
