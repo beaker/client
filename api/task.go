@@ -129,14 +129,3 @@ type TaskPatchSpec struct {
 	// (optional) Whether the task should be canceled. Ignored if false.
 	Cancel bool `json:"cancel,omitempty"`
 }
-
-type TaskEvents struct {
-	Task   string      `json:"task"`
-	Events []TaskEvent `json:"events"`
-}
-
-type TaskEvent struct {
-	Status  TaskStatus `json:"status"`
-	Message string     `json:"message,omitempty"`
-	Time    time.Time  `json:"time"`
-}
