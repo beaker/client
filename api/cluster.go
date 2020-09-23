@@ -111,12 +111,11 @@ type NodeResources struct {
 
 // A Node is a single machine within a cluster
 type Node struct {
-	ID         string         `json:"id"`
-	Hostname   string         `json:"hostname"`
-	Created    time.Time      `json:"created"`
-	Cordoned   *time.Time     `json:"cordoned,omitempty"`
-	Terminated *time.Time     `json:"terminated,omitempty"`
-	Limits     *NodeResources `json:"limits,omitempty"`
+	ID       string         `json:"id"`
+	Hostname string         `json:"hostname"`
+	Created  time.Time      `json:"created"`
+	Cordoned *time.Time     `json:"cordoned,omitempty"`
+	Limits   *NodeResources `json:"limits,omitempty"`
 }
 
 // NodePage contains a partial list of nodes.

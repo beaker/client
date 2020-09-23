@@ -3,7 +3,9 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
+	"time"
 
 	"github.com/beaker/client/api"
 )
@@ -52,9 +54,12 @@ func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeRe
 	return &result, nil
 }
 
-func (h *NodeHandle) Heartbeat(ctx context.Context) error {
-	path := path.Join("/api/v3/nodes", h.id, "heartbeat")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
+// ExpireIn updates a node's expiry to now + a given duration.
+// The time-to-live must be positive.
+func (h *NodeHandle) ExpireIn(ctx context.Context, ttl time.Duration) error {
+	path := path.Join("/api/v3/nodes", h.id, "expiry")
+	query := url.Values{"ttl": []string{ttl.String()}}
+	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, query, nil)
 	if err != nil {
 		return err
 	}
