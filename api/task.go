@@ -22,8 +22,9 @@ type Task struct {
 	Ended   time.Time  `json:"ended"`
 
 	// State of this task's most recent execution, if any.
-	LastState *ExecutionState `json:"lastState,omitempty"`
-	Canceled  *time.Time      `json:"canceled,omitempty"`
+	LastState  *ExecutionState `json:"lastState,omitempty"`
+	Canceled   *time.Time      `json:"canceled,omitempty"`
+	Executions []string        `json:"executions,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpec        `json:"spec"`
