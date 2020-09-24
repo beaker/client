@@ -214,3 +214,7 @@ type ExecStatusUpdate struct {
 	// (optional) Limits record the maximum resources available during execution.
 	Limits *TaskResources `json:"limits,omitempty"`
 }
+
+type ExecutionResults struct {
+	Metrics map[string]interface{} `json:"metrics"`
+}

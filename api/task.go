@@ -50,10 +50,6 @@ type TaskLogUploadLink struct {
 	URL         string `json:"url"`
 }
 
-type TaskResults struct {
-	Metrics map[string]interface{} `json:"metrics"`
-}
-
 // TaskSpec contains all information necessary to create a new task.
 type TaskSpec struct {
 	// (required) Image containing the code to be run.
