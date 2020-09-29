@@ -50,24 +50,6 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 	return &task, nil
 }
 
-// GetResults retrieves a task's results.
-// TODO: Delete on successful Leaderboard Update
-func (h *TaskHandle) GetResults(ctx context.Context) (*api.ExecutionResults, error) {
-	path := path.Join("/api/v3/tasks", h.id, "results")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var results api.ExecutionResults
-	if err := parseResponse(resp, &results); err != nil {
-		return nil, err
-	}
-
-	return &results, nil
-}
-
 // SetDescription sets a task's description.
 func (h *TaskHandle) SetDescription(ctx context.Context, description string) error {
 	path := path.Join("/api/v3/tasks", h.id)
