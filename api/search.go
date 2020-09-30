@@ -68,7 +68,6 @@ const (
 	ExperimentName              ExperimentField = "name"
 	ExperimentNameOrDescription ExperimentField = "nameOrDescription"
 	ExperimentOwner             ExperimentField = "owner"
-	ExperimentStatus            ExperimentField = "status"
 )
 
 func (e ExperimentField) String() string { return string(e) }

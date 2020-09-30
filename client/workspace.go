@@ -44,7 +44,8 @@ type ListWorkspaceOptions struct {
 
 func (c *Client) ListWorkspaces(
 	ctx context.Context,
-	org string, opts *ListWorkspaceOptions,
+	org string,
+	opts *ListWorkspaceOptions,
 ) ([]api.Workspace, string, error) {
 	if opts == nil {
 		opts = &ListWorkspaceOptions{}
