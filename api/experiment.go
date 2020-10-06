@@ -31,27 +31,6 @@ func (e *Experiment) DisplayID() string {
 	return e.ID
 }
 
-// ExperimentSpec describes a set of tasks with optional dependencies.
-// This set represents a (potentially disconnected) directed acyclic graph.
-type ExperimentSpec struct {
-	// (optional) Version must be 'v1' or left unset.
-	Version string `json:"version,omitempty" yaml:"version,omitempty"`
-
-	// (required) Workspace where this experiment and its results should be placed.
-	Workspace string `json:"workspace,omitempty" yaml:"workspace,omitempty"`
-
-	// (optional) Text description of the experiment.
-	Description string `json:"description,omitempty" yaml:"description,omitempty"`
-
-	// (required) Tasks to create. Tasks may be defined in any order, though all
-	// dependencies must be internally resolvable within the experiment.
-	Tasks []ExperimentTaskSpec `json:"tasks" yaml:"tasks"`
-
-	// (optional) A token representing the user to which the object should be attributed.
-	// If omitted attribution will be given to the user issuing the request.
-	AuthorToken string `json:"authorToken,omitempty" yaml:"authorToken,omitempty"`
-}
-
 // ExperimentNode describes a task along with its links within an experiment.
 type ExperimentNode struct {
 	Name      string          `json:"name,omitempty"`
@@ -59,7 +38,6 @@ type ExperimentNode struct {
 	ResultID  string          `json:"resultId"`
 	LastState *ExecutionState `json:"lastState,omitempty"`
 	Canceled  *time.Time      `json:"canceled,omitempty"`
-	Status    TaskStatus      `json:"status"`
 
 	// Identifiers of tasks dependent on this node within the containing experiment.
 	ChildTasks []string `json:"childTaskIds"`
@@ -75,25 +53,6 @@ func (n *ExperimentNode) DisplayID() string {
 		return n.Name
 	}
 	return n.TaskID
-}
-
-// ExperimentTaskSpec describes a task spec with optional dependencies on other
-// tasks within an experiment. Tasks refer to each other by the Name field.
-type ExperimentTaskSpec struct {
-	// (optional) Name of the task node, which need only be defined if
-	// dependencies reference it.
-	Name string `json:"name,omitempty" yaml:"name,omitempty"`
-
-	// (required) Specification describing the task to run.
-	Spec TaskSpec `json:"spec" yaml:"spec,omitempty"`
-
-	// (optional) Tasks on which this task depends. Mounts will be applied, in
-	// the order defined here, after existing mounts in the task spec.
-	DependsOn []TaskDependency `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty"`
-
-	// (optional) Name of a cluster on which the task should run.
-	// Cluster affinity supercedes task requirements.
-	Cluster string `json:"cluster,omitempty" yaml:"cluster,omitempty"`
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.

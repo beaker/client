@@ -21,7 +21,7 @@ type ExperimentHandle struct {
 // CreateExperiment creates a new experiment with an optional name.
 func (c *Client) CreateExperiment(
 	ctx context.Context,
-	spec api.ExperimentSpec,
+	spec api.ExperimentSpecV1,
 	name string,
 	priority string,
 ) (*ExperimentHandle, error) {

@@ -71,7 +71,6 @@ type GroupExperiment struct {
 // GroupTask is a minimal task summary for aggregated views.
 type GroupTask struct {
 	ID        string                 `json:"id"`
-	Status    TaskStatus             `json:"status"`
 	LastState *ExecutionState        `json:"lastState,omitempty"`
 	Canceled  *time.Time             `json:"canceled,omitempty"`
 	Metrics   map[string]interface{} `json:"metrics,omitempty"`

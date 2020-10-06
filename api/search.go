@@ -125,7 +125,6 @@ type GroupTaskField string
 
 const (
 	GroupTaskID         GroupTaskField = "taskId"
-	GroupTaskStatus     GroupTaskField = "taskStatus"
 	GroupExperimentID   GroupTaskField = "experimentId"
 	GroupExperimentName GroupTaskField = "experimentName"
 )
