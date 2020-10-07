@@ -15,14 +15,15 @@ type Task struct {
 	Owner  Identity `json:"owner"`
 	Author Identity `json:"author"`
 
-	Created time.Time `json:"created"`
-	// State of this task's most recent execution, if any.
-	LastState  *ExecutionState `json:"lastState,omitempty"`
+	// State of this task and its execution(s).
+	Created    time.Time       `json:"created"`
 	Canceled   *time.Time      `json:"canceled,omitempty"`
+	LastState  *ExecutionState `json:"lastState,omitempty"`
 	Executions []string        `json:"executions,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpecV1      `json:"spec"`
+	SpecV1      *TaskSpecV1     `json:"specV1,omitempty"`
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 
 	// Scheduling
