@@ -14,7 +14,13 @@ type Cluster struct {
 
 	Created    time.Time  `json:"created"`
 	Terminated *time.Time `json:"terminated,omitempty"`
-	Validated  *time.Time `json:"validated,omitempty"`
+	Protected  bool       `json:"protected"`
+
+	// Everything after this point is autoscale policy.
+	// TODO allenai/beaker-service#1203: Separate autoscale from Cluster.
+
+	Autoscale bool       `json:"autoscale"`
+	Validated *time.Time `json:"validated,omitempty"`
 
 	StatusMessage string `json:"statusMessage,omitempty"`
 
@@ -26,7 +32,6 @@ type Cluster struct {
 
 	// Requested and actual configuration
 	Preemptible bool           `json:"preemptible"`
-	Protected   bool           `json:"protected"`
 	Status      ClusterStatus  `json:"status"`
 	NodeSpec    NodeResources  `json:"nodeSpec"`
 	NodeShape   *NodeResources `json:"nodeShape,omitempty"`

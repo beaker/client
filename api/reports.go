@@ -28,8 +28,8 @@ type NodeUsageSeries struct {
 	// Whether or not the cluster is preemptible. Included if the data is grouped by preemptible.
 	Preemptible *bool `json:"preemptible,omitempty"`
 
-	// Whether or not the cluster is on-premise. Included if the data is grouped by on-premise.
-	OnPrem *bool `json:"onPrem,omitempty"`
+	// Whether the node's cluster scales automatically. Included if the data is grouped by autoscale.
+	Autoscale *bool `json:"autoscale,omitempty"`
 
 	Totals    UsageInterval   `json:"totals"`
 	Intervals []UsageInterval `json:"intervals"`
@@ -67,8 +67,8 @@ type TaskUsageSeries struct {
 	// Team name is included if the data is grouped by team.
 	Team string `json:"team,omitempty"`
 
-	// Whether or not the cluster is on-premise. Included if the data is grouped by on-premise.
-	OnPrem *bool `json:"onPrem,omitempty"`
+	// Whether the cluster running the task autoscales. Included if the data is grouped by autoscale.
+	Autoscale *bool `json:"autoscale,omitempty"`
 
 	Totals    UsageInterval   `json:"totals"`
 	Intervals []UsageInterval `json:"intervals"`
