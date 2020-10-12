@@ -36,3 +36,14 @@ type SystemMetricSeries struct {
 	Times  []int64   `json:"times"` // Seconds since the Unix epoch.
 	Values []float32 `json:"values"`
 }
+
+type SystemMetricAggregate struct {
+	Task       string                      `json:"task"`
+	Aggregates map[AggregationType]float32 `json:"aggregates"`
+}
+
+type SystemMetricAggregateList struct {
+	Metrics []SystemMetricAggregate `json:"metrics"`
+}
+
+type AggregationType string
