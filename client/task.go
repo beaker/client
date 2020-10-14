@@ -50,30 +50,6 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 	return &task, nil
 }
 
-// SetDescription sets a task's description.
-func (h *TaskHandle) SetDescription(ctx context.Context, description string) error {
-	path := path.Join("/api/v3/tasks", h.id)
-	body := api.TaskPatchSpec{Description: &description}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
-
-// Stop cancels a task. If the task has already completed, this succeeds with no effect.
-func (h *TaskHandle) Stop(ctx context.Context) error {
-	path := path.Join("/api/v3/tasks", h.id)
-	body := api.TaskPatchSpec{Cancel: true}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
-
 // GetLogs gets all logs for a task. Logs are in the form:
 // {RFC3339 nano timestamp} {message}\n
 func (h *TaskHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {

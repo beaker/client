@@ -52,7 +52,4 @@ type TaskPatchSpec struct {
 	// (optional) Description to assign to the task or empty string to delete an
 	// existing description.
 	Description *string `json:"description,omitempty"`
-
-	// (optional) Whether the task should be canceled. Ignored if false.
-	Cancel bool `json:"cancel,omitempty"`
 }
