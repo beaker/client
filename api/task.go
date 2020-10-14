@@ -46,10 +46,3 @@ type TaskLogUploadLink struct {
 	LogChunk    string `json:"logChunk"`
 	URL         string `json:"url"`
 }
-
-// TaskPatchSpec describes a patch to apply to a task's editable fields.
-type TaskPatchSpec struct {
-	// (optional) Description to assign to the task or empty string to delete an
-	// existing description.
-	Description *string `json:"description,omitempty"`
-}
