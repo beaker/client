@@ -22,7 +22,7 @@ type Task struct {
 	Executions []string        `json:"executions,omitempty"`
 
 	// Creation parameters
-	Spec        TaskSpecV1      `json:"spec"`
+	Spec        TaskSpecV2      `json:"spec"`
 	SpecV1      *TaskSpecV1     `json:"specV1,omitempty"`
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 

@@ -55,10 +55,10 @@ type TaskSpecV1 struct {
 	Description string `json:"desc" yaml:"description,omitempty"`
 
 	// (optional) Entrypoint to pass to the task's container.
-	Command []string `json:"command,omitempty" yaml:"command,omitempty"`
+	Command []string `json:"command,omitempty" yaml:"command,omitempty,flow"`
 
 	// (optional) Command-line arguments to pass to the task's container.
-	Arguments []string `json:"arguments,omitempty" yaml:"args,omitempty"`
+	Arguments []string `json:"arguments,omitempty" yaml:"args,omitempty,flow"`
 
 	// (optional) Environment variables to pass into the task's container.
 	Env map[string]string `json:"env" yaml:"env,omitempty"`

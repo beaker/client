@@ -27,7 +27,7 @@ type TaskSpecV2 struct {
 	// ENTRYPOINT and CMD directives are ignored.
 	//
 	// Example: ["python", "-u", "main.py"]
-	Command []string `json:"command,omitempty" yaml:"command,omitempty"`
+	Command []string `json:"command,omitempty" yaml:"command,omitempty,flow"`
 
 	// (optional) Arguments are appended to the Command and replace default
 	// arguments such as Docker's CMD directive. If Command is omitted arguments
@@ -35,7 +35,7 @@ type TaskSpecV2 struct {
 	//
 	// Example: If Command is ["python"], specifying arguments ["-u", "main.py"]
 	// will run the command "python -u main.py".
-	Arguments []string `json:"arguments,omitempty" yaml:"arguments,omitempty"`
+	Arguments []string `json:"arguments,omitempty" yaml:"arguments,omitempty,flow"`
 
 	// (optional) EnvVars are passed into the task as environment variables.
 	EnvVars map[string]string `json:"envVars,omitempty" yaml:"envVars,omitempty"`
@@ -94,13 +94,13 @@ type DataMount struct {
 
 // DataSource describes all supported data sources by type. Exactly one must be defined.
 type DataSource struct {
-	// Name or ID of a Beaker dataset.
+	// Source data from a Beaker dataset by name or ID.
 	Beaker string `json:"beaker,omitempty" yaml:"beaker,omitempty"`
 
-	// Mount data from the executing host. Support depends on the executing environment.
+	// Source data from a host path. Support depends on the executing environment.
 	HostPath string `json:"hostPath,omitempty" yaml:"hostPath,omitempty"`
 
-	// Name of a previous task from which the result will be mounted.
+	// Source date from of a previous task by name.
 	Result string `json:"result,omitempty" yaml:"result,omitempty"`
 }
 
