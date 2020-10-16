@@ -2,14 +2,8 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"net/http"
 	"path"
-	"time"
-
-	retryable "github.com/hashicorp/go-retryablehttp"
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -48,51 +42,4 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 	}
 
 	return &task, nil
-}
-
-// GetLogs gets all logs for a task. Logs are in the form:
-// {RFC3339 nano timestamp} {message}\n
-func (h *TaskHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
-	path := path.Join("/api/v3/tasks", h.id, "logs")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	if err := errorFromResponse(resp); err != nil {
-		safeClose(resp.Body)
-		return nil, err
-	}
-	return resp.Body, nil
-}
-
-// PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
-func (h *TaskHandle) PutLogs(ctx context.Context, logs io.Reader, since time.Time) error {
-	// 0 represents task run. It's safe to ignore this since we can't have more than one run per task.
-	path := fmt.Sprintf("/api/tasks/%s/logs/0/task-%s.log/upload", h.id, since.Format(time.RFC3339Nano))
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-
-	var uploadLink api.TaskLogUploadLink
-	if err := parseResponse(resp, &uploadLink); err != nil {
-		return err
-	}
-
-	req, err := retryable.NewRequest(http.MethodPut, uploadLink.URL, logs)
-	if err != nil {
-		return err
-	}
-
-	resp, err = newRetryableClient(&http.Client{
-		Timeout: 30 * time.Second,
-	}, nil).Do(req.WithContext(ctx))
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode >= 400 {
-		return errors.Errorf("log upload failed with status %d", resp.StatusCode)
-	}
-	return nil
 }

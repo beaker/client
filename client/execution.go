@@ -2,10 +2,13 @@ package client
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"path"
+	"time"
 
 	"github.com/beaker/client/api"
+	retryable "github.com/hashicorp/go-retryablehttp"
 )
 
 // ExecutionHandle provides access to a single execution.
@@ -34,6 +37,36 @@ func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 		return nil, err
 	}
 	return &result, nil
+}
+
+// GetLogs gets all logs for a task. Logs are in the form:
+// {RFC3339 nano timestamp} {message}\n
+func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
+	path := path.Join("/api/v3/executions", h.id, "logs")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	if err := errorFromResponse(resp); err != nil {
+		safeClose(resp.Body)
+		return nil, err
+	}
+	return resp.Body, nil
+}
+
+// PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
+func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.Reader) error {
+	path := path.Join("/api/executions", h.id, "logs", filename)
+	req, err := retryable.NewRequest(http.MethodPut, path, logs)
+	if err != nil {
+		return err
+	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout: 30 * time.Second,
+	}, nil).Do(req.WithContext(ctx))
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
 }
 
 // GetResults retrieves an execution's results.
