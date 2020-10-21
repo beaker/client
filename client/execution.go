@@ -54,7 +54,7 @@ func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
 
 // PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
 func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.Reader) error {
-	path := path.Join("/api/executions", h.id, "logs", filename)
+	path := path.Join("/api/v3/executions", h.id, "logs", filename)
 	resp, err := h.client.sendRequest(ctx, http.MethodPut, path, nil, logs)
 	if err != nil {
 		return err
