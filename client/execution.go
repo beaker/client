@@ -5,10 +5,8 @@ import (
 	"io"
 	"net/http"
 	"path"
-	"time"
 
 	"github.com/beaker/client/api"
-	retryable "github.com/hashicorp/go-retryablehttp"
 )
 
 // ExecutionHandle provides access to a single execution.
@@ -57,14 +55,10 @@ func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
 // PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
 func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.Reader) error {
 	path := path.Join("/api/executions", h.id, "logs", filename)
-	req, err := retryable.NewRequest(http.MethodPut, path, logs)
+	resp, err := h.client.sendRequest(ctx, http.MethodPut, path, nil, logs)
 	if err != nil {
 		return err
 	}
-
-	resp, err := newRetryableClient(&http.Client{
-		Timeout: 30 * time.Second,
-	}, nil).Do(req.WithContext(ctx))
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
 }
