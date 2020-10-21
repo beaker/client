@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"path"
+	"time"
 
 	"github.com/beaker/client/api"
 )
@@ -55,10 +56,15 @@ func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
 // PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
 func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.Reader) error {
 	path := path.Join("/api/v3/executions", h.id, "logs", filename)
-	resp, err := h.client.sendRequest(ctx, http.MethodPut, path, nil, logs)
+	req, err := h.client.newRetryableRequest(http.MethodPut, path, nil, logs)
 	if err != nil {
 		return err
 	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout:       30 * time.Second,
+		CheckRedirect: copyRedirectHeader,
+	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
 }
