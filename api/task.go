@@ -39,10 +39,3 @@ type ResumedFromSpec struct {
 	TaskID       string `json:"taskId,omitempty"`
 	ExperimentID string `json:"experimentId,omitempty"`
 }
-
-type TaskLogUploadLink struct {
-	TaskID      string `json:"taskId"`
-	TaskAttempt string `json:"taskAttempt"`
-	LogChunk    string `json:"logChunk"`
-	URL         string `json:"url"`
-}
