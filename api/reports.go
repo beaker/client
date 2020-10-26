@@ -31,6 +31,12 @@ type NodeUsageSeries struct {
 	// Whether the node's cluster scales automatically. Included if the data is grouped by autoscale.
 	Autoscale *bool `json:"autoscale,omitempty"`
 
+	// Number of GPUs the node has. Included if the data is grouped by GPU count.
+	GPUCount *int `json:"gpuCount,omitempty"`
+
+	// Type of GPU that the node has. Included if the data is grouped by GPU type.
+	GPUType *string `json:"gpuType,omitempty"`
+
 	Totals    UsageInterval   `json:"totals"`
 	Intervals []UsageInterval `json:"intervals"`
 }
@@ -69,6 +75,12 @@ type TaskUsageSeries struct {
 
 	// Whether the cluster running the task autoscales. Included if the data is grouped by autoscale.
 	Autoscale *bool `json:"autoscale,omitempty"`
+
+	// Number of GPUs claimed by the task. Included if the data is grouped by GPU count.
+	GPUCount *int `json:"gpuCount,omitempty"`
+
+	// Type of GPU that the task's node has. Included if the data is grouped by GPU type.
+	GPUType *string `json:"gpuType,omitempty"`
 
 	Totals    UsageInterval   `json:"totals"`
 	Intervals []UsageInterval `json:"intervals"`
