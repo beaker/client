@@ -37,13 +37,22 @@ type SystemMetricSeries struct {
 	Values []float32 `json:"values"`
 }
 
+type SystemMetricAggregateList struct {
+	Metrics []SystemMetricAggregate `json:"metrics"`
+}
+
 type SystemMetricAggregate struct {
 	Task       string                      `json:"task"`
 	Aggregates map[AggregationType]float32 `json:"aggregates"`
 }
 
-type SystemMetricAggregateList struct {
-	Metrics []SystemMetricAggregate `json:"metrics"`
-}
-
 type AggregationType string
+
+const (
+	AggregationTypeMax    AggregationType = "max"
+	AggregationTypeMin    AggregationType = "min"
+	AggregationTypeMean   AggregationType = "mean"
+	AggregationTypeMedian AggregationType = "median"
+	AggregationTypeMode   AggregationType = "mode"
+	AggregationTypeCount  AggregationType = "count"
+)
