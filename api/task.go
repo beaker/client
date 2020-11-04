@@ -16,23 +16,19 @@ type Task struct {
 	Author Identity `json:"author"`
 
 	// State of this task and its execution(s).
-	Created    time.Time       `json:"created"`
-	Canceled   *time.Time      `json:"canceled,omitempty"`
-	LastState  *ExecutionState `json:"lastState,omitempty"`
-	Executions []string        `json:"executions,omitempty"`
+	Created        time.Time   `json:"created"`
+	Canceled       *time.Time  `json:"canceled,omitempty"`
+	FullExecutions []Execution `json:"fullExecutions,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpecV2      `json:"spec"`
 	SpecV1      *TaskSpecV1     `json:"specV1,omitempty"`
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 
-	// Scheduling
-	Cluster string `json:"cluster,omitempty"`
-	Node    string `json:"node,omitempty"`
-
-	// Results
-	ResultID string `json:"resultId"`
-	ExitCode int    `json:"exitCode,omitempty"`
+	// Deprecated
+	Executions []string        `json:"executions,omitempty"`
+	LastState  *ExecutionState `json:"lastState,omitempty"`
+	ResultID   string          `json:"resultId"`
 }
 
 type ResumedFromSpec struct {

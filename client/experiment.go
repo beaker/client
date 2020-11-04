@@ -149,6 +149,22 @@ func (h *ExperimentHandle) Delete(ctx context.Context) error {
 	return errorFromResponse(resp)
 }
 
+// Tasks of the experiment
+func (h *ExperimentHandle) Tasks(ctx context.Context) ([]api.Task, error) {
+	path := path.Join("/api/v3/experiments", h.id, "tasks")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+	var tasks []api.Task
+	if err := parseResponse(resp, &tasks); err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
 func (c *Client) SearchExperiments(
 	ctx context.Context,
 	searchOptions api.ExperimentSearchOptions,
