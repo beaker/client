@@ -16,9 +16,9 @@ type Task struct {
 	Author Identity `json:"author"`
 
 	// State of this task and its execution(s).
-	Created        time.Time   `json:"created"`
-	Canceled       *time.Time  `json:"canceled,omitempty"`
-	FullExecutions []Execution `json:"fullExecutions,omitempty"`
+	Created    time.Time   `json:"created"`
+	Canceled   *time.Time  `json:"canceled,omitempty"`
+	Executions []Execution `json:"executions,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpecV2      `json:"spec"`
@@ -26,9 +26,7 @@ type Task struct {
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
 
 	// Deprecated
-	Executions []string        `json:"executions,omitempty"`
-	LastState  *ExecutionState `json:"lastState,omitempty"`
-	ResultID   string          `json:"resultId"`
+	FullExecutions []Execution `json:"fullExecutions,omitempty"`
 }
 
 type ResumedFromSpec struct {
