@@ -24,9 +24,6 @@ type Task struct {
 	Spec        TaskSpecV2      `json:"spec"`
 	SpecV1      *TaskSpecV1     `json:"specV1,omitempty"`
 	ResumedFrom ResumedFromSpec `json:"resumedFrom"`
-
-	// Deprecated
-	FullExecutions []Execution `json:"fullExecutions,omitempty"`
 }
 
 type ResumedFromSpec struct {
