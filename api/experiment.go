@@ -16,10 +16,11 @@ type Experiment struct {
 	Author    Identity           `json:"author"`
 	Workspace WorkspaceReference `json:"workspaceRef"` // TODO: Rename to "workspace" when clients are updated.
 
-	Description string           `json:"description,omitempty"`
-	Nodes       []ExperimentNode `json:"nodes"`
-	Created     time.Time        `json:"created"`
-	Archived    bool             `json:"archived"`
+	Description string       `json:"description,omitempty"`
+	Executions  []*Execution `json:"executions,omitempty"`
+	Created     time.Time    `json:"created"`
+	Canceled    bool         `json:"canceled,omitempty"`
+	Archived    bool         `json:"archived"`
 }
 
 // DisplayID returns the most human-friendly name available for an experiment
@@ -29,30 +30,6 @@ func (e *Experiment) DisplayID() string {
 		return path.Join(e.Owner.Name, e.Name)
 	}
 	return e.ID
-}
-
-// ExperimentNode describes a task along with its links within an experiment.
-type ExperimentNode struct {
-	Name      string          `json:"name,omitempty"`
-	TaskID    string          `json:"taskId"`
-	ResultID  string          `json:"resultId"`
-	LastState *ExecutionState `json:"lastState,omitempty"`
-	Canceled  *time.Time      `json:"canceled,omitempty"`
-
-	// Identifiers of tasks dependent on this node within the containing experiment.
-	ChildTasks []string `json:"childTaskIds"`
-
-	// Identifiers of task on which this node depends within the containing experiment.
-	ParentTasks []string `json:"parentTaskIds"`
-}
-
-// DisplayID returns the most human-friendly name available for an experiment
-// node while guaranteeing that it's unique within the context of its experiment.
-func (n *ExperimentNode) DisplayID() string {
-	if n.Name != "" {
-		return n.Name
-	}
-	return n.TaskID
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.
