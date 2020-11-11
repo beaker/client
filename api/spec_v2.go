@@ -102,6 +102,9 @@ type DataSource struct {
 
 	// Source date from of a previous task by name.
 	Result string `json:"result,omitempty" yaml:"result,omitempty"`
+
+	// Source data from a cloud service provider like S3/GS or HTTP
+	URL string `json:"uri,omitempty" yaml:"uri,omitempty"`
 }
 
 // ResultSpec describes how to store the output of a task.
