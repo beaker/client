@@ -16,9 +16,9 @@ type Task struct {
 	Author Identity `json:"author"`
 
 	// State of this task and its execution(s).
-	Created    time.Time   `json:"created"`
-	Canceled   *time.Time  `json:"canceled,omitempty"`
-	Executions []Execution `json:"executions,omitempty"`
+	Created     time.Time   `json:"created"`
+	Schedulable bool        `json:"schedulable"`
+	Executions  []Execution `json:"executions,omitempty"`
 
 	// Creation parameters
 	Spec        TaskSpecV2      `json:"spec"`
