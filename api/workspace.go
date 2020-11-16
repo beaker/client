@@ -62,7 +62,8 @@ type WorkspacePage struct {
 
 	// Opaque token to the element after Data, provided only if more data is available.
 	NextCursor string `json:"nextCursor,omitempty"`
-	// (required) Organization on whose behalf this resource is created. The
+
+	// Organization on whose behalf this resource is created. The
 	// user issuing the request must be a member of the organization.
 	Organization string `json:"org"`
 }
@@ -72,4 +73,18 @@ type WorkspacePage struct {
 type WorkspaceReference struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+// Secrets is an ordered collection of secrets.
+type Secrets struct {
+	Data []Secret `json:"data"`
+}
+
+// A Secret describes privileged data stored within a workspace. Secrets can
+// only be accessed by workspace contributors with 'write' or higher permission.
+type Secret struct {
+	Name string `json:"name"`
+
+	Created time.Time `json:"created"`
+	Updated time.Time `json:"updated"`
 }

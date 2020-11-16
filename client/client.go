@@ -225,7 +225,7 @@ func (c *Client) sendRequest(
 		}
 	}
 
-	req, err := c.newRetryableRequest(method, path, query, b)
+	req, err := c.newRequest(method, path, query, b)
 	if err != nil {
 		return nil, err
 	}
@@ -238,37 +238,14 @@ func (c *Client) sendRequest(
 	}, c.HTTPResponseHook).Do(req.WithContext(ctx))
 }
 
-func (c *Client) newRetryableRequest(
-	method string,
-	path string,
-	query url.Values,
-	body interface{},
-) (*retryable.Request, error) {
-	u := c.baseURL.ResolveReference(&url.URL{Path: path, RawQuery: query.Encode()})
-	req, err := retryable.NewRequest(method, u.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	if version != "" {
-		req.Header.Set(api.HeaderVersion, version)
-	}
-	if len(c.userToken) > 0 {
-		req.Header.Set("Authorization", "Bearer "+c.userToken)
-	}
-
-	req.Header.Set("User-Agent", c.userAgent)
-	return req, nil
-}
-
 func (c *Client) newRequest(
 	method string,
 	path string,
 	query url.Values,
 	body io.Reader,
-) (*http.Request, error) {
+) (*retryable.Request, error) {
 	u := c.baseURL.ResolveReference(&url.URL{Path: path, RawQuery: query.Encode()})
-	req, err := http.NewRequest(method, u.String(), body)
+	req, err := retryable.NewRequest(method, u.String(), body)
 	if err != nil {
 		return nil, err
 	}

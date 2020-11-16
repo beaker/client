@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -195,7 +196,7 @@ func (h *WorkspaceHandle) CreateExperiment(
 	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "experiments")
-	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, &buf)
+	req, err := h.client.newRequest(http.MethodPost, path, query, &buf)
 	if err != nil {
 		return nil, err
 	}
@@ -351,6 +352,7 @@ func (h *WorkspaceHandle) Permissions(ctx context.Context) (*api.WorkspacePermis
 		return nil, err
 	}
 	defer safeClose(resp.Body)
+
 	var result api.WorkspacePermissionSummary
 	if err := parseResponse(resp, &result); err != nil {
 		return nil, err
@@ -367,4 +369,91 @@ func (h *WorkspaceHandle) SetPermissions(ctx context.Context, patch api.Workspac
 	}
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
+}
+
+func (h *WorkspaceHandle) ListSecrets(ctx context.Context) ([]api.Secret, error) {
+	path := path.Join("/api/v3/workspaces", h.id, "secrets")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.Secrets
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+
+	return result.Data, nil
+}
+
+func (h *WorkspaceHandle) GetSecret(ctx context.Context, name string) (*api.Secret, error) {
+	path := path.Join("/api/v3/workspaces", h.id, "secrets", name)
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result api.Secret
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (h *WorkspaceHandle) DeleteSecret(ctx context.Context, name string) error {
+	path := path.Join("/api/v3/workspaces", h.id, "secrets", name)
+	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
+
+func (h *WorkspaceHandle) PutSecret(
+	ctx context.Context,
+	name string,
+	value []byte,
+) (*api.Secret, error) {
+	path := path.Join("/api/v3/workspaces", h.id, "secrets", name, "value")
+	req, err := h.client.newRequest(http.MethodPut, path, nil, bytes.NewReader(value))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout:       30 * time.Second,
+		CheckRedirect: copyRedirectHeader,
+	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	defer safeClose(resp.Body)
+
+	var result api.Secret
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (h *WorkspaceHandle) ReadSecret(ctx context.Context, name string) ([]byte, error) {
+	path := path.Join("/api/v3/workspaces", h.id, "secrets", name, "value")
+	req, err := h.client.newRequest(http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout:       30 * time.Second,
+		CheckRedirect: copyRedirectHeader,
+	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	defer safeClose(resp.Body)
+
+	if err := errorFromResponse(resp); err != nil {
+		return nil, err
+	}
+
+	return ioutil.ReadAll(resp.Body)
 }
