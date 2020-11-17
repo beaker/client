@@ -105,6 +105,10 @@ type DataSource struct {
 
 	// Source data from a cloud service provider like S3/GS or HTTP
 	URL string `json:"uri,omitempty" yaml:"uri,omitempty"`
+
+	// Source data from a secret. The secret is mounted as a file.
+	// The secret must be in the same workspace as the experiment using it.
+	Secret string `json:"secret,omitempty" yaml:"secret,omitempty"`
 }
 
 // ResultSpec describes how to store the output of a task.
