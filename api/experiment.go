@@ -66,6 +66,27 @@ type ExperimentPage struct {
 	NextCursor string `json:"nextCursor,omitempty"`
 }
 
+// Task is a full description of a task specification and its status.
+type Task struct {
+	// Identity
+	ID           string `json:"id"`
+	ExperimentID string `json:"experimentId"`
+	Name         string `json:"name,omitempty"`
+
+	// Ownership
+	Owner  Identity `json:"owner"`
+	Author Identity `json:"author"`
+
+	// State of this task and its execution(s).
+	Created     time.Time   `json:"created"`
+	Schedulable bool        `json:"schedulable"`
+	Executions  []Execution `json:"executions,omitempty"`
+
+	// Creation parameters
+	Spec   TaskSpecV2  `json:"spec"`
+	SpecV1 *TaskSpecV1 `json:"specV1,omitempty"`
+}
+
 // Executions is an ordered collection of task executions.
 type Executions struct {
 	Data []Execution `json:"data"`
@@ -151,6 +172,13 @@ type ExecStatusUpdate struct {
 	Limits *TaskResources `json:"limits,omitempty"`
 }
 
+// ExecutionPatchSpec describes a patch to apply to a execution's editable fields.
+type ExecutionPatchSpec struct {
+	// (optional) Priority to assign to the execution.
+	Priority Priority `json:"priority,omitempty"`
+}
+
+// ExecutionResults is the structured content of an execution's output 'metrics.json' file.
 type ExecutionResults struct {
 	Metrics map[string]interface{} `json:"metrics"`
 }

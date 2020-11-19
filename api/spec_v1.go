@@ -1,6 +1,6 @@
 package api
 
-// ExperimentSpec describes a set of tasks with optional dependencies.
+// ExperimentSpecV1 describes a set of tasks with optional dependencies.
 // This set represents a (potentially disconnected) directed acyclic graph.
 type ExperimentSpecV1 struct {
 	// (optional) Version must be 'v1' or left unset.
