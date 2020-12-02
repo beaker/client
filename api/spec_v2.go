@@ -100,11 +100,11 @@ type DataSource struct {
 	// Source data from a host path. Support depends on the executing environment.
 	HostPath string `json:"hostPath,omitempty" yaml:"hostPath,omitempty"`
 
-	// Source date from of a previous task by name.
+	// Source data from of a previous task by name.
 	Result string `json:"result,omitempty" yaml:"result,omitempty"`
 
 	// Source data from a cloud service provider like S3/GS or HTTP
-	URL string `json:"uri,omitempty" yaml:"uri,omitempty"`
+	URL string `json:"url,omitempty" yaml:"url,omitempty"`
 
 	// Source data from a secret. The secret is mounted as a file.
 	// The secret must be in the same workspace as the experiment using it.
