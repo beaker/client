@@ -38,7 +38,7 @@ type TaskSpecV2 struct {
 	Arguments []string `json:"arguments,omitempty" yaml:"arguments,omitempty,flow"`
 
 	// (optional) EnvVars are passed into the task as environment variables.
-	EnvVars map[string]string `json:"envVars,omitempty" yaml:"envVars,omitempty"`
+	EnvVars []EnvironmentVariable `json:"envVars,omitempty" yaml:"envVars,omitempty"`
 
 	// (optional) Datasets are external data sources to mount into the task.
 	Datasets []DataMount `json:"datasets,omitempty" yaml:"datasets,omitempty"`
@@ -69,6 +69,20 @@ type ImageSource struct {
 	// registry. If the image is from a private registry, the building host must
 	// be pre-configured to allow access.
 	Docker string `json:"docker,omitempty" yaml:"docker,omitempty"`
+}
+
+// EnvironmentVariable describes the name and source of an environment variable.
+// Exactly one source (value or secret) must be specified.
+type EnvironmentVariable struct {
+	// (required) Name of the environment variable. Case sensitive.
+	Name string `json:"name" yaml:"name"`
+
+	// (optional) Source the environment variable from a literal value.
+	Value *string `json:"value,omitempty" yaml:"value,omitempty"`
+
+	// (optional) Source the environment variable from a secret.
+	// The secret must be present in the experiment's workspace.
+	Secret string `json:"secret,omitempty" yaml:"secret,omitempty"`
 }
 
 // DataMount describes how a dataset is mounted into a task or environment.
