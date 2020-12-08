@@ -103,26 +103,26 @@ type DataMount struct {
 	SubPath string `json:"subPath,omitempty" yaml:"subPath,omitempty"`
 
 	// (required) Source describes where to find data to mount.
-	Source DataSource `json:",inline" yaml:",inline"`
+	Source DataSource `json:"source" yaml:"source"`
 }
 
 // DataSource describes all supported data sources by type. Exactly one must be defined.
 type DataSource struct {
 	// Source data from a Beaker dataset by name or ID.
-	Beaker string `json:"fromBeaker,omitempty" yaml:"fromBeaker,omitempty"`
+	Beaker string `json:"beaker,omitempty" yaml:"beaker,omitempty"`
 
 	// Source data from a host path. Support depends on the executing environment.
-	HostPath string `json:"fromHost,omitempty" yaml:"fromHost,omitempty"`
+	HostPath string `json:"hostPath,omitempty" yaml:"hostPath,omitempty"`
 
-	// Source data from a previous task by name.
-	Result string `json:"fromTask,omitempty" yaml:"fromTask,omitempty"`
+	// Source data from of a previous task by name.
+	Result string `json:"result,omitempty" yaml:"result,omitempty"`
 
 	// Source data from a cloud service provider like S3/GS or HTTP
-	URL string `json:"fromUrl,omitempty" yaml:"fromUrl,omitempty"`
+	URL string `json:"url,omitempty" yaml:"url,omitempty"`
 
 	// Source data from a secret. The secret is mounted as a file.
 	// The secret must be in the same workspace as the experiment using it.
-	Secret string `json:"fromSecret,omitempty" yaml:"fromSecret,omitempty"`
+	Secret string `json:"secret,omitempty" yaml:"secret,omitempty"`
 }
 
 // ResultSpec describes how to store the output of a task.
