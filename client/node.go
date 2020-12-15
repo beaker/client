@@ -3,9 +3,7 @@ package client
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"path"
-	"time"
 
 	"github.com/beaker/client/api"
 )
@@ -54,12 +52,10 @@ func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeRe
 	return &result, nil
 }
 
-// ExpireIn updates a node's expiry to now + a given duration.
-// The time-to-live must be positive.
-func (h *NodeHandle) ExpireIn(ctx context.Context, ttl time.Duration) error {
-	path := path.Join("/api/v3/nodes", h.id, "expiry")
-	query := url.Values{"ttl": []string{ttl.String()}}
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, query, nil)
+// Delete removes the node (marks it terminated)
+func (h *NodeHandle) Delete(ctx context.Context) error {
+	path := path.Join("/api/v3/nodes", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -67,10 +63,10 @@ func (h *NodeHandle) ExpireIn(ctx context.Context, ttl time.Duration) error {
 	return errorFromResponse(resp)
 }
 
-// Delete removes the node (marks it terminated)
-func (h *NodeHandle) Delete(ctx context.Context) error {
+// Patch updates the fields of a node.
+func (h *NodeHandle) Patch(ctx context.Context, patch *api.NodePatchSpec) error {
 	path := path.Join("/api/v3/nodes", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, patch)
 	if err != nil {
 		return err
 	}

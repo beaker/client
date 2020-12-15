@@ -133,3 +133,21 @@ type NodeSpec struct {
 	Hostname string         `json:"hostname"`
 	Limits   *NodeResources `json:"limits"`
 }
+
+// NodePatchSpec allows a requestor to update a node.
+// Expired nodes cannot be patched.
+type NodePatchSpec struct {
+	// (optional) Set to true to cordon the node or false to uncordon it.
+	Cordoned *bool `json:"cordoned,omitempty"`
+
+	// (optional) Formatted as a Golang duration e.g. "1h".
+	// If included, the node's expiry is set to TTL after the current time.
+	// TTL cannot exceed one week.
+	TTL *string `json:"ttl,omitempty"`
+
+	// (optional) If included, the node's hostname is updated.
+	Hostname *string `json:"hostname,omitempty"`
+
+	// (optional) If included, the node's limits are updated.
+	Limits *NodeResources `json:"limits,omitempty"`
+}
