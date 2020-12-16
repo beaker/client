@@ -119,6 +119,7 @@ type Node struct {
 	ID       string         `json:"id"`
 	Hostname string         `json:"hostname"`
 	Created  time.Time      `json:"created"`
+	Expiry   *time.Time     `json:"expiry,omitempty"`
 	Cordoned *time.Time     `json:"cordoned,omitempty"`
 	Limits   *NodeResources `json:"limits,omitempty"`
 }
