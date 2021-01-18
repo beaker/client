@@ -4,6 +4,19 @@ import (
 	"time"
 )
 
+// Interval specifies the granularity of each interval in a report.
+type Interval string
+
+// Reports can be broken down by these intervals
+const (
+	IntervalHour    Interval = "hour"
+	IntervalDay     Interval = "day"
+	IntervalWeek    Interval = "week"
+	IntervalMonth   Interval = "month"
+	IntervalQuarter Interval = "quarter"
+	IntervalYear    Interval = "year"
+)
+
 // NodeUsageReport contains one series for each combination of values in the group by.
 type NodeUsageReport struct {
 	Totals UsageInterval     `json:"totals"`
