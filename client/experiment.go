@@ -2,10 +2,12 @@ package client
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -102,6 +104,22 @@ func (h *ExperimentHandle) Get(ctx context.Context) (*api.Experiment, error) {
 	return &experiment, nil
 }
 
+// Groups gets the ID of each group that the experiment belongs to.
+func (h *ExperimentHandle) Groups(ctx context.Context) ([]string, error) {
+	path := path.Join("/api/v3/experiments", h.id, "groups")
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var groups []string
+	if err := parseResponse(resp, &groups); err != nil {
+		return nil, err
+	}
+	return groups, nil
+}
+
 // SetName sets an experiment's name.
 func (h *ExperimentHandle) SetName(ctx context.Context, name string) error {
 	path := path.Join("/api/v3/experiments", h.id)
@@ -124,6 +142,34 @@ func (h *ExperimentHandle) SetDescription(ctx context.Context, description strin
 	}
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
+}
+
+// Spec gets the experiment specification.
+// Default format is YAML. JSON is available by setting json=true.
+func (h *ExperimentHandle) Spec(ctx context.Context, version string, json bool) (io.ReadCloser, error) {
+	path := path.Join("/api/v3/experiments", h.id, "spec")
+	req, err := h.client.newRequest("GET", path, url.Values{
+		"version": []string{version},
+	}, nil)
+	if err != nil {
+		return nil, err
+	}
+	if json {
+		req.Header.Set("Accept", "application/json")
+	}
+
+	resp, err := newRetryableClient(&http.Client{
+		Timeout:       30 * time.Second,
+		CheckRedirect: copyRedirectHeader,
+	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+	if err := errorFromResponse(resp); err != nil {
+		resp.Body.Close()
+		return nil, err
+	}
+	return resp.Body, nil
 }
 
 // Stop cancels all uncompleted tasks for an experiment. If the experiment has

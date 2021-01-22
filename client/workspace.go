@@ -41,6 +41,7 @@ func (c *Client) CreateWorkspace(
 type ListWorkspaceOptions struct {
 	Archived *bool
 	Cursor   string
+	Text     string
 }
 
 func (c *Client) ListWorkspaces(
@@ -57,6 +58,9 @@ func (c *Client) ListWorkspaces(
 	query.Add("cursor", opts.Cursor)
 	if opts.Archived != nil {
 		query.Add("archived", strconv.FormatBool(*opts.Archived))
+	}
+	if opts.Text != "" {
+		query.Add("q", opts.Text)
 	}
 
 	resp, err := c.sendRequest(ctx, http.MethodGet, "/api/v3/workspaces", query, nil)
@@ -131,6 +135,7 @@ type ListDatasetOptions struct {
 	Archived      *bool
 	ResultsOnly   *bool
 	CommittedOnly *bool
+	Text          string
 }
 
 func (h *WorkspaceHandle) Datasets(
@@ -151,6 +156,9 @@ func (h *WorkspaceHandle) Datasets(
 	}
 	if opts.CommittedOnly != nil {
 		query.Add("committed", strconv.FormatBool(*opts.CommittedOnly))
+	}
+	if opts.Text != "" {
+		query.Add("q", opts.Text)
 	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "datasets")
@@ -223,6 +231,7 @@ func (h *WorkspaceHandle) CreateExperiment(
 type ListExperimentOptions struct {
 	Cursor   string
 	Archived *bool
+	Text     string
 }
 
 func (h *WorkspaceHandle) Experiments(
@@ -237,6 +246,9 @@ func (h *WorkspaceHandle) Experiments(
 	query.Add("cursor", opts.Cursor)
 	if opts.Archived != nil {
 		query.Add("archived", strconv.FormatBool(*opts.Archived))
+	}
+	if opts.Text != "" {
+		query.Add("q", opts.Text)
 	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "experiments")
@@ -257,6 +269,7 @@ func (h *WorkspaceHandle) Experiments(
 type ListGroupOptions struct {
 	Cursor   string
 	Archived *bool
+	Text     string
 }
 
 func (h *WorkspaceHandle) Groups(
@@ -271,6 +284,9 @@ func (h *WorkspaceHandle) Groups(
 	query.Add("cursor", opts.Cursor)
 	if opts.Archived != nil {
 		query.Add("archived", strconv.FormatBool(*opts.Archived))
+	}
+	if opts.Text != "" {
+		query.Add("q", opts.Text)
 	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "groups")
@@ -290,6 +306,7 @@ func (h *WorkspaceHandle) Groups(
 
 type ListImageOptions struct {
 	Cursor string
+	Text   string
 }
 
 func (h *WorkspaceHandle) Images(
@@ -302,6 +319,9 @@ func (h *WorkspaceHandle) Images(
 
 	query := url.Values{}
 	query.Add("cursor", opts.Cursor)
+	if opts.Text != "" {
+		query.Add("q", opts.Text)
+	}
 
 	path := path.Join("/api/v3/workspaces", h.id, "images")
 	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, query, nil)
