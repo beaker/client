@@ -3,10 +3,30 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/beaker/client/api"
 )
+
+// ListOrganizations gets all organizations.
+func (c *Client) ListOrganizations(
+	ctx context.Context,
+	cursor string,
+) ([]api.Organization, string, error) {
+	query := url.Values{}
+	query.Add("cursor", cursor)
+	resp, err := c.sendRequest(ctx, http.MethodGet, "/api/v3/admin/orgs", query, nil)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var result api.OrganizationPage
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, "", err
+	}
+	return result.Data, result.NextCursor, nil
+}
 
 // ListMyOrgs lists all orgs in which the caller is a member. The caller's
 // account is inferred from the client's auth token.
@@ -30,6 +50,24 @@ func (c *Client) ListMyOrgs(ctx context.Context) ([]api.Organization, error) {
 type OrgHandle struct {
 	client *Client
 	ref    string
+}
+
+// CreateOrganization creates a new organization.
+func (c *Client) CreateOrganization(
+	ctx context.Context,
+	spec api.OrganizationSpec,
+) (*OrgHandle, error) {
+	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/admin/orgs", nil, spec)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var org api.Organization
+	if err := parseResponse(resp, &org); err != nil {
+		return nil, err
+	}
+	return c.Organization(org.ID), nil
 }
 
 // Organization gets a handle for an organization by name or ID. The returned
@@ -62,7 +100,9 @@ func (h *OrgHandle) ListMembers(
 	cursor string,
 ) (users []api.UserDetail, next string, err error) {
 	path := path.Join("/api/v3/orgs", h.ref, "members")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	query := url.Values{}
+	query.Add("cursor", cursor)
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
 	}

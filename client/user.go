@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/beaker/client/api"
@@ -57,4 +58,23 @@ func (h *UserHandle) Get(ctx context.Context) (*api.UserDetail, error) {
 		return nil, err
 	}
 	return &body, nil
+}
+
+// ListUsers gets all users.
+func (c *Client) ListUsers(
+	ctx context.Context,
+	cursor string,
+) ([]api.UserDetail, string, error) {
+	query := url.Values{}
+	query.Add("cursor", cursor)
+	resp, err := c.sendRequest(ctx, http.MethodGet, "/api/v3/admin/users", query, nil)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var result api.UserPage
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, "", err
+	}
+	return result.Data, result.NextCursor, nil
 }

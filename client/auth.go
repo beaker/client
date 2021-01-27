@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"path"
 
@@ -27,4 +28,29 @@ func (c *Client) WhoAmI(ctx context.Context) (*api.UserDetail, error) {
 	}
 
 	return &user, nil
+}
+
+// GenerateToken creates a new token for authentication.
+func (c *Client) GenerateToken(ctx context.Context) (string, error) {
+	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/auth/tokens", nil, nil)
+	if err != nil {
+		return "", err
+	}
+	defer safeClose(resp.Body)
+
+	if err := errorFromResponse(resp); err != nil {
+		return "", err
+	}
+
+	var token string
+	for _, cookie := range resp.Cookies() {
+		if cookie.Name != "User-Token" {
+			continue
+		}
+		token = cookie.Value
+	}
+	if token == "" {
+		return "", fmt.Errorf("token not found in response")
+	}
+	return token, nil
 }

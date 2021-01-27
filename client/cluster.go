@@ -226,3 +226,22 @@ func (h *ClusterHandle) ListExecutions(
 	}
 	return result.Data, nil
 }
+
+// PatchExecution updates an execution within the cluster.
+func (h *ClusterHandle) PatchExecution(
+	ctx context.Context,
+	execution string,
+	spec api.ExecutionPatchSpec,
+) error {
+	if err := validateRef(h.name, 2); err != nil {
+		return err
+	}
+
+	path := path.Join("/api/v3/clusters", h.name, "executions", execution)
+	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, spec)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}

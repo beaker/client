@@ -20,6 +20,23 @@ func (c *Client) Node(id string) *NodeHandle {
 	return &NodeHandle{client: c, id: id}
 }
 
+// Get information about a node.
+func (h *NodeHandle) Get(ctx context.Context) (*api.Node, error) {
+	path := path.Join("/api/v3/nodes", h.id)
+	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var node api.Node
+	if err := parseResponse(resp, &node); err != nil {
+		return nil, err
+	}
+
+	return &node, nil
+}
+
 // ListExecutions retrieves all executions that are assigned to the node.
 func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error) {
 	path := path.Join("/api/v3/nodes", h.id, "executions")
