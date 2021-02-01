@@ -85,8 +85,8 @@ type ClusterSpec struct {
 	Protected bool `json:"protected,omitempty"`
 
 	// Spec describes characteristics of each node within the cluster.
-	// Default values will be set by internal policy.
-	Spec NodeResources `json:"spec"`
+	// If omitted, the cluster will not autoscale.
+	Spec *NodeResources `json:"spec"`
 }
 
 // ClusterStatus describes where a cluster is in its lifecycle.
