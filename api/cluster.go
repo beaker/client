@@ -3,6 +3,7 @@ package api
 import (
 	"time"
 
+	"github.com/allenai/bytefmt"
 	"github.com/shopspring/decimal"
 )
 
@@ -108,10 +109,10 @@ const (
 
 // NodeResources describe a node's available resources.
 type NodeResources struct {
-	CPUCount float64 `json:"cpuCount,omitempty"`
-	GPUCount int     `json:"gpuCount,omitempty"`
-	GPUType  string  `json:"gpuType,omitempty"`
-	Memory   string  `json:"memory,omitempty"`
+	CPUCount float64       `json:"cpuCount,omitempty"`
+	GPUCount int           `json:"gpuCount,omitempty"`
+	GPUType  string        `json:"gpuType,omitempty"`
+	Memory   *bytefmt.Size `json:"memory,omitempty"`
 }
 
 // A Node is a single machine within a cluster

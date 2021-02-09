@@ -1,5 +1,7 @@
 package api
 
+import "github.com/allenai/bytefmt"
+
 // ExperimentSpecV2 describes a collection of processes to run.
 type ExperimentSpecV2 struct {
 	// (required) Version must be 'v2-alpha'
@@ -141,16 +143,14 @@ type TaskResources struct {
 	// (optional) GPUCount sets a mimimum number of GPU cores and must be a non-negative integer.
 	GPUCount int `json:"gpuCount,omitempty" yaml:"gpuCount,omitempty"`
 
-	// (optional) Memory sets a limit for CPU memory as a number with unit suffix.
-	// Memory must be equivalent to MemoryBytes if both are set.
+	// (optional) Memory sets a limit for CPU memory, which may be a raw number
+	// of bytes or a formatted string with a number followed by a unit suffix.
 	//
-	// Examples: 2.5GiB, 10240m
-	Memory string `json:"memory,omitempty" yaml:"memory,omitempty"`
+	// Examples: "2.5 GiB", 2684354560
+	Memory *bytefmt.Size `json:"memory,omitempty" yaml:"memory,omitempty"`
 
-	// (optional) MemoryBytes sets a limit for CPU memory as an exact byte count.
-	// MemoryBytes must be equivalent to Memory if both are set.
-	//
-	// Examples: 1073741824
+	// (deprecated) Use Memory.
+	// TODO: Remove this before resolving allenai/beaker-service#1106
 	MemoryBytes int64 `json:"memoryBytes,omitempty" yaml:"memoryBytes,omitempty"`
 }
 
