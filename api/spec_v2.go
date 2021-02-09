@@ -148,10 +148,6 @@ type TaskResources struct {
 	//
 	// Examples: "2.5 GiB", 2684354560
 	Memory *bytefmt.Size `json:"memory,omitempty" yaml:"memory,omitempty"`
-
-	// (deprecated) Use Memory.
-	// TODO: Remove this before resolving allenai/beaker-service#1106
-	MemoryBytes int64 `json:"memoryBytes,omitempty" yaml:"memoryBytes,omitempty"`
 }
 
 // A Context describes how and where to run tasks.
