@@ -33,7 +33,7 @@ func (c *Client) CreateDataset(
 		query.Set("name", name)
 	}
 
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/datasets", query, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/datasets", query, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *Client) Dataset(ctx context.Context, reference string) (*DatasetHandle,
 		return nil, err
 	}
 
-	resp, err := c.sendRequest(ctx, http.MethodGet, path.Join("/api/v3/datasets", canonicalRef), nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path.Join("/api/v3/datasets", canonicalRef), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (h *DatasetHandle) ID() string {
 // Get retrieves a dataset's details.
 func (h *DatasetHandle) Get(ctx context.Context) (*api.Dataset, error) {
 	uri := path.Join("/api/v3/datasets", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, uri, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (h *DatasetHandle) Files(ctx context.Context, path string) (FileIterator, e
 func (h *DatasetHandle) SetName(ctx context.Context, name string) error {
 	path := path.Join("/api/v3/datasets", h.id)
 	body := api.DatasetPatchSpec{Name: &name}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func (h *DatasetHandle) SetName(ctx context.Context, name string) error {
 func (h *DatasetHandle) SetDescription(ctx context.Context, description string) error {
 	path := path.Join("/api/v3/datasets", h.id)
 	body := api.DatasetPatchSpec{Description: &description}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func (h *DatasetHandle) SetDescription(ctx context.Context, description string) 
 func (h *DatasetHandle) Commit(ctx context.Context) error {
 	path := path.Join("/api/v3/datasets", h.id)
 	body := api.DatasetPatchSpec{Commit: true}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ func (h *DatasetHandle) Commit(ctx context.Context) error {
 // Delete a dataset. Note that this action is not reversible.
 func (h *DatasetHandle) Delete(ctx context.Context) error {
 	path := path.Join("/api/v3/datasets", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func (c *Client) SearchDatasets(
 	page int,
 ) ([]api.Dataset, error) {
 	query := url.Values{"page": {strconv.Itoa(page)}}
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/datasets/search", query, searchOptions)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/datasets/search", query, searchOptions)
 	if err != nil {
 		return nil, err
 	}

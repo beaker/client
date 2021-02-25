@@ -27,7 +27,7 @@ func (c *Client) CreateCluster(
 	}
 
 	path := path.Join("/api/v3/clusters", account)
-	resp, err := c.sendRequest(ctx, http.MethodPost, path, nil, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, path, nil, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (c *Client) ListClusters(
 	if opts.Terminated != nil {
 		query.Add("terminated", strconv.FormatBool(*opts.Terminated))
 	}
-	resp, err := c.sendRequest(ctx, http.MethodGet, path, query, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
 	}
@@ -101,7 +101,7 @@ func (h *ClusterHandle) Get(ctx context.Context) (*api.Cluster, error) {
 	}
 
 	path := path.Join("/api/v3/clusters", h.name)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*ap
 	}
 
 	path := path.Join("/api/v3/clusters", h.name)
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, patch)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, patch)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (h *ClusterHandle) Terminate(ctx context.Context) error {
 	}
 
 	path := path.Join("/api/v3/clusters", h.name)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -159,7 +159,7 @@ func (h *ClusterHandle) CreateNode(ctx context.Context, spec api.NodeSpec) (*api
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "nodes")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, spec)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +179,7 @@ func (h *ClusterHandle) ListClusterNodes(ctx context.Context) ([]api.Node, error
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "nodes")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +214,7 @@ func (h *ClusterHandle) ListExecutions(
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "executions")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func (h *ClusterHandle) PatchExecution(
 	}
 
 	path := path.Join("/api/v3/clusters", h.name, "executions", execution)
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, spec)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, spec)
 	if err != nil {
 		return err
 	}

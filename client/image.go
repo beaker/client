@@ -29,7 +29,7 @@ func (c *Client) CreateImage(
 		query.Set("name", name)
 	}
 
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/images", query, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/images", query, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (h *ImageHandle) ID() string {
 // Get retrieves an image's details.
 func (h *ImageHandle) Get(ctx context.Context) (*api.Image, error) {
 	uri := path.Join("/api/v3/images", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, uri, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (h *ImageHandle) Repository(
 ) (*api.ImageRepository, error) {
 	path := path.Join("/api/v3/images", h.id, "repository")
 	query := url.Values{"upload": {strconv.FormatBool(upload)}}
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, query, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (h *ImageHandle) Repository(
 func (h *ImageHandle) SetName(ctx context.Context, name string) error {
 	path := path.Join("/api/v3/images", h.id)
 	body := api.ImagePatchSpec{Name: &name}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func (h *ImageHandle) SetName(ctx context.Context, name string) error {
 func (h *ImageHandle) SetDescription(ctx context.Context, description string) error {
 	path := path.Join("/api/v3/images", h.id)
 	body := api.ImagePatchSpec{Description: &description}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -125,7 +125,7 @@ func (h *ImageHandle) SetDescription(ctx context.Context, description string) er
 func (h *ImageHandle) Commit(ctx context.Context) error {
 	path := path.Join("/api/v3/images", h.id)
 	body := api.ImagePatchSpec{Commit: true}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -136,7 +136,7 @@ func (h *ImageHandle) Commit(ctx context.Context) error {
 // Delete an image. Note that this action is not reversible.
 func (h *ImageHandle) Delete(ctx context.Context) error {
 	path := path.Join("/api/v3/images", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func (c *Client) SearchImages(
 	page int,
 ) ([]api.Image, error) {
 	query := url.Values{"page": {strconv.Itoa(page)}}
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/images/search", query, searchOptions)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/images/search", query, searchOptions)
 	if err != nil {
 		return nil, err
 	}

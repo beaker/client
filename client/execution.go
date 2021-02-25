@@ -25,7 +25,7 @@ func (c *Client) Execution(id string) *ExecutionHandle {
 // Get retrieves an execution's details.
 func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 	path := path.Join("/api/v3/executions", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 // {RFC3339 nano timestamp} {message}\n
 func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
 	path := path.Join("/api/v3/executions", h.id, "logs")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -61,10 +61,14 @@ func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.
 		return err
 	}
 
-	resp, err := newRetryableClient(&http.Client{
+	client := &http.Client{
 		Timeout:       30 * time.Second,
 		CheckRedirect: copyRedirectHeader,
-	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	}
+	resp, err := client.Do(req.WithContext(ctx))
+	if err != nil {
+		return err
+	}
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
 }
@@ -72,7 +76,7 @@ func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.
 // GetResults retrieves an execution's results.
 func (h *ExecutionHandle) GetResults(ctx context.Context) (*api.ExecutionResults, error) {
 	path := path.Join("/api/v3/executions", h.id, "results")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +93,7 @@ func (h *ExecutionHandle) GetResults(ctx context.Context) (*api.ExecutionResults
 // PostStatus updates an execution's current status.
 func (h *ExecutionHandle) PostStatus(ctx context.Context, status api.ExecStatusUpdate) error {
 	path := path.Join("/api/v3/executions", h.id, "status")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, status)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, status)
 	if err != nil {
 		return err
 	}

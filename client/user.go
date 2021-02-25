@@ -25,7 +25,7 @@ func (c *Client) User(ctx context.Context, reference string) (*UserHandle, error
 	}
 
 	path := path.Join("/api/v3/users", reference)
-	resp, err := c.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (h *UserHandle) ID() string {
 // Get retrieves a user's details.
 func (h *UserHandle) Get(ctx context.Context) (*api.UserDetail, error) {
 	uri := path.Join("/api/v3/users", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, uri, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c *Client) ListUsers(
 ) ([]api.UserDetail, string, error) {
 	query := url.Values{}
 	query.Add("cursor", cursor)
-	resp, err := c.sendRequest(ctx, http.MethodGet, "/api/v3/admin/users", query, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, "/api/v3/admin/users", query, nil)
 	if err != nil {
 		return nil, "", err
 	}

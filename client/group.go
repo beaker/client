@@ -18,7 +18,7 @@ type GroupHandle struct {
 
 // CreateGroup creates a new group with an optional name.
 func (c *Client) CreateGroup(ctx context.Context, spec api.GroupSpec) (*GroupHandle, error) {
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/groups", nil, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/groups", nil, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (h *GroupHandle) ID() string {
 // Get retrieves a group's details.
 func (h *GroupHandle) Get(ctx context.Context) (*api.Group, error) {
 	path := path.Join("/api/v3/groups", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (h *GroupHandle) Get(ctx context.Context) (*api.Group, error) {
 func (h *GroupHandle) SetName(ctx context.Context, name string) error {
 	path := path.Join("/api/v3/groups", h.id)
 	body := api.GroupPatchSpec{Name: &name}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (h *GroupHandle) SetName(ctx context.Context, name string) error {
 func (h *GroupHandle) SetDescription(ctx context.Context, description string) error {
 	path := path.Join("/api/v3/groups", h.id)
 	body := api.GroupPatchSpec{Description: &description}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (h *GroupHandle) SetDescription(ctx context.Context, description string) er
 // Experiments returns the IDs of all experiments within a group.
 func (h *GroupHandle) Experiments(ctx context.Context) ([]string, error) {
 	path := path.Join("/api/v3/groups", h.id, "experiments")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (h *GroupHandle) AddExperiments(ctx context.Context, experiments []string) 
 
 	path := path.Join("/api/v3/groups", h.id)
 	body := api.GroupPatchSpec{AddExperiments: experiments}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func (h *GroupHandle) RemoveExperiments(ctx context.Context, experiments []strin
 
 	path := path.Join("/api/v3/groups", h.id)
 	body := api.GroupPatchSpec{RemoveExperiments: experiments}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func (h *GroupHandle) RemoveExperiments(ctx context.Context, experiments []strin
 // Delete removes a group and its contents.
 func (h *GroupHandle) Delete(ctx context.Context) error {
 	path := path.Join("/api/v3/groups", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}

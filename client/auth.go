@@ -12,7 +12,7 @@ import (
 // WhoAmI returns a client's active user.
 func (c *Client) WhoAmI(ctx context.Context) (*api.UserDetail, error) {
 	uri := path.Join("/api/v3/user")
-	resp, err := c.sendRequest(ctx, http.MethodGet, uri, nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (c *Client) WhoAmI(ctx context.Context) (*api.UserDetail, error) {
 
 // GenerateToken creates a new token for authentication.
 func (c *Client) GenerateToken(ctx context.Context) (string, error) {
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/auth/tokens", nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/auth/tokens", nil, nil)
 	if err != nil {
 		return "", err
 	}

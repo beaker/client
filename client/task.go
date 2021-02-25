@@ -30,7 +30,7 @@ func (h *TaskHandle) ID() string {
 // Get retrieves a task's details.
 func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 	path := path.Join("/api/v3/tasks", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 // Preempt stops the execution of a task and queues it to run again.
 func (h *TaskHandle) Preempt(ctx context.Context) error {
 	path := path.Join("/api/v3/tasks", h.id, "preempt")
-	resp, err := h.client.sendRequest(ctx, http.MethodPost, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
 		return err
 	}

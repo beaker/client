@@ -167,7 +167,7 @@ func (c *Client) resolveRef(
 		return "", err
 	}
 
-	resp, err := c.sendRequest(ctx, http.MethodGet, path.Join(basePath, canonicalRef), nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path.Join(basePath, canonicalRef), nil, nil)
 	if err != nil {
 		return "", err
 	}
@@ -211,7 +211,7 @@ func (c *Client) canonicalizeRef(ctx context.Context, reference string) (string,
 	return path.Join(userPart, namePart), nil
 }
 
-func (c *Client) sendRequest(
+func (c *Client) sendRetryableRequest(
 	ctx context.Context,
 	method string,
 	path string,
@@ -225,7 +225,7 @@ func (c *Client) sendRequest(
 		}
 	}
 
-	req, err := c.newRequest(method, path, query, b)
+	req, err := c.newRetryableRequest(method, path, query, b)
 	if err != nil {
 		return nil, err
 	}
@@ -239,6 +239,29 @@ func (c *Client) sendRequest(
 }
 
 func (c *Client) newRequest(
+	method string,
+	path string,
+	query url.Values,
+	body io.Reader,
+) (*http.Request, error) {
+	u := c.baseURL.ResolveReference(&url.URL{Path: path, RawQuery: query.Encode()})
+	req, err := http.NewRequest(method, u.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	if version != "" {
+		req.Header.Set(api.HeaderVersion, version)
+	}
+	if len(c.userToken) > 0 {
+		req.Header.Set("Authorization", "Bearer "+c.userToken)
+	}
+
+	req.Header.Set("User-Agent", c.userAgent)
+	return req, nil
+}
+
+func (c *Client) newRetryableRequest(
 	method string,
 	path string,
 	query url.Values,

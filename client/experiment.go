@@ -28,7 +28,7 @@ func (c *Client) CreateExperiment(
 	priority string,
 ) (*ExperimentHandle, error) {
 	query := url.Values{"name": {name}, "priority": {priority}}
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/experiments", query, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/experiments", query, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *Client) ResumeExperiment(
 		return nil, errors.WithMessage(err, "could not resolve experiment reference "+resumeFromReference)
 	}
 	query := url.Values{"name": {experimentName}}
-	resp, err := c.sendRequest(ctx, http.MethodPost, path.Join("/api/v3/experiments", id, "/resume"), query, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, path.Join("/api/v3/experiments", id, "/resume"), query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (h *ExperimentHandle) ID() string {
 // Get retrieves an experiment's details, including a summary of contained tasks.
 func (h *ExperimentHandle) Get(ctx context.Context) (*api.Experiment, error) {
 	path := path.Join("/api/v3/experiments", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (h *ExperimentHandle) Get(ctx context.Context) (*api.Experiment, error) {
 // Groups gets the ID of each group that the experiment belongs to.
 func (h *ExperimentHandle) Groups(ctx context.Context) ([]string, error) {
 	path := path.Join("/api/v3/experiments", h.id, "groups")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func (h *ExperimentHandle) Groups(ctx context.Context) ([]string, error) {
 func (h *ExperimentHandle) SetName(ctx context.Context, name string) error {
 	path := path.Join("/api/v3/experiments", h.id)
 	body := api.ExperimentPatchSpec{Name: &name}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -136,7 +136,7 @@ func (h *ExperimentHandle) SetName(ctx context.Context, name string) error {
 func (h *ExperimentHandle) SetDescription(ctx context.Context, description string) error {
 	path := path.Join("/api/v3/experiments", h.id)
 	body := api.ExperimentPatchSpec{Description: &description}
-	resp, err := h.client.sendRequest(ctx, http.MethodPatch, path, nil, body)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func (h *ExperimentHandle) SetDescription(ctx context.Context, description strin
 // Default format is YAML. JSON is available by setting json=true.
 func (h *ExperimentHandle) Spec(ctx context.Context, version string, json bool) (io.ReadCloser, error) {
 	path := path.Join("/api/v3/experiments", h.id, "spec")
-	req, err := h.client.newRequest("GET", path, url.Values{
+	req, err := h.client.newRetryableRequest("GET", path, url.Values{
 		"version": []string{version},
 	}, nil)
 	if err != nil {
@@ -176,7 +176,7 @@ func (h *ExperimentHandle) Spec(ctx context.Context, version string, json bool) 
 // already completed, this succeeds without effect.
 func (h *ExperimentHandle) Stop(ctx context.Context) error {
 	path := path.Join("/api/v3/experiments", h.id, "stop")
-	resp, err := h.client.sendRequest(ctx, http.MethodPut, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPut, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func (h *ExperimentHandle) Stop(ctx context.Context) error {
 // Delete an experiment. This action is not reversible.
 func (h *ExperimentHandle) Delete(ctx context.Context) error {
 	path := path.Join("/api/v3/experiments", h.id)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -198,7 +198,7 @@ func (h *ExperimentHandle) Delete(ctx context.Context) error {
 // Tasks of the experiment
 func (h *ExperimentHandle) Tasks(ctx context.Context) ([]api.Task, error) {
 	path := path.Join("/api/v3/experiments", h.id, "tasks")
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (c *Client) SearchExperiments(
 	page int,
 ) ([]api.Experiment, error) {
 	query := url.Values{"page": {strconv.Itoa(page)}}
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/experiments/search", query, searchOptions)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/experiments/search", query, searchOptions)
 	if err != nil {
 		return nil, err
 	}

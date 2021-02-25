@@ -16,7 +16,7 @@ func (c *Client) ListOrganizations(
 ) ([]api.Organization, string, error) {
 	query := url.Values{}
 	query.Add("cursor", cursor)
-	resp, err := c.sendRequest(ctx, http.MethodGet, "/api/v3/admin/orgs", query, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, "/api/v3/admin/orgs", query, nil)
 	if err != nil {
 		return nil, "", err
 	}
@@ -31,7 +31,7 @@ func (c *Client) ListOrganizations(
 // ListMyOrgs lists all orgs in which the caller is a member. The caller's
 // account is inferred from the client's auth token.
 func (c *Client) ListMyOrgs(ctx context.Context) ([]api.Organization, error) {
-	resp, err := c.sendRequest(ctx, http.MethodGet, path.Join("/api/v3/user/orgs"), nil, nil)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path.Join("/api/v3/user/orgs"), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *Client) CreateOrganization(
 	ctx context.Context,
 	spec api.OrganizationSpec,
 ) (*OrgHandle, error) {
-	resp, err := c.sendRequest(ctx, http.MethodPost, "/api/v3/admin/orgs", nil, spec)
+	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/admin/orgs", nil, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (c *Client) Organization(reference string) *OrgHandle {
 // Get retrieves an organization's details.
 func (h *OrgHandle) Get(ctx context.Context) (*api.Organization, error) {
 	path := path.Join("/api/v3/orgs", h.ref)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (h *OrgHandle) ListMembers(
 	path := path.Join("/api/v3/orgs", h.ref, "members")
 	query := url.Values{}
 	query.Add("cursor", cursor)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, query, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
 	}
@@ -119,7 +119,7 @@ func (h *OrgHandle) ListMembers(
 // GetMember returns details about a specific membership, if it exists.
 func (h *OrgHandle) GetMember(ctx context.Context, account string) (*api.OrgMembership, error) {
 	path := path.Join("/api/v3/orgs", h.ref, "members", account)
-	resp, err := h.client.sendRequest(ctx, http.MethodGet, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func (h *OrgHandle) GetMember(ctx context.Context, account string) (*api.OrgMemb
 // Role must be "admin" or "member".
 func (h *OrgHandle) SetMember(ctx context.Context, account string, role string) error {
 	path := path.Join("/api/v3/orgs", h.ref, "members", account)
-	resp, err := h.client.sendRequest(ctx, http.MethodPut, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPut, path, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func (h *OrgHandle) SetMember(ctx context.Context, account string, role string) 
 // RemoveMember removes the given account from the org.
 func (h *OrgHandle) RemoveMember(ctx context.Context, account string) error {
 	path := path.Join("/api/v3/orgs", h.ref, "members", account)
-	resp, err := h.client.sendRequest(ctx, http.MethodDelete, path, nil, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
 	}
