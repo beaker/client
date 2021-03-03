@@ -83,8 +83,7 @@ type Task struct {
 	Executions  []Execution `json:"executions,omitempty"`
 
 	// Creation parameters
-	Spec   TaskSpecV2  `json:"spec"`
-	SpecV1 *TaskSpecV1 `json:"specV1,omitempty"`
+	Spec TaskSpecV2 `json:"spec"`
 }
 
 // Executions is an ordered collection of task executions.
