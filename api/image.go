@@ -1,15 +1,15 @@
 package api
 
 import (
-	"path"
 	"time"
 )
 
 // Image describes the Docker image ran by a Task while executing an Experiment.
 type Image struct {
 	// Identity
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty"`
+	ID       string `json:"id"`
+	Name     string `json:"name,omitempty"`
+	FullName string `json:"fullName,omitempty"`
 
 	// Ownership
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
@@ -25,15 +25,6 @@ type Image struct {
 
 	// A plain-text description of this image.
 	Description string `json:"description,omitempty"`
-}
-
-// DisplayID returns the most human-friendly name available for an image
-// while guaranteeing that it's unique and non-empty.
-func (b *Image) DisplayID() string {
-	if b.Name != "" {
-		return path.Join(b.Owner.Name, b.Name)
-	}
-	return b.ID
 }
 
 // ImageSpec is a specification for creating a new Image.

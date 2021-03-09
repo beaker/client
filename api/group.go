@@ -1,7 +1,6 @@
 package api
 
 import (
-	"path"
 	"time"
 )
 
@@ -33,8 +32,9 @@ type GroupSpec struct {
 // Group is a collection of experiments.
 type Group struct {
 	// Identity
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty"`
+	ID       string `json:"id"`
+	Name     string `json:"name,omitempty"`
+	FullName string `json:"fullName,omitempty"`
 
 	// Ownership
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
@@ -45,15 +45,6 @@ type Group struct {
 	Created     time.Time `json:"created"`
 	Modified    time.Time `json:"modified"`
 	Archived    bool      `json:"archived"`
-}
-
-// DisplayID returns the most human-friendly name available for a group
-// while guaranteeing that it's unique and non-empty.
-func (e *Group) DisplayID() string {
-	if e.Name != "" {
-		return path.Join(e.Owner.Name, e.Name)
-	}
-	return e.ID
 }
 
 // GroupExperimentTask identifies an (experiment, task) pair within a group.

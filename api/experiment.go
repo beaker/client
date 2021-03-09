@@ -1,15 +1,15 @@
 package api
 
 import (
-	"path"
 	"time"
 )
 
 // Experiment describes an experiment and its tasks.
 type Experiment struct {
 	// Identity
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty"`
+	ID       string `json:"id"`
+	Name     string `json:"name,omitempty"`
+	FullName string `json:"fullName,omitempty"`
 
 	// Ownership
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
@@ -21,15 +21,6 @@ type Experiment struct {
 	Created     time.Time    `json:"created"`
 	Canceled    bool         `json:"canceled,omitempty"`
 	Archived    bool         `json:"archived"`
-}
-
-// DisplayID returns the most human-friendly name available for an experiment
-// while guaranteeing that it's unique and non-empty.
-func (e *Experiment) DisplayID() string {
-	if e.Name != "" {
-		return path.Join(e.Owner.Name, e.Name)
-	}
-	return e.ID
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.

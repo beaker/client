@@ -10,8 +10,9 @@ import (
 // A Cluster is a homogenous collection of compute nodes. Nodes may be
 // virtual machines or physical hardware, depending on the hosting environment.
 type Cluster struct {
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
 
 	Created    time.Time  `json:"created"`
 	Terminated *time.Time `json:"terminated,omitempty"`

@@ -4,8 +4,10 @@ import "time"
 
 // Workspace is the consumabable information about a workspace
 type Workspace struct {
-	ID          string             `json:"id"`
-	Name        string             `json:"name"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
+
 	Description string             `json:"description,omitempty"`
 	Size        WorkspaceItemCount `json:"size"`
 

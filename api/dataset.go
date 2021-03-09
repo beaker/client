@@ -1,7 +1,6 @@
 package api
 
 import (
-	"path"
 	"time"
 )
 
@@ -17,8 +16,9 @@ type DatasetStorage struct {
 // uploaded directly by a user.
 type Dataset struct {
 	// Identity
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty"`
+	ID       string `json:"id"`
+	Name     string `json:"name,omitempty"`
+	FullName string `json:"fullName,omitempty"`
 
 	// Ownership
 	Owner     Identity           `json:"owner"` // TODO: Deprecated. Refer to containing workspace instead.
@@ -37,15 +37,6 @@ type Dataset struct {
 	SourceTask *string `json:"sourceTask,omitempty"`
 
 	Storage *DatasetStorage `json:"storage,omitempty"`
-}
-
-// DisplayID returns the most human-friendly name available for a dataset while
-// guaranteeing that it's unique and non-empty.
-func (ds *Dataset) DisplayID() string {
-	if ds.Name != "" {
-		return path.Join(ds.Owner.Name, ds.Name)
-	}
-	return ds.ID
 }
 
 // DatasetSpec is a specification for creating a new Dataset.
