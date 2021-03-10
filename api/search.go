@@ -35,7 +35,6 @@ type DatasetSearchOptions struct {
 	FilterClauses      []DatasetFilterClause `json:"filterClauses,omitempty"`
 	OmitResultDatasets bool                  `json:"omitResultDatasets,omitempty"`
 	IncludeUncommitted bool                  `json:"includeUncommitted,omitempty"`
-	Archived           *bool                 `json:"archived,omitempty"`
 }
 
 type DatasetSortClause struct {
@@ -75,7 +74,6 @@ func (e ExperimentField) String() string { return string(e) }
 type ExperimentSearchOptions struct {
 	SortClauses   []ExperimentSortClause   `json:"sortClauses,omitempty"`
 	FilterClauses []ExperimentFilterClause `json:"filterClauses,omitempty"`
-	Archived      *bool                    `json:"archived,omitempty"`
 }
 
 type ExperimentSortClause struct {
@@ -107,7 +105,6 @@ func (g GroupField) String() string { return string(g) }
 type GroupSearchOptions struct {
 	SortClauses   []GroupSortClause   `json:"sortClauses,omitempty"`
 	FilterClauses []GroupFilterClause `json:"filterClauses,omitempty"`
-	Archived      *bool               `json:"archived,omitempty"`
 }
 
 type GroupSortClause struct {

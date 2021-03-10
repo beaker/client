@@ -20,7 +20,6 @@ type Experiment struct {
 	Executions  []*Execution `json:"executions,omitempty"`
 	Created     time.Time    `json:"created"`
 	Canceled    bool         `json:"canceled,omitempty"`
-	Archived    bool         `json:"archived"`
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.
@@ -43,9 +42,6 @@ type ExperimentPatchSpec struct {
 	// (optional) Description to assign to the experiment or empty string to
 	// delete an existing description.
 	Description *string `json:"description,omitempty"`
-
-	// (optional) Whether the experiment should be archived. Ignored if nil.
-	Archive *bool `json:"archive,omitempty"`
 }
 
 // ExperimentPage is a page of results from a batch experiment API.

@@ -44,7 +44,6 @@ type Group struct {
 	Description string    `json:"description,omitempty"`
 	Created     time.Time `json:"created"`
 	Modified    time.Time `json:"modified"`
-	Archived    bool      `json:"archived"`
 }
 
 // GroupExperimentTask identifies an (experiment, task) pair within a group.
@@ -89,9 +88,6 @@ type GroupPatchSpec struct {
 
 	// (optional) New selected environment variables and metrics.
 	Parameters *[]GroupParameter `json:"parameters,omitempty"`
-
-	// (optional) Whether the group should be archived. Ignored if nil.
-	Archive *bool `json:"archive,omitempty"`
 }
 
 // GroupParameterType enumerates sources for a paramater in group analyses.

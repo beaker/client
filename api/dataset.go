@@ -28,7 +28,6 @@ type Dataset struct {
 	// Status
 	Created   time.Time `json:"created"`
 	Committed time.Time `json:"committed,omitempty"`
-	Archived  bool      `json:"archived"`
 
 	// A plain-text description of this dataset.
 	Description string `json:"description,omitempty"`
@@ -69,9 +68,6 @@ type DatasetPatchSpec struct {
 
 	// (optional) Whether the dataset should be locked for writes. Ignored if false.
 	Commit bool `json:"commit,omitempty"`
-
-	// (optional) Whether the dataset should be archived. Ignored if nil.
-	Archive *bool `json:"archive,omitempty"`
 }
 
 // DatasetPage is a page of results from a batch dataset API.

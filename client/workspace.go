@@ -132,7 +132,6 @@ func (h *WorkspaceHandle) Transfer(ctx context.Context, ids ...string) error {
 
 type ListDatasetOptions struct {
 	Cursor        string
-	Archived      *bool
 	ResultsOnly   *bool
 	CommittedOnly *bool
 	Text          string
@@ -148,9 +147,6 @@ func (h *WorkspaceHandle) Datasets(
 
 	query := url.Values{}
 	query.Add("cursor", opts.Cursor)
-	if opts.Archived != nil {
-		query.Add("archived", strconv.FormatBool(*opts.Archived))
-	}
 	if opts.ResultsOnly != nil {
 		query.Add("results", strconv.FormatBool(*opts.ResultsOnly))
 	}
@@ -229,9 +225,8 @@ func (h *WorkspaceHandle) CreateExperiment(
 }
 
 type ListExperimentOptions struct {
-	Cursor   string
-	Archived *bool
-	Text     string
+	Cursor string
+	Text   string
 }
 
 func (h *WorkspaceHandle) Experiments(
@@ -244,9 +239,6 @@ func (h *WorkspaceHandle) Experiments(
 
 	query := url.Values{}
 	query.Add("cursor", opts.Cursor)
-	if opts.Archived != nil {
-		query.Add("archived", strconv.FormatBool(*opts.Archived))
-	}
 	if opts.Text != "" {
 		query.Add("q", opts.Text)
 	}
@@ -267,9 +259,8 @@ func (h *WorkspaceHandle) Experiments(
 }
 
 type ListGroupOptions struct {
-	Cursor   string
-	Archived *bool
-	Text     string
+	Cursor string
+	Text   string
 }
 
 func (h *WorkspaceHandle) Groups(
@@ -282,9 +273,6 @@ func (h *WorkspaceHandle) Groups(
 
 	query := url.Values{}
 	query.Add("cursor", opts.Cursor)
-	if opts.Archived != nil {
-		query.Add("archived", strconv.FormatBool(*opts.Archived))
-	}
 	if opts.Text != "" {
 		query.Add("q", opts.Text)
 	}
