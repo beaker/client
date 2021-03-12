@@ -49,7 +49,7 @@ func (c *Client) ListSessions(
 	}
 
 	path := path.Join("/api/v3/sessions")
-	var query url.Values
+	query := url.Values{}
 	if opts.Node != nil {
 		query.Add("node", *opts.Node)
 	}
