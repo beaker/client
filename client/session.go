@@ -3,7 +3,9 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
+	"strconv"
 
 	"github.com/beaker/client/api"
 )
@@ -28,6 +30,46 @@ func (c *Client) CreateSession(ctx context.Context, spec api.SessionSpec) (*api.
 		return nil, err
 	}
 	return &result, nil
+}
+
+// ListSessionOpts specifies filters for listing sessions.
+type ListSessionOpts struct {
+	Node      *string
+	Cluster   *string
+	Finalized *bool
+}
+
+// ListSessions enumerates all sessions with optional filtering.
+func (c *Client) ListSessions(
+	ctx context.Context,
+	opts *ListSessionOpts,
+) ([]api.Session, error) {
+	if opts == nil {
+		opts = &ListSessionOpts{}
+	}
+
+	path := path.Join("/api/v3/sessions")
+	var query url.Values
+	if opts.Node != nil {
+		query.Add("node", *opts.Node)
+	}
+	if opts.Cluster != nil {
+		query.Add("cluster", *opts.Cluster)
+	}
+	if opts.Finalized != nil {
+		query.Add("finalized", strconv.FormatBool(*opts.Finalized))
+	}
+	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer safeClose(resp.Body)
+
+	var result []api.Session
+	if err := parseResponse(resp, &result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 // Session gets a handle for a session by ID. The session is not resolved

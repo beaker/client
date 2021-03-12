@@ -53,22 +53,6 @@ func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error
 	return &result, nil
 }
 
-// ListSessions retrieves all sessions that are assigned to the node.
-func (h *NodeHandle) ListSessions(ctx context.Context) ([]api.Session, error) {
-	path := path.Join("/api/v3/nodes", h.id, "sessions")
-	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var result []api.Session
-	if err := parseResponse(resp, &result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 // AssignExecutions lists all executions on a node and assigns a new one if it has none.
 func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeResources) (*api.Executions, error) {
 	path := path.Join("/api/v3/nodes", h.id, "executions")
