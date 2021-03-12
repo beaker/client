@@ -6,6 +6,7 @@ type Session struct {
 	ID      string   `json:"id"`
 	Name    string   `json:"name"`
 	Cluster string   `json:"cluster"`
+	Account string   `json:"account"` // Account of the session's cluster.
 	Author  Identity `json:"author"`
 
 	// Node that the session is assigned to.
