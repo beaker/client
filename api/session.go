@@ -1,5 +1,7 @@
 package api
 
+import "github.com/allenai/bytefmt"
+
 // Session is an interactive Beaker session.
 type Session struct {
 	// Identity
@@ -13,7 +15,7 @@ type Session struct {
 	Node string `json:"node"`
 
 	// Limits describes resources assigned to this session.
-	Limits *TaskResources `json:"limits"`
+	Limits *SessionResources `json:"limits"`
 
 	// State describes session status and progression.
 	State ExecutionState `json:"state"`
@@ -31,8 +33,25 @@ type SessionSpec struct {
 // SessionPatch updates a session.
 type SessionPatch struct {
 	// Limits updates the resources assigned to a session.
-	Limits *TaskResources `json:"limits"`
+	Limits *SessionResources `json:"limits"`
 
 	// State updates the session status and progression.
 	State *ExecutionState `json:"state"`
+}
+
+// SessionResources describe external requirements which must be available for a session to run.
+type SessionResources struct {
+	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
+	//
+	// Examples: 4, 0.5
+	CPUCount float64 `json:"cpuCount,omitempty" yaml:"cpuCount,omitempty"`
+
+	// (optional) GPUs assigned to the session. Either GPU index or ID.
+	GPUs []string `json:"gpuCount,omitempty" yaml:"gpus,omitempty"`
+
+	// (optional) Memory sets a limit for CPU memory, which may be a raw number
+	// of bytes or a formatted string with a number followed by a unit suffix.
+	//
+	// Examples: "2.5 GiB", 2684354560
+	Memory *bytefmt.Size `json:"memory,omitempty" yaml:"memory,omitempty"`
 }
