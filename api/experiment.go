@@ -68,9 +68,6 @@ type Task struct {
 	Created     time.Time   `json:"created"`
 	Schedulable bool        `json:"schedulable"`
 	Executions  []Execution `json:"executions,omitempty"`
-
-	// Creation parameters
-	Spec TaskSpecV2 `json:"spec"`
 }
 
 // Executions is an ordered collection of task executions.
