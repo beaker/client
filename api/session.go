@@ -14,7 +14,10 @@ type Session struct {
 	// Node that the session is assigned to.
 	Node string `json:"node"`
 
-	// Limits describes resources assigned to this session.
+	// Resources requested by this session.
+	Resources *TaskResources `json:"resources"`
+
+	// Limits assigned to this session.
 	Limits *SessionResources `json:"limits"`
 
 	// State describes session status and progression.
@@ -28,6 +31,9 @@ type SessionSpec struct {
 
 	// (optional) Name for the session.
 	Name string `json:"name" yaml:"name"`
+
+	// (optional) Resources requested by this session.
+	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
 }
 
 // SessionPatch updates a session.
