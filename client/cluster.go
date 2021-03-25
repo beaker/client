@@ -41,9 +41,8 @@ func (c *Client) CreateCluster(
 }
 
 type ListClusterOptions struct {
-	Limit      int64
-	Cursor     string
-	Terminated *bool
+	Limit  int64
+	Cursor string
 }
 
 // ListClusters enumerates all clusters owned by an account. If provided, only clusters
@@ -66,9 +65,6 @@ func (c *Client) ListClusters(
 	query.Add("cursor", opts.Cursor)
 	if opts.Limit > 0 {
 		query.Add("limit", strconv.FormatInt(opts.Limit, 10))
-	}
-	if opts.Terminated != nil {
-		query.Add("terminated", strconv.FormatBool(*opts.Terminated))
 	}
 	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {

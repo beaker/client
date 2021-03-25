@@ -14,9 +14,8 @@ type Cluster struct {
 	Name     string `json:"name"`
 	FullName string `json:"fullName"`
 
-	Created    time.Time  `json:"created"`
-	Terminated *time.Time `json:"terminated,omitempty"`
-	Protected  bool       `json:"protected"`
+	Created   time.Time `json:"created"`
+	Protected bool      `json:"protected"`
 
 	// Everything after this point is autoscale policy.
 	// TODO allenai/beaker-service#1203: Separate autoscale from Cluster.
