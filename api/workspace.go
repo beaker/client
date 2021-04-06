@@ -49,7 +49,7 @@ type WorkspacePatchSpec struct {
 	// (optional) New description to give the workspace
 	Description *string `json:"description,omitempty"`
 
-	// (optional) Whether the experiment should be archived. Ignored if nil.
+	// (optional) Whether the workspace should be archived. Ignored if nil.
 	Archive *bool `json:"archive,omitempty"`
 }
 
