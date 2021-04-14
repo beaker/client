@@ -108,7 +108,8 @@ type ExecutionState struct {
 	Created   time.Time  `json:"created"`
 	Scheduled *time.Time `json:"scheduled,omitempty"`
 	Started   *time.Time `json:"started,omitempty"`
-	Ended     *time.Time `json:"ended,omitempty"`
+	Exited    *time.Time `json:"exited,omitempty"`
+	Failed    *time.Time `json:"failed,omitempty"`
 	Finalized *time.Time `json:"finalized,omitempty"`
 
 	// ExitCode is an integer process exit code, if the process exited normally.
@@ -119,9 +120,12 @@ type ExecutionState struct {
 
 	// Canceled indicates whether and when an execution was canceled.
 	Canceled *time.Time `json:"canceled,omitempty"`
+
+	// Deprecated: Use Exited and Failed fields.
+	Ended *time.Time `json:"ended,omitempty"`
 }
 
-// ExecStatus describes what phase an execution is in.
+// Deprecated. ExecStatus describes what phase an execution is in.
 type ExecStatus string
 
 const (
@@ -140,16 +144,30 @@ const (
 	ExecFinalized ExecStatus = "finalized"
 )
 
-// ExecStatusUpdate snapshots a task execution's status.
+// ExecStatusUpdate changes a process' status. Unset fields are left unchanged.
+// Timestamp fields can only be written once and will be ignored if already set.
 type ExecStatusUpdate struct {
-	// (optional) Status is the task's current stage of execution.
+	// (optional) Scheduled is set when a process has been assigned to a node.
+	Scheduled bool `json:"scheduled,omitempty"`
+
+	// (optional) Started is set when a process has started running.
+	Started bool `json:"started,omitempty"`
+
+	// (optional) ExitCode is set when a process exits normally.
+	ExitCode *int `json:"exitCode,omitempty"`
+
+	// (optional) Failed is set when a process has ended abnormally.
+	Failed bool `json:"failed,omitempty"`
+
+	// (optional) Finalized is set when a process has ended and all results have been captured.
+	Finalized bool `json:"finalized,omitempty"`
+
+	// (deprecated) Status is the task's current stage of execution.
+	// Requestors should set one or more of the above fields instead.
 	Status ExecStatus `json:"status,omitempty"`
 
 	// (optional) Human-readable message to provide context for the status.
 	Message *string `json:"message,omitempty"`
-
-	// (optional) Exit code of the task's process.
-	ExitCode *int `json:"exitCode,omitempty"`
 
 	// (optional) Limits record the maximum resources available during execution.
 	Limits *TaskResources `json:"limits,omitempty"`
