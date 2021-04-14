@@ -54,7 +54,7 @@ type Option interface {
 type optionFunc func(*Client) error
 
 func (o optionFunc) apply(c *Client) error {
-	return o.apply(c)
+	return o(c)
 }
 
 // WithUserAgent sets the useragent header for all requests issued by the client.
@@ -363,6 +363,6 @@ func (th *timingHook) RequestLogHook(logger retryable.Logger, req *http.Request,
 }
 
 func (th *timingHook) ResponseLogHook(logger retryable.Logger, resp *http.Response) {
-	duration := time.Now().Sub(th.start)
+	duration := time.Since(th.start)
 	th.responseHook(resp, duration)
 }

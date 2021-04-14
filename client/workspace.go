@@ -214,6 +214,9 @@ func (h *WorkspaceHandle) CreateExperiment(
 		Timeout:       30 * time.Second,
 		CheckRedirect: copyRedirectHeader,
 	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
 	defer safeClose(resp.Body)
 
 	var result api.Experiment
@@ -436,6 +439,9 @@ func (h *WorkspaceHandle) PutSecret(
 		Timeout:       30 * time.Second,
 		CheckRedirect: copyRedirectHeader,
 	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
 	defer safeClose(resp.Body)
 
 	var result api.Secret
@@ -457,6 +463,9 @@ func (h *WorkspaceHandle) ReadSecret(ctx context.Context, name string) ([]byte, 
 		Timeout:       30 * time.Second,
 		CheckRedirect: copyRedirectHeader,
 	}, h.client.HTTPResponseHook).Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
 	defer safeClose(resp.Body)
 
 	if err := errorFromResponse(resp); err != nil {
