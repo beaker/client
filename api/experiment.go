@@ -162,6 +162,9 @@ type ExecStatusUpdate struct {
 	// (optional) Finalized is set when a process has ended and all results have been captured.
 	Finalized bool `json:"finalized,omitempty"`
 
+	// (optional) Canceled is set to terminate a process remotely.
+	Canceled bool `json:"canceled,omitempty"`
+
 	// (deprecated) Status is the task's current stage of execution.
 	// Requestors should set one or more of the above fields instead.
 	Status ExecStatus `json:"status,omitempty"`
