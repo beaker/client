@@ -120,29 +120,7 @@ type ExecutionState struct {
 
 	// Canceled indicates whether and when an execution was canceled.
 	Canceled *time.Time `json:"canceled,omitempty"`
-
-	// Deprecated: Use Exited and Failed fields.
-	Ended *time.Time `json:"ended,omitempty"`
 }
-
-// Deprecated. ExecStatus describes what phase an execution is in.
-type ExecStatus string
-
-const (
-	// ExecScheduled indicates a task has been assigned to a node and is preparing to run.
-	ExecScheduled ExecStatus = "scheduled"
-
-	// ExecStarted indicates an execution has started running.
-	ExecStarted ExecStatus = "started"
-
-	// ExecEnded indicates an execution exited or was interrupted. Its results
-	// may not yet be final. Callers may inspect its exit code to determine
-	// success or failure. If none is set, the execution is considered failed.
-	ExecEnded ExecStatus = "ended"
-
-	// ExecFinalized indicates a task has ended and all results have been captured.
-	ExecFinalized ExecStatus = "finalized"
-)
 
 // ExecStatusUpdate changes a process' status. Unset fields are left unchanged.
 // Timestamp fields can only be written once and will be ignored if already set.
@@ -164,10 +142,6 @@ type ExecStatusUpdate struct {
 
 	// (optional) Canceled is set to terminate a process remotely.
 	Canceled bool `json:"canceled,omitempty"`
-
-	// (deprecated) Status is the task's current stage of execution.
-	// Requestors should set one or more of the above fields instead.
-	Status ExecStatus `json:"status,omitempty"`
 
 	// (optional) Human-readable message to provide context for the status.
 	Message *string `json:"message,omitempty"`
