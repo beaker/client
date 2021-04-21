@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -184,10 +185,13 @@ type ExperimentOpts struct {
 	AuthorToken string
 }
 
-// CreateExperiment creates a new experiment in the calling workspace.
-func (h *WorkspaceHandle) CreateExperiment(
+// CreateExperimentRaw creates a new experiment with a raw specification.
+//
+// Accepted formats are JSON ("application/json") or YAML ("application/x-yaml").
+func (h *WorkspaceHandle) CreateExperimentRaw(
 	ctx context.Context,
-	spec *api.ExperimentSpecV2,
+	contentType string,
+	spec io.Reader,
 	opts *ExperimentOpts,
 ) (*api.Experiment, error) {
 	var query url.Values
@@ -195,18 +199,13 @@ func (h *WorkspaceHandle) CreateExperiment(
 		query = url.Values{"name": {opts.Name}}
 	}
 
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(spec); err != nil {
-		return nil, err
-	}
-
 	path := path.Join("/api/v3/workspaces", h.id, "experiments")
-	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, &buf)
+	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, spec)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", contentType)
 	if opts != nil && opts.AuthorToken != "" {
 		req.Header.Set(api.HeaderAuthor, opts.AuthorToken)
 	}
@@ -226,6 +225,20 @@ func (h *WorkspaceHandle) CreateExperiment(
 	}
 
 	return &result, nil
+}
+
+// CreateExperiment creates a new experiment from a V2 specification.
+func (h *WorkspaceHandle) CreateExperiment(
+	ctx context.Context,
+	spec *api.ExperimentSpecV2,
+	opts *ExperimentOpts,
+) (*api.Experiment, error) {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(spec); err != nil {
+		return nil, err
+	}
+
+	return h.CreateExperimentRaw(ctx, "application/json", &buf, opts)
 }
 
 type ListExperimentOptions struct {

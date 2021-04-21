@@ -19,28 +19,6 @@ type ExperimentHandle struct {
 	id     string
 }
 
-// CreateExperiment creates a new experiment with an optional name.
-func (c *Client) CreateExperiment(
-	ctx context.Context,
-	spec api.ExperimentSpecV1,
-	name string,
-	priority string,
-) (*ExperimentHandle, error) {
-	query := url.Values{"name": {name}, "priority": {priority}}
-	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, "/api/v3/experiments", query, spec)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var id string
-	if err := parseResponse(resp, &id); err != nil {
-		return nil, err
-	}
-
-	return &ExperimentHandle{client: c, id: id}, nil
-}
-
 // ResumeExperiment resumes a previously preempted experiment. The new experiment is
 // created with an optional name if provided in experimentName. The experiment referenced
 // in resumeFromReference should refer to the name or ID of the experiment to resume from.
