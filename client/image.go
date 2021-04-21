@@ -2,12 +2,11 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
-
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -49,7 +48,7 @@ func (c *Client) CreateImage(
 func (c *Client) Image(ctx context.Context, reference string) (*ImageHandle, error) {
 	id, err := c.resolveRef(ctx, "/api/v3/images", reference)
 	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve image reference "+reference)
+		return nil, fmt.Errorf("could not resolve image %q: %w", reference, err)
 	}
 
 	return &ImageHandle{client: c, id: id}, nil

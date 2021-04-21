@@ -2,10 +2,9 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"path"
-
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -37,7 +36,7 @@ func (c *Client) CreateGroup(ctx context.Context, spec api.GroupSpec) (*GroupHan
 func (c *Client) Group(ctx context.Context, reference string) (*GroupHandle, error) {
 	id, err := c.resolveRef(ctx, "/api/v3/groups", reference)
 	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve group reference "+reference)
+		return nil, fmt.Errorf("could not resolve group %q: %w", reference, err)
 	}
 
 	return &GroupHandle{client: c, id: id}, nil

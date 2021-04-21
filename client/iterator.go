@@ -1,10 +1,10 @@
 package client
 
 import (
+	"errors"
 	"time"
 
 	fileheap "github.com/beaker/fileheap/client"
-	"github.com/pkg/errors"
 )
 
 // FileIterator is an iterator over files within a dataset.

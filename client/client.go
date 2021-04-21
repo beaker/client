@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -19,7 +21,6 @@ import (
 
 	"github.com/goware/urlx"
 	retryable "github.com/hashicorp/go-retryablehttp"
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -140,21 +141,6 @@ func (c *Client) Address() string {
 	return c.baseURL.String()
 }
 
-// Validate whether a reference appears to be of the correct shape. This helps
-// catch errors relating to missing delimiters so we can show consistent errors.
-func validateRef(ref string, parts int) error {
-	split := strings.Split(ref, "/")
-	if len(split) != parts {
-		return errors.Errorf("%q is not a valid identifier", ref)
-	}
-	for _, s := range split {
-		if s == "" {
-			return errors.Errorf("%q is not a valid identifier", ref)
-		}
-	}
-	return nil
-}
-
 // resolveRef resolves a given name or ID to its stable ID. On success, the
 // object is guaranteed to exist at the time of call.
 func (c *Client) resolveRef(
@@ -199,7 +185,7 @@ func (c *Client) canonicalizeRef(ctx context.Context, reference string) (string,
 		// User is implicitly scoped; get the user name.
 		user, err := c.WhoAmI(ctx)
 		if err != nil {
-			return "", errors.WithMessage(err, "failed to resolve current user")
+			return "", fmt.Errorf("failed to resolve current user: %w", err)
 		}
 
 		userPart = user.Name
@@ -303,12 +289,12 @@ func errorFromResponse(resp *http.Response) error {
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return errors.Errorf("failed to read response: %v", err)
+		return fmt.Errorf("failed to read response: %w", err)
 	}
 
 	var apiErr api.Error
 	if err := json.Unmarshal(bytes, &apiErr); err != nil {
-		return errors.Errorf("failed to parse response: %s", string(bytes))
+		return fmt.Errorf("failed to parse response: %s", string(bytes))
 	}
 
 	return apiErr

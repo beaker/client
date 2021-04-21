@@ -2,14 +2,13 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
 	"time"
-
-	"github.com/pkg/errors"
 
 	"github.com/beaker/client/api"
 )
@@ -53,7 +52,7 @@ func (c *Client) ResumeExperiment(
 ) (*ExperimentHandle, error) {
 	id, err := c.resolveRef(ctx, "/api/v3/experiments", resumeFromReference)
 	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve experiment reference "+resumeFromReference)
+		return nil, fmt.Errorf("could not resolve experiment %q: %w", resumeFromReference, err)
 	}
 	query := url.Values{"name": {experimentName}}
 	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, path.Join("/api/v3/experiments", id, "/resume"), query, nil)
@@ -76,7 +75,7 @@ func (c *Client) ResumeExperiment(
 func (c *Client) Experiment(ctx context.Context, reference string) (*ExperimentHandle, error) {
 	id, err := c.resolveRef(ctx, "/api/v3/experiments", reference)
 	if err != nil {
-		return nil, errors.WithMessage(err, "could not resolve experiment reference "+reference)
+		return nil, fmt.Errorf("could not resolve experiment %q: %w", reference, err)
 	}
 
 	return &ExperimentHandle{client: c, id: id}, nil

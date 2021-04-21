@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/beaker/client/api"
@@ -99,11 +101,10 @@ func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
 }
 
 func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Workspace, error) {
-	if err := validateRef(reference, 2); err != nil {
-		return nil, err
+	if strings.Count(reference, "/") != 1 {
+		return nil, fmt.Errorf("%q isn't a valid workspace name, expected \"account/workspace\"", reference)
 	}
 
-	// If successfully validated, reference contains a slash to match the correct route.
 	path := path.Join("/api/v3/workspaces", reference)
 	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {

@@ -19,12 +19,7 @@ type UserHandle struct {
 // guaranteed throughout its lifetime to refer to the same object, even if that
 // object is later renamed.
 func (c *Client) User(ctx context.Context, reference string) (*UserHandle, error) {
-	// user is a top level resource
-	if err := validateRef(reference, 1); err != nil {
-		return nil, err
-	}
-
-	path := path.Join("/api/v3/users", reference)
+	path := path.Join("/api/v3/users", url.PathEscape(reference))
 	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err

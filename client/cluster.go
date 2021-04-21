@@ -2,10 +2,12 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
+	"strings"
 
 	"github.com/beaker/client/api"
 )
@@ -22,11 +24,7 @@ func (c *Client) CreateCluster(
 	account string,
 	spec api.ClusterSpec,
 ) (*api.Cluster, error) {
-	if err := validateRef(account, 1); err != nil {
-		return nil, err
-	}
-
-	path := path.Join("/api/v3/clusters", account)
+	path := path.Join("/api/v3/clusters", url.PathEscape(account))
 	resp, err := c.sendRetryableRequest(ctx, http.MethodPost, path, nil, spec)
 	if err != nil {
 		return nil, err
@@ -52,20 +50,17 @@ func (c *Client) ListClusters(
 	account string,
 	opts *ListClusterOptions,
 ) ([]api.Cluster, string, error) {
-	if err := validateRef(account, 1); err != nil {
-		return nil, "", err
-	}
-
 	if opts == nil {
 		opts = &ListClusterOptions{}
 	}
 
-	path := path.Join("/api/v3/clusters", account)
+	path := path.Join("/api/v3/clusters", url.PathEscape(account))
 	query := url.Values{}
 	query.Add("cursor", opts.Cursor)
 	if opts.Limit > 0 {
 		query.Add("limit", strconv.FormatInt(opts.Limit, 10))
 	}
+
 	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
@@ -92,7 +87,7 @@ func (h *ClusterHandle) Name() string {
 
 // Get retrieves a clusters details.
 func (h *ClusterHandle) Get(ctx context.Context) (*api.Cluster, error) {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +107,7 @@ func (h *ClusterHandle) Get(ctx context.Context) (*api.Cluster, error) {
 
 // Patch updates a cluster's details.
 func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*api.Cluster, error) {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return nil, err
 	}
 
@@ -135,7 +130,7 @@ func (h *ClusterHandle) Patch(ctx context.Context, patch *api.ClusterPatch) (*ap
 // New tasks cannot be created on the cluster, but existing scheduled tasks will
 // be allowed to complete.
 func (h *ClusterHandle) Terminate(ctx context.Context) error {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return err
 	}
 
@@ -150,7 +145,7 @@ func (h *ClusterHandle) Terminate(ctx context.Context) error {
 
 // CreateNode is meant for internal use only.
 func (h *ClusterHandle) CreateNode(ctx context.Context, spec api.NodeSpec) (*api.Node, error) {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return nil, err
 	}
 
@@ -170,7 +165,7 @@ func (h *ClusterHandle) CreateNode(ctx context.Context, spec api.NodeSpec) (*api
 // ListClusterNodes enumerates all active nodes within a cluster.
 // TODO: Make this return an iterator.
 func (h *ClusterHandle) ListClusterNodes(ctx context.Context) ([]api.Node, error) {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return nil, err
 	}
 
@@ -198,7 +193,7 @@ func (h *ClusterHandle) ListExecutions(
 	ctx context.Context,
 	opts *ExecutionFilters,
 ) ([]api.Execution, error) {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return nil, err
 	}
 
@@ -229,7 +224,7 @@ func (h *ClusterHandle) PatchExecution(
 	execution string,
 	spec api.ExecutionPatchSpec,
 ) error {
-	if err := validateRef(h.name, 2); err != nil {
+	if err := validateClusterRef(h.name); err != nil {
 		return err
 	}
 
@@ -240,4 +235,13 @@ func (h *ClusterHandle) PatchExecution(
 	}
 	defer safeClose(resp.Body)
 	return errorFromResponse(resp)
+}
+
+// Validate a cluster reference appears to be of the correct shape. This helps
+// catch errors relating to missing delimiters so we can show consistent errors.
+func validateClusterRef(ref string) error {
+	if strings.Count(ref, "/") != 1 {
+		return fmt.Errorf("%q isn't a valid cluster name, expected \"account/cluster\"", ref)
+	}
+	return nil
 }

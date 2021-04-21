@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-
-	"github.com/pkg/errors"
 )
 
 // FileHandle provides operations on a file within a dataset.
@@ -35,12 +33,12 @@ func (h *FileHandle) DownloadRange(ctx context.Context, offset, length int64) (i
 // DownloadTo downloads a file and writes it to disk.
 func (h *FileHandle) DownloadTo(ctx context.Context, filePath string) error {
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	f, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 	defer safeClose(f)
 
