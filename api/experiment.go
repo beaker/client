@@ -2,6 +2,8 @@ package api
 
 import (
 	"time"
+
+	"github.com/allenai/bytefmt"
 )
 
 // Experiment describes an experiment and its tasks.
@@ -91,7 +93,8 @@ type Execution struct {
 	State ExecutionState `json:"state"`
 
 	// Limits describes resources assigned to this execution
-	Limits TaskResources `json:"limits"`
+	// TODO allenai-beaker-service#1448: Change this to ResourceLimits
+	Limits ResourceRequest `json:"limits"`
 
 	// (deprecated) See corresponding value in Spec.
 	Priority Priority `json:"priority"`
@@ -101,6 +104,23 @@ type Execution struct {
 type ResultTarget struct {
 	// Name or ID of a Beaker dataset.
 	Beaker string `json:"beaker,omitempty"`
+}
+
+// ResourceLimits describes limits assigned to a process.
+type ResourceLimits struct {
+	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
+	//
+	// Examples: 4, 0.5
+	CPUCount float64 `json:"cpuCount,omitempty"`
+
+	// (optional) GPUs assigned to the session. Either GPU index or ID.
+	GPUs []string `json:"gpus,omitempty"`
+
+	// (optional) Memory sets a limit for CPU memory, which may be a raw number
+	// of bytes or a formatted string with a number followed by a unit suffix.
+	//
+	// Examples: "2.5 GiB", 2684354560
+	Memory *bytefmt.Size `json:"memory,omitempty"`
 }
 
 // ExecutionState details an execution's status.
@@ -147,7 +167,8 @@ type ExecStatusUpdate struct {
 	Message *string `json:"message,omitempty"`
 
 	// (optional) Limits record the maximum resources available during execution.
-	Limits *TaskResources `json:"limits,omitempty"`
+	// TODO allenai-beaker-service#1448: Change this to ResourceLimits
+	Limits *ResourceRequest `json:"limits,omitempty"`
 }
 
 // ExecutionPatchSpec describes a patch to apply to a execution's editable fields.

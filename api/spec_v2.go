@@ -49,8 +49,7 @@ type TaskSpecV2 struct {
 	Result ResultSpec `json:"result" yaml:"result"`
 
 	// (optional) Resources define external hardware requirements for this task.
-	// TODO: Consider whether to move this into the context.
-	Resources *TaskResources `json:"resources,omitempty" yaml:"resources,omitempty"`
+	Resources *ResourceRequest `json:"resources,omitempty" yaml:"resources,omitempty"`
 
 	// (required) Context describes how and where this task should run.
 	//
@@ -133,8 +132,8 @@ type ResultSpec struct {
 	Path string `json:"path" yaml:"path"`
 }
 
-// TaskResources describe external requirements which must be available for a task to run.
-type TaskResources struct {
+// Request describe external requirements which must be available for a process to run.
+type ResourceRequest struct {
 	// (optional) CPUCount sets a minimum number of logical CPU cores and may be fractional.
 	//
 	// Examples: 4, 0.5
