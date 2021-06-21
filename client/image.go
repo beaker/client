@@ -75,14 +75,14 @@ func (h *ImageHandle) Get(ctx context.Context) (*api.Image, error) {
 	return &body, nil
 }
 
-// Repository returns information required to push an image's Docker image.
+// Repository returns information required to access an image through Docker.
 func (h *ImageHandle) Repository(
 	ctx context.Context,
 	upload bool,
 ) (*api.ImageRepository, error) {
 	path := path.Join("/api/v3/images", h.id, "repository")
 	query := url.Values{"upload": {strconv.FormatBool(upload)}}
-	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, query, nil)
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, err
 	}
