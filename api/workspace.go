@@ -73,8 +73,9 @@ type WorkspacePage struct {
 // WorkspaceReference is a reference to a workspace in the system, providing both
 // name and ID for human-readible and static references, respectively.
 type WorkspaceReference struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
 }
 
 // Secrets is an ordered collection of secrets.
