@@ -4,11 +4,17 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"net/url"
 	"path"
 	"time"
 
 	"github.com/beaker/client/api"
 )
+
+// Execution gets a handle for an execution by ID. The id is not resolved.
+func (c *Client) Execution(id string) *ExecutionHandle {
+	return &ExecutionHandle{client: c, id: id}
+}
 
 // ExecutionHandle provides access to a single execution.
 type ExecutionHandle struct {
@@ -16,15 +22,14 @@ type ExecutionHandle struct {
 	id     string
 }
 
-// Execution gets a handle for an execution by ID. The execution is not resolved
-// and not guaranteed to exist.
-func (c *Client) Execution(id string) *ExecutionHandle {
-	return &ExecutionHandle{client: c, id: id}
+// Ref returns the name or ID with which a handle was created.
+func (h *ExecutionHandle) Ref() string {
+	return h.id
 }
 
 // Get retrieves an execution's details.
 func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
-	path := path.Join("/api/v3/executions", h.id)
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -41,7 +46,7 @@ func (h *ExecutionHandle) Get(ctx context.Context) (*api.Execution, error) {
 // GetLogs gets all logs for a task. Logs are in the form:
 // {RFC3339 nano timestamp} {message}\n
 func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
-	path := path.Join("/api/v3/executions", h.id, "logs")
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "logs")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -55,7 +60,7 @@ func (h *ExecutionHandle) GetLogs(ctx context.Context) (io.ReadCloser, error) {
 
 // PutLogs uploads a log chunk. Since is the time of the first log message in the chunk.
 func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.Reader) error {
-	path := path.Join("/api/v3/executions", h.id, "logs", filename)
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "logs", filename)
 	req, err := h.client.newRequest(http.MethodPut, path, nil, logs)
 	if err != nil {
 		return err
@@ -75,7 +80,7 @@ func (h *ExecutionHandle) PutLogs(ctx context.Context, filename string, logs io.
 
 // GetResults retrieves an execution's results.
 func (h *ExecutionHandle) GetResults(ctx context.Context) (*api.ExecutionResults, error) {
-	path := path.Join("/api/v3/executions", h.id, "results")
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "results")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -92,7 +97,7 @@ func (h *ExecutionHandle) GetResults(ctx context.Context) (*api.ExecutionResults
 
 // PostStatus updates an execution's current status.
 func (h *ExecutionHandle) PostStatus(ctx context.Context, status api.ExecStatusUpdate) error {
-	path := path.Join("/api/v3/executions", h.id, "status")
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "status")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, status)
 	if err != nil {
 		return err

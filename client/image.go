@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"path"
@@ -10,12 +9,6 @@ import (
 
 	"github.com/beaker/client/api"
 )
-
-// ImageHandle provides operations on an image.
-type ImageHandle struct {
-	client *Client
-	id     string
-}
 
 // CreateImage creates a new image with an optional name.
 func (c *Client) CreateImage(
@@ -39,29 +32,28 @@ func (c *Client) CreateImage(
 		return nil, err
 	}
 
-	return &ImageHandle{client: c, id: body.ID}, nil
+	return &ImageHandle{client: c, ref: body.ID}, nil
 }
 
-// Image gets a handle for an image by name or ID. The returned handle is
-// guaranteed throughout its lifetime to refer to the same object, even if that
-// object is later renamed.
-func (c *Client) Image(ctx context.Context, reference string) (*ImageHandle, error) {
-	id, err := c.resolveRef(ctx, "/api/v3/images", reference)
-	if err != nil {
-		return nil, fmt.Errorf("could not resolve image %q: %w", reference, err)
-	}
-
-	return &ImageHandle{client: c, id: id}, nil
+// Image gets a handle for an image by name or ID. The reference is not resolved.
+func (c *Client) Image(reference string) *ImageHandle {
+	return &ImageHandle{client: c, ref: reference}
 }
 
-// ID returns an image's stable, unique ID.
-func (h *ImageHandle) ID() string {
-	return h.id
+// ImageHandle provides operations on an image.
+type ImageHandle struct {
+	client *Client
+	ref    string
+}
+
+// Ref returns the name or ID with which a handle was created.
+func (h *ImageHandle) Ref() string {
+	return h.ref
 }
 
 // Get retrieves an image's details.
 func (h *ImageHandle) Get(ctx context.Context) (*api.Image, error) {
-	uri := path.Join("/api/v3/images", h.id)
+	uri := path.Join("/api/v3/images", url.PathEscape(h.ref))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
@@ -80,7 +72,7 @@ func (h *ImageHandle) Repository(
 	ctx context.Context,
 	upload bool,
 ) (*api.ImageRepository, error) {
-	path := path.Join("/api/v3/images", h.id, "repository")
+	path := path.Join("/api/v3/images", url.PathEscape(h.ref), "repository")
 	query := url.Values{"upload": {strconv.FormatBool(upload)}}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
@@ -97,7 +89,7 @@ func (h *ImageHandle) Repository(
 
 // SetName sets an image's name.
 func (h *ImageHandle) SetName(ctx context.Context, name string) error {
-	path := path.Join("/api/v3/images", h.id)
+	path := path.Join("/api/v3/images", url.PathEscape(h.ref))
 	body := api.ImagePatchSpec{Name: &name}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -109,7 +101,7 @@ func (h *ImageHandle) SetName(ctx context.Context, name string) error {
 
 // SetDescription sets an image's description.
 func (h *ImageHandle) SetDescription(ctx context.Context, description string) error {
-	path := path.Join("/api/v3/images", h.id)
+	path := path.Join("/api/v3/images", url.PathEscape(h.ref))
 	body := api.ImagePatchSpec{Description: &description}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -122,7 +114,7 @@ func (h *ImageHandle) SetDescription(ctx context.Context, description string) er
 // Commit finalizes an image, unblocking usage and locking it for further
 // writes. The image is guaranteed to remain uncommitted on failure.
 func (h *ImageHandle) Commit(ctx context.Context) error {
-	path := path.Join("/api/v3/images", h.id)
+	path := path.Join("/api/v3/images", url.PathEscape(h.ref))
 	body := api.ImagePatchSpec{Commit: true}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -134,7 +126,7 @@ func (h *ImageHandle) Commit(ctx context.Context) error {
 
 // Delete an image. Note that this action is not reversible.
 func (h *ImageHandle) Delete(ctx context.Context) error {
-	path := path.Join("/api/v3/images", h.id)
+	path := path.Join("/api/v3/images", url.PathEscape(h.ref))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err

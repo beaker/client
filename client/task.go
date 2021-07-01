@@ -3,10 +3,16 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/beaker/client/api"
 )
+
+// Task gets a handle for a task by ID. The id is not resolved.
+func (c *Client) Task(id string) *TaskHandle {
+	return &TaskHandle{client: c, id: id}
+}
 
 // TaskHandle provides operations on a task.
 type TaskHandle struct {
@@ -14,22 +20,14 @@ type TaskHandle struct {
 	id     string
 }
 
-// Task gets a handle for a task by name or ID. The returned handle is
-// guaranteed throughout its lifetime to refer to the same object, even if that
-// object is later renamed, however, the task is not resolved and may infact
-// not exist/already be deleted.
-func (c *Client) Task(reference string) *TaskHandle {
-	return &TaskHandle{client: c, id: reference}
-}
-
-// ID returns a task's stable, unique ID.
-func (h *TaskHandle) ID() string {
+// Ref returns the name or ID with which a handle was created.
+func (h *TaskHandle) Ref() string {
 	return h.id
 }
 
 // Get retrieves a task's details.
 func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
-	path := path.Join("/api/v3/tasks", h.id)
+	path := path.Join("/api/v3/tasks", url.PathEscape(h.id))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -46,7 +44,7 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 
 // Preempt stops the execution of a task and queues it to run again.
 func (h *TaskHandle) Preempt(ctx context.Context) error {
-	path := path.Join("/api/v3/tasks", h.id, "preempt")
+	path := path.Join("/api/v3/tasks", url.PathEscape(h.id), "preempt")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, nil)
 	if err != nil {
 		return err

@@ -4,24 +4,16 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/beaker/client/api"
 )
-
-type WorkspaceHandle struct {
-	client *Client
-	id     string
-	// TODO: Support name-based references too when API support is available
-}
 
 func (c *Client) CreateWorkspace(
 	ctx context.Context,
@@ -38,7 +30,7 @@ func (c *Client) CreateWorkspace(
 		return nil, err
 	}
 
-	return &WorkspaceHandle{client: c, id: workspace.ID}, nil
+	return &WorkspaceHandle{client: c, ref: workspace.ID}, nil
 }
 
 type ListWorkspaceOptions struct {
@@ -80,34 +72,25 @@ func (c *Client) ListWorkspaces(
 	return result.Data, result.NextCursor, nil
 }
 
-// Workspace gets a handle for a workspace by name or ID. The returned handle is
-// guaranteed throughout its lifetime to refer to the same object, even if that
-// object is later renamed.
-func (c *Client) Workspace(ctx context.Context, reference string) (*WorkspaceHandle, error) {
-	workspace, err := getWorkspace(ctx, c, reference)
-	if err != nil {
-		return nil, err
-	}
-	return &WorkspaceHandle{client: c, id: workspace.ID}, nil
+// Workspace gets a handle for a workspace by name or ID. The reference is not resolved.
+func (c *Client) Workspace(reference string) *WorkspaceHandle {
+	return &WorkspaceHandle{client: c, ref: reference}
 }
 
-// ID returns a workspace's stable, unique ID.
-func (h *WorkspaceHandle) ID() string {
-	return h.id
+type WorkspaceHandle struct {
+	client *Client
+	ref    string
+}
+
+// Ref returns the name or ID with which a handle was created.
+func (h *WorkspaceHandle) Ref() string {
+	return h.ref
 }
 
 // Get retrieves a task's details.
 func (h *WorkspaceHandle) Get(ctx context.Context) (*api.Workspace, error) {
-	return getWorkspace(ctx, h.client, h.id)
-}
-
-func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Workspace, error) {
-	if strings.Count(reference, "/") != 1 {
-		return nil, fmt.Errorf("%q isn't a valid workspace name, expected \"account/workspace\"", reference)
-	}
-
-	path := path.Join("/api/v3/workspaces", reference)
-	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref))
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +106,7 @@ func getWorkspace(ctx context.Context, c *Client, reference string) (*api.Worksp
 
 func (h *WorkspaceHandle) Transfer(ctx context.Context, ids ...string) error {
 	body := api.WorkspaceTransferSpec{IDs: ids}
-	path := path.Join("/api/v3/workspaces", h.id, "transfer")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "transfer")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, body)
 	if err != nil {
 		return err
@@ -159,7 +142,7 @@ func (h *WorkspaceHandle) Datasets(
 		query.Add("q", opts.Text)
 	}
 
-	path := path.Join("/api/v3/workspaces", h.id, "datasets")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "datasets")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
@@ -199,7 +182,7 @@ func (h *WorkspaceHandle) CreateExperimentRaw(
 		query = url.Values{"name": {opts.Name}}
 	}
 
-	path := path.Join("/api/v3/workspaces", h.id, "experiments")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "experiments")
 	req, err := h.client.newRetryableRequest(http.MethodPost, path, query, spec)
 	if err != nil {
 		return nil, err
@@ -260,7 +243,7 @@ func (h *WorkspaceHandle) Experiments(
 		query.Add("q", opts.Text)
 	}
 
-	path := path.Join("/api/v3/workspaces", h.id, "experiments")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "experiments")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
@@ -294,7 +277,7 @@ func (h *WorkspaceHandle) Groups(
 		query.Add("q", opts.Text)
 	}
 
-	path := path.Join("/api/v3/workspaces", h.id, "groups")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "groups")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
@@ -328,7 +311,7 @@ func (h *WorkspaceHandle) Images(
 		query.Add("q", opts.Text)
 	}
 
-	path := path.Join("/api/v3/workspaces", h.id, "images")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "images")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, query, nil)
 	if err != nil {
 		return nil, "", err
@@ -361,7 +344,7 @@ func (h *WorkspaceHandle) SetArchived(ctx context.Context, archive bool) error {
 }
 
 func (h *WorkspaceHandle) patchWorkspace(ctx context.Context, spec api.WorkspacePatchSpec) error {
-	path := path.Join("/api/v3/workspaces", h.id)
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, spec)
 	if err != nil {
 		return err
@@ -371,7 +354,7 @@ func (h *WorkspaceHandle) patchWorkspace(ctx context.Context, spec api.Workspace
 }
 
 func (h *WorkspaceHandle) Permissions(ctx context.Context) (*api.WorkspacePermissionSummary, error) {
-	path := path.Join("/api/v3/workspaces", h.id, "auth")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "auth")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -387,7 +370,7 @@ func (h *WorkspaceHandle) Permissions(ctx context.Context) (*api.WorkspacePermis
 }
 
 func (h *WorkspaceHandle) SetPermissions(ctx context.Context, patch api.WorkspacePermissionPatch) error {
-	path := path.Join("/api/v3/workspaces", h.id, "auth")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "auth")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, patch)
 	if err != nil {
 		return err
@@ -397,7 +380,7 @@ func (h *WorkspaceHandle) SetPermissions(ctx context.Context, patch api.Workspac
 }
 
 func (h *WorkspaceHandle) ListSecrets(ctx context.Context) ([]api.Secret, error) {
-	path := path.Join("/api/v3/workspaces", h.id, "secrets")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "secrets")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -413,7 +396,7 @@ func (h *WorkspaceHandle) ListSecrets(ctx context.Context) ([]api.Secret, error)
 }
 
 func (h *WorkspaceHandle) GetSecret(ctx context.Context, name string) (*api.Secret, error) {
-	path := path.Join("/api/v3/workspaces", h.id, "secrets", name)
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "secrets", name)
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -429,7 +412,7 @@ func (h *WorkspaceHandle) GetSecret(ctx context.Context, name string) (*api.Secr
 }
 
 func (h *WorkspaceHandle) DeleteSecret(ctx context.Context, name string) error {
-	path := path.Join("/api/v3/workspaces", h.id, "secrets", name)
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "secrets", name)
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
@@ -443,7 +426,7 @@ func (h *WorkspaceHandle) PutSecret(
 	name string,
 	value []byte,
 ) (*api.Secret, error) {
-	path := path.Join("/api/v3/workspaces", h.id, "secrets", name, "value")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "secrets", url.PathEscape(name), "value")
 	req, err := h.client.newRetryableRequest(http.MethodPut, path, nil, bytes.NewReader(value))
 	if err != nil {
 		return nil, err
@@ -467,7 +450,7 @@ func (h *WorkspaceHandle) PutSecret(
 }
 
 func (h *WorkspaceHandle) ReadSecret(ctx context.Context, name string) ([]byte, error) {
-	path := path.Join("/api/v3/workspaces", h.id, "secrets", name, "value")
+	path := path.Join("/api/v3/workspaces", url.PathEscape(h.ref), "secrets", url.PathEscape(name), "value")
 	req, err := h.client.newRetryableRequest(http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err

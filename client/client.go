@@ -15,7 +15,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"regexp"
 	"strings"
 	"time"
 
@@ -31,8 +30,6 @@ var (
 	// will respond with an error if the client version is out of date.
 	// The CLI sets version at link time.
 	version = ""
-
-	idPattern = regexp.MustCompile(`^\w\w_[a-z0-9]{12}$`)
 )
 
 // Client is a Beaker HTTP client.
@@ -139,62 +136,6 @@ func (l *errorLogger) Printf(template string, args ...interface{}) {
 // Address returns a client's host and port.
 func (c *Client) Address() string {
 	return c.baseURL.String()
-}
-
-// resolveRef resolves a given name or ID to its stable ID. On success, the
-// object is guaranteed to exist at the time of call.
-func (c *Client) resolveRef(
-	ctx context.Context,
-	basePath string,
-	reference string,
-) (string, error) {
-	canonicalRef, err := c.canonicalizeRef(ctx, reference)
-	if err != nil {
-		return "", err
-	}
-
-	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path.Join(basePath, canonicalRef), nil, nil)
-	if err != nil {
-		return "", err
-	}
-	defer safeClose(resp.Body)
-
-	// Note: This depends on all root-level objects having an "id" field.
-	type idResult struct {
-		ID string `json:"id"`
-	}
-
-	var body idResult
-	if err := parseResponse(resp, &body); err != nil {
-		return "", err
-	}
-	return body.ID, nil
-}
-
-// canonicalizeRef ensures a given name or ID is in canonical form.
-func (c *Client) canonicalizeRef(ctx context.Context, reference string) (string, error) {
-	if idPattern.MatchString(reference) {
-		return reference, nil
-	}
-
-	var userPart string
-	var namePart string
-
-	refParts := strings.SplitN(reference, "/", 2)
-	if len(refParts) == 1 {
-		// User is implicitly scoped; get the user name.
-		user, err := c.WhoAmI(ctx)
-		if err != nil {
-			return "", fmt.Errorf("failed to resolve current user: %w", err)
-		}
-
-		userPart = user.Name
-		namePart = refParts[0]
-	} else {
-		userPart = refParts[0]
-		namePart = refParts[1]
-	}
-	return path.Join(userPart, namePart), nil
 }
 
 func (c *Client) sendRetryableRequest(

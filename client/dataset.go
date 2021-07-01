@@ -13,15 +13,6 @@ import (
 	"github.com/beaker/client/api"
 )
 
-// DatasetHandle provides operations on a dataset.
-type DatasetHandle struct {
-	client  *Client
-	expires time.Time
-	id      string
-
-	Storage *fileheap.DatasetRef
-}
-
 // CreateDataset creates a new dataset with an optional name.
 func (c *Client) CreateDataset(
 	ctx context.Context,
@@ -44,65 +35,28 @@ func (c *Client) CreateDataset(
 		return nil, err
 	}
 
-	fhClient, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
-	if err != nil {
-		return nil, err
-	}
-
-	return &DatasetHandle{
-		client:  c,
-		expires: body.Storage.TokenExpires,
-		id:      body.ID,
-		Storage: fhClient.Dataset(body.Storage.ID),
-	}, nil
+	return &DatasetHandle{client: c, ref: body.ID}, nil
 }
 
-// Dataset gets a handle for a dataset by name or ID. The returned handle is
-// guaranteed throughout its lifetime to refer to the same object, even if that
-// object is later renamed.
-func (c *Client) Dataset(ctx context.Context, reference string) (*DatasetHandle, error) {
-	canonicalRef, err := c.canonicalizeRef(ctx, reference)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.sendRetryableRequest(ctx, http.MethodGet, path.Join("/api/v3/datasets", canonicalRef), nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer safeClose(resp.Body)
-
-	var body api.Dataset
-	if err := parseResponse(resp, &body); err != nil {
-		return nil, err
-	}
-
-	fhClient, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
-	if err != nil {
-		return nil, err
-	}
-
-	return &DatasetHandle{
-		client:  c,
-		expires: body.Storage.TokenExpires,
-		id:      body.ID,
-		Storage: fhClient.Dataset(body.Storage.ID),
-	}, nil
+// Dataset gets a handle for a dataset by name or ID. The reference is not resolved.
+func (c *Client) Dataset(reference string) *DatasetHandle {
+	return &DatasetHandle{client: c, ref: reference}
 }
 
-// Expires gets the time that the dataset reference expires and must be resolved again.
-func (h *DatasetHandle) Expires() time.Time {
-	return h.expires
+// DatasetHandle provides operations on a dataset.
+type DatasetHandle struct {
+	client *Client
+	ref    string
 }
 
-// ID returns a dataset's stable, unique ID.
-func (h *DatasetHandle) ID() string {
-	return h.id
+// Ref returns the name or ID with which a handle was created.
+func (h *DatasetHandle) Ref() string {
+	return h.ref
 }
 
 // Get retrieves a dataset's details.
 func (h *DatasetHandle) Get(ctx context.Context) (*api.Dataset, error) {
-	uri := path.Join("/api/v3/datasets", h.id)
+	uri := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
 	if err != nil {
 		return nil, err
@@ -116,17 +70,36 @@ func (h *DatasetHandle) Get(ctx context.Context) (*api.Dataset, error) {
 	return &body, nil
 }
 
-// Files returns an iterator over all files in the dataset under the given path.
-func (h *DatasetHandle) Files(ctx context.Context, path string) (FileIterator, error) {
-	return &fileHeapIterator{
-		dataset:  h,
-		iterator: h.Storage.Files(ctx, &fileheap.FileIteratorOptions{Prefix: path}),
-	}, nil
+// Storage gets a client to access a dataset's backing storage. The returned
+// client expires at the returned time and must be discarded and replaced.
+func (h *DatasetHandle) Storage(ctx context.Context) (
+	client *fileheap.DatasetRef,
+	expiry time.Time,
+	err error,
+) {
+	uri := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, uri, nil, nil)
+	if err != nil {
+		return nil, time.Time{}, err
+	}
+	defer safeClose(resp.Body)
+
+	var body api.Dataset
+	if err := parseResponse(resp, &body); err != nil {
+		return nil, time.Time{}, err
+	}
+
+	fh, err := fileheap.New(body.Storage.Address, fileheap.WithToken(body.Storage.Token))
+	if err != nil {
+		return nil, time.Time{}, err
+	}
+
+	return fh.Dataset(body.Storage.ID), body.Storage.TokenExpires, nil
 }
 
 // SetName sets a dataset's name.
 func (h *DatasetHandle) SetName(ctx context.Context, name string) error {
-	path := path.Join("/api/v3/datasets", h.id)
+	path := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
 	body := api.DatasetPatchSpec{Name: &name}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -138,7 +111,7 @@ func (h *DatasetHandle) SetName(ctx context.Context, name string) error {
 
 // SetDescription sets a dataset's description.
 func (h *DatasetHandle) SetDescription(ctx context.Context, description string) error {
-	path := path.Join("/api/v3/datasets", h.id)
+	path := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
 	body := api.DatasetPatchSpec{Description: &description}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -151,7 +124,7 @@ func (h *DatasetHandle) SetDescription(ctx context.Context, description string) 
 // Commit finalizes a dataset, unblocking usage and locking it for further
 // writes. The dataset is guaranteed to remain uncommitted on failure.
 func (h *DatasetHandle) Commit(ctx context.Context) error {
-	path := path.Join("/api/v3/datasets", h.id)
+	path := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
 	body := api.DatasetPatchSpec{Commit: true}
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, body)
 	if err != nil {
@@ -163,7 +136,7 @@ func (h *DatasetHandle) Commit(ctx context.Context) error {
 
 // Delete a dataset. Note that this action is not reversible.
 func (h *DatasetHandle) Delete(ctx context.Context) error {
-	path := path.Join("/api/v3/datasets", h.id)
+	path := path.Join("/api/v3/datasets", url.PathEscape(h.ref))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err

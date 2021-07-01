@@ -3,10 +3,16 @@ package client
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/beaker/client/api"
 )
+
+// Node gets a handle for an node by ID. The id is not resolved.
+func (c *Client) Node(id string) *NodeHandle {
+	return &NodeHandle{client: c, id: id}
+}
 
 // NodeHandle provides access to a single node.
 type NodeHandle struct {
@@ -14,15 +20,14 @@ type NodeHandle struct {
 	id     string
 }
 
-// Node gets a handle for an node by ID. The node is not resolved
-// and not guaranteed to exist.
-func (c *Client) Node(id string) *NodeHandle {
-	return &NodeHandle{client: c, id: id}
+// Ref returns the name or ID with which a handle was created.
+func (h *NodeHandle) Ref() string {
+	return h.id
 }
 
 // Get information about a node.
 func (h *NodeHandle) Get(ctx context.Context) (*api.Node, error) {
-	path := path.Join("/api/v3/nodes", h.id)
+	path := path.Join("/api/v3/nodes", url.PathEscape(h.id))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -39,7 +44,7 @@ func (h *NodeHandle) Get(ctx context.Context) (*api.Node, error) {
 
 // ListExecutions retrieves all executions that are assigned to the node.
 func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error) {
-	path := path.Join("/api/v3/nodes", h.id, "executions")
+	path := path.Join("/api/v3/nodes", url.PathEscape(h.id), "executions")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodGet, path, nil, nil)
 	if err != nil {
 		return nil, err
@@ -55,7 +60,7 @@ func (h *NodeHandle) ListExecutions(ctx context.Context) (*api.Executions, error
 
 // AssignExecutions lists all executions on a node and assigns a new one if it has none.
 func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeResources) (*api.Executions, error) {
-	path := path.Join("/api/v3/nodes", h.id, "executions")
+	path := path.Join("/api/v3/nodes", url.PathEscape(h.id), "executions")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, resources)
 	if err != nil {
 		return nil, err
@@ -71,7 +76,7 @@ func (h *NodeHandle) AssignExecutions(ctx context.Context, resources *api.NodeRe
 
 // Delete removes the node (marks it terminated)
 func (h *NodeHandle) Delete(ctx context.Context) error {
-	path := path.Join("/api/v3/nodes", h.id)
+	path := path.Join("/api/v3/nodes", url.PathEscape(h.id))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodDelete, path, nil, nil)
 	if err != nil {
 		return err
@@ -82,7 +87,7 @@ func (h *NodeHandle) Delete(ctx context.Context) error {
 
 // Patch updates the fields of a node.
 func (h *NodeHandle) Patch(ctx context.Context, patch *api.NodePatchSpec) error {
-	path := path.Join("/api/v3/nodes", h.id)
+	path := path.Join("/api/v3/nodes", url.PathEscape(h.id))
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPatch, path, nil, patch)
 	if err != nil {
 		return err
