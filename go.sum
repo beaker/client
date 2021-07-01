@@ -5,8 +5,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdko
 github.com/VividCortex/ewma v1.1.1/go.mod h1:2Tkkvm3sRDVXaiyucHiACn4cqf7DpdyLvmxzcbUokwA=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d/go.mod h1:asat636LX7Bqt5lYEZ27JNDcqxfjdBQuJ/MM4CN/Lzo=
 github.com/allenai/bytefmt v0.1.0/go.mod h1:3hhcDqHXjwM3JBHx4cX79jG5G3V8zKsjeutbhJ3XjI0=
-github.com/allenai/bytefmt v0.1.1 h1:WjaMWCox0x39h40Q6HNLjXS8ourFHeZwsXwlyeierXY=
-github.com/allenai/bytefmt v0.1.1/go.mod h1:3hhcDqHXjwM3JBHx4cX79jG5G3V8zKsjeutbhJ3XjI0=
+github.com/allenai/bytefmt v0.1.2 h1:27970/ph1eYlv9e5i6Jc6SZoIyXy+DVD4hDDiF0dQGI=
+github.com/allenai/bytefmt v0.1.2/go.mod h1:3hhcDqHXjwM3JBHx4cX79jG5G3V8zKsjeutbhJ3XjI0=
 github.com/beaker/fileheap v0.0.0-20210213001550-3d3932012952 h1:HlBD6WoDTH+Z42AbK0r+zzjY8dhPbGfQie0gpfyoTnI=
 github.com/beaker/fileheap v0.0.0-20210213001550-3d3932012952/go.mod h1:ylYuVpNx+kB9UxLYmSvrygMIHD/GbU+LzlEqfBrf+Rg=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=

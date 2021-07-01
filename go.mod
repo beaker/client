@@ -3,7 +3,7 @@ module github.com/beaker/client
 go 1.14
 
 require (
-	github.com/allenai/bytefmt v0.1.1
+	github.com/allenai/bytefmt v0.1.2
 	github.com/beaker/fileheap v0.0.0-20210213001550-3d3932012952
 	github.com/goware/urlx v0.3.1
 	github.com/hashicorp/go-retryablehttp v0.6.8
