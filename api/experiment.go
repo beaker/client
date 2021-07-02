@@ -92,8 +92,7 @@ type Execution struct {
 	State ExecutionState `json:"state"`
 
 	// Limits describes resources assigned to this execution
-	// TODO allenai-beaker-service#1448: Change this to ResourceLimits
-	Limits ResourceRequest `json:"limits"`
+	Limits ResourceLimits `json:"limits"`
 
 	// (deprecated) See corresponding value in Spec.
 	Priority Priority `json:"priority"`
@@ -166,8 +165,7 @@ type ExecStatusUpdate struct {
 	Message *string `json:"message,omitempty"`
 
 	// (optional) Limits record the maximum resources available during execution.
-	// TODO allenai-beaker-service#1448: Change this to ResourceLimits
-	Limits *ResourceRequest `json:"limits,omitempty"`
+	Limits *ResourceLimits `json:"limits,omitempty"`
 }
 
 // ExecutionPatchSpec describes a patch to apply to a execution's editable fields.
