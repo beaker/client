@@ -21,7 +21,6 @@ type Experiment struct {
 	Description string       `json:"description,omitempty"`
 	Executions  []*Execution `json:"executions,omitempty"`
 	Created     time.Time    `json:"created"`
-	Canceled    bool         `json:"canceled,omitempty"`
 }
 
 // TaskDependency describes a single "edge" in a task dependency graph.
