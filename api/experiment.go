@@ -78,8 +78,10 @@ type Executions struct {
 
 // Execution represents an attempt to run a task. A task may have many executions.
 type Execution struct {
-	ID   string `json:"id"`
-	Task string `json:"task"`
+	ID         string `json:"id"`
+	Task       string `json:"task"`
+	Experiment string `json:"experiment"`
+	Workspace  string `json:"workspace"`
 
 	// Node is set when a task has been assigned to a node.
 	Node string `json:"node,omitempty"`
