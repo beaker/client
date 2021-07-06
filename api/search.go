@@ -19,13 +19,11 @@ const (
 type DatasetField string
 
 const (
+	DatasetAuthor            DatasetField = "user"
 	DatasetCommitted         DatasetField = "committed"
-	DatasetCreatingUser      DatasetField = "user"
-	DatasetDescription       DatasetField = "description"
-	DatasetID                DatasetField = "id"
+	DatasetCreated           DatasetField = "created"
 	DatasetName              DatasetField = "name"
 	DatasetNameOrDescription DatasetField = "nameOrDescription"
-	DatasetOwner             DatasetField = "owner"
 )
 
 func (ds DatasetField) String() string { return string(ds) }
@@ -60,13 +58,10 @@ func (e ExecutionField) String() string { return string(e) }
 type ExperimentField string
 
 const (
+	ExperimentAuthor            ExperimentField = "author"
 	ExperimentCreated           ExperimentField = "created"
-	ExperimentCreatingUser      ExperimentField = "user"
-	ExperimentDescription       ExperimentField = "description"
-	ExperimentID                ExperimentField = "id"
 	ExperimentName              ExperimentField = "name"
 	ExperimentNameOrDescription ExperimentField = "nameOrDescription"
-	ExperimentOwner             ExperimentField = "owner"
 )
 
 func (e ExperimentField) String() string { return string(e) }
@@ -90,14 +85,11 @@ type ExperimentFilterClause struct {
 type GroupField string
 
 const (
+	GroupAuthor            GroupField = "author"
 	GroupCreated           GroupField = "created"
-	GroupCreatingUser      GroupField = "user"
-	GroupDescription       GroupField = "description"
-	GroupID                GroupField = "id"
 	GroupModified          GroupField = "modified"
 	GroupName              GroupField = "name"
 	GroupNameOrDescription GroupField = "nameOrDescription"
-	GroupOwner             GroupField = "owner"
 )
 
 func (g GroupField) String() string { return string(g) }
@@ -121,9 +113,8 @@ type GroupFilterClause struct {
 type GroupTaskField string
 
 const (
-	GroupTaskID         GroupTaskField = "taskId"
-	GroupExperimentID   GroupTaskField = "experimentId"
-	GroupExperimentName GroupTaskField = "experimentName"
+	GroupExperimentID GroupTaskField = "experimentId"
+	GroupTaskID       GroupTaskField = "taskId"
 )
 
 func (gt GroupTaskField) String() string { return string(gt) }
@@ -147,11 +138,10 @@ type GroupParameterSortClause struct {
 type ImageField string
 
 const (
-	ImageID           ImageField = "id"
-	ImageName         ImageField = "name"
-	ImageCommitted    ImageField = "committed"
-	ImageDescription  ImageField = "description"
-	ImageCreatingUser ImageField = "user"
+	ImageAuthor    ImageField = "author"
+	ImageCommitted ImageField = "committed"
+	ImageCreated   ImageField = "created"
+	ImageName      ImageField = "name"
 )
 
 func (i ImageField) String() string { return string(i) }
