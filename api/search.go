@@ -19,7 +19,7 @@ const (
 type DatasetField string
 
 const (
-	DatasetAuthor            DatasetField = "user"
+	DatasetAuthor            DatasetField = "author"
 	DatasetCommitted         DatasetField = "committed"
 	DatasetCreated           DatasetField = "created"
 	DatasetName              DatasetField = "name"
