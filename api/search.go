@@ -20,7 +20,6 @@ type DatasetField string
 
 const (
 	DatasetAuthor            DatasetField = "author"
-	DatasetCommitted         DatasetField = "committed"
 	DatasetCreated           DatasetField = "created"
 	DatasetName              DatasetField = "name"
 	DatasetNameOrDescription DatasetField = "nameOrDescription"
@@ -138,10 +137,9 @@ type GroupParameterSortClause struct {
 type ImageField string
 
 const (
-	ImageAuthor    ImageField = "author"
-	ImageCommitted ImageField = "committed"
-	ImageCreated   ImageField = "created"
-	ImageName      ImageField = "name"
+	ImageAuthor  ImageField = "author"
+	ImageCreated ImageField = "created"
+	ImageName    ImageField = "name"
 )
 
 func (i ImageField) String() string { return string(i) }
