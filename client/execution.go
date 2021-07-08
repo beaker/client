@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/beaker/client/api"
@@ -99,6 +100,18 @@ func (h *ExecutionHandle) GetResults(ctx context.Context) (*api.ExecutionResults
 func (h *ExecutionHandle) PostStatus(ctx context.Context, status api.ExecStatusUpdate) error {
 	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "status")
 	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, status)
+	if err != nil {
+		return err
+	}
+	defer safeClose(resp.Body)
+	return errorFromResponse(resp)
+}
+
+// Stop an execution and optionally queue it to run again.
+func (h *ExecutionHandle) Stop(ctx context.Context, requeue bool) error {
+	path := path.Join("/api/v3/executions", url.PathEscape(h.id), "stop")
+	query := url.Values{"requeue": {strconv.FormatBool(requeue)}}
+	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, query, nil)
 	if err != nil {
 		return err
 	}

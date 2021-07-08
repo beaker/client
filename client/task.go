@@ -41,14 +41,3 @@ func (h *TaskHandle) Get(ctx context.Context) (*api.Task, error) {
 
 	return &task, nil
 }
-
-// Preempt stops the execution of a task and queues it to run again.
-func (h *TaskHandle) Preempt(ctx context.Context) error {
-	path := path.Join("/api/v3/tasks", url.PathEscape(h.id), "preempt")
-	resp, err := h.client.sendRetryableRequest(ctx, http.MethodPost, path, nil, nil)
-	if err != nil {
-		return err
-	}
-	defer safeClose(resp.Body)
-	return errorFromResponse(resp)
-}
