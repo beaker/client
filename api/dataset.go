@@ -32,8 +32,8 @@ type Dataset struct {
 	// A plain-text description of this dataset.
 	Description string `json:"description,omitempty"`
 
-	// Task for which this dataset is a result, i.e. provenance, if any.
-	SourceTask *string `json:"sourceTask,omitempty"`
+	// Execution for which this dataset is a result, i.e. provenance, if any.
+	SourceExecution string `json:"sourceExecution,omitempty"`
 
 	Storage *DatasetStorage `json:"storage,omitempty"`
 }
